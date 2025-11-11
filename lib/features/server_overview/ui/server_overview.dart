@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overview_viewmodel.dart';
+import 'package:omni_for_pyload/domain/models/server.dart';
 
 class ServersScreen extends StatefulWidget {
   const ServersScreen({super.key});
@@ -8,6 +10,82 @@ class ServersScreen extends StatefulWidget {
 }
 
 class _ServersScreenState extends State<ServersScreen> {
+  late ServerOverviewViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ServerOverviewViewModel();
+    _viewModel.addListener(_onViewModelChanged);
+    _loadServers();
+  }
+
+  void _onViewModelChanged() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    super.dispose();
+  }
+
+  Future<void> _loadServers() async {
+    await _viewModel.loadServers();
+  }
+
+  void _showServerOptions(BuildContext context, Server server) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Remove server'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDeleteConfirmation(context, server);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, Server server) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove server?'),
+          content: Text(
+            'Are you sure you want to remove ${server.ip}:${server.port}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _viewModel.removeServer(server);
+                setState(() {});
+              },
+              child: const Text('Remove'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,12 +131,42 @@ class _ServersScreenState extends State<ServersScreen> {
             ),
             // Scrollable List
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                children: const [
-                  // Empty for now
-                ],
-              ),
+              child: _viewModel.servers.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No servers added yet',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      itemCount: _viewModel.servers.length,
+                      itemBuilder: (context, index) {
+                        final server = _viewModel.servers[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12.0),
+                          child: ListTile(
+                            title: Text(
+                              '${server.ip}:${server.port}',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              'User: ${server.username}\nProtocol: ${server.isHttps ? 'https' : 'http'}',
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.more_vert),
+                              onPressed: () =>
+                                  _showServerOptions(context, server),
+                            ),
+                            isThreeLine: true,
+                            onTap: () {
+                              // TODO: Navigate to server detail or control screen
+                            },
+                          ),
+                        );
+                      },
+                    ),
             ),
             // Add New Server Button
             Padding(
@@ -72,8 +180,17 @@ class _ServersScreenState extends State<ServersScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/add-server');
+                  onPressed: () async {
+                    final result = await Navigator.pushNamed(
+                      context,
+                      '/add-server',
+                    );
+                    // Reload servers if a new one was added
+                    if (result == true) {
+                      setState(() {
+                        _loadServers();
+                      });
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

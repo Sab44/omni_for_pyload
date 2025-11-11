@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/features/add_server/viewmodel/add_server_viewmodel.dart';
 
 class AddServerScreen extends StatefulWidget {
   const AddServerScreen({super.key});
@@ -14,8 +15,15 @@ class _AddServerScreenState extends State<AddServerScreen> {
   );
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  late AddServerViewModel _viewModel;
   bool _isHttp = true;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = AddServerViewModel();
+  }
 
   @override
   void dispose() {
@@ -24,6 +32,51 @@ class _AddServerScreenState extends State<AddServerScreen> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleAddServer() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _viewModel.validateAndAddServer(
+        ip: _ipController.text.trim(),
+        port: _portController.text.trim(),
+        username: _usernameController.text.trim(),
+        password: _passwordController.text,
+        isHttps: !_isHttp,
+      );
+
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(e.toString());
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -44,12 +97,14 @@ class _AddServerScreenState extends State<AddServerScreen> {
               // IP / Hostname
               TextFormField(
                 controller: _ipController,
+                enabled: !_isLoading,
                 decoration: const InputDecoration(labelText: 'IP / Hostname'),
               ),
               const SizedBox(height: 12),
               // Port
               TextFormField(
                 controller: _portController,
+                enabled: !_isLoading,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Port'),
               ),
@@ -71,11 +126,13 @@ class _AddServerScreenState extends State<AddServerScreen> {
                     const SizedBox(width: 16),
                     ToggleButtons(
                       isSelected: [_isHttp, !_isHttp],
-                      onPressed: (index) {
-                        setState(() {
-                          _isHttp = index == 0;
-                        });
-                      },
+                      onPressed: _isLoading
+                          ? null
+                          : (index) {
+                              setState(() {
+                                _isHttp = index == 0;
+                              });
+                            },
                       borderRadius: BorderRadius.circular(8),
                       constraints: const BoxConstraints(
                         minHeight: 36,
@@ -90,12 +147,14 @@ class _AddServerScreenState extends State<AddServerScreen> {
               // Username
               TextFormField(
                 controller: _usernameController,
+                enabled: !_isLoading,
                 decoration: const InputDecoration(labelText: 'Username'),
               ),
               const SizedBox(height: 12),
               // Password
               TextFormField(
                 controller: _passwordController,
+                enabled: !_isLoading,
                 obscureText: true,
                 decoration: const InputDecoration(labelText: 'Password'),
               ),
@@ -112,23 +171,27 @@ class _AddServerScreenState extends State<AddServerScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      // Add server click listener (empty for now)
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(
-                          'Add server',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                    onPressed: _isLoading ? null : _handleAddServer,
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(
+                                'Add server',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),

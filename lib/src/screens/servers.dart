@@ -62,7 +62,7 @@ class _ServersScreenState extends State<ServersScreen> {
             ),
             // Add New Server Button
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 28.0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -73,7 +73,7 @@ class _ServersScreenState extends State<ServersScreen> {
                     ),
                   ),
                   onPressed: () {
-                    // Add new server button click listener
+                    Navigator.pushNamed(context, '/add-server');
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

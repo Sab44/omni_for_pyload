@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/servers.dart';
+import 'screens/add_server.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -58,7 +59,10 @@ class App extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       initialRoute: '/',
-      routes: {'/': (context) => const ServersScreen()},
+      routes: {
+        '/': (context) => const ServersScreen(),
+        '/add-server': (context) => const AddServerScreen(),
+      },
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/servers.dart';
-import 'screens/add_server.dart';
+import 'server_overview/ui/server_overview.dart';
+import 'add_server/ui/add_server.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

@@ -25,4 +25,11 @@ class ServerOverviewViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     await loadServers();
   }
+
+  /// Fetch online status for a given server.
+  Future<String> fetchOnlineStatus(Server server) async {
+    // TODO: Implement real network/status check
+    await Future.delayed(const Duration(seconds: 3)); // Simulate network delay
+    return 'offline';
+  }
 }

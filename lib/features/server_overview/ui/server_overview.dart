@@ -11,6 +11,7 @@ class ServersScreen extends StatefulWidget {
 
 class _ServersScreenState extends State<ServersScreen> {
   late ServerOverviewViewModel _viewModel;
+  final Map<String, String> _statuses = {};
 
   @override
   void initState() {
@@ -32,6 +33,18 @@ class _ServersScreenState extends State<ServersScreen> {
 
   Future<void> _loadServers() async {
     await _viewModel.loadServers();
+    await _fetchAllStatuses();
+  }
+
+  Future<void> _fetchAllStatuses() async {
+    _statuses.clear();
+    for (final server in _viewModel.servers) {
+      final key = '${server.ip}:${server.port}';
+      final status = await _viewModel.fetchOnlineStatus(server);
+      setState(() {
+        _statuses[key] = status;
+      });
+    }
   }
 
   void _showServerOptions(BuildContext context, Server server) {
@@ -76,7 +89,10 @@ class _ServersScreenState extends State<ServersScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 await _viewModel.removeServer(server);
-                setState(() {});
+                final key = '${server.ip}:${server.port}';
+                setState(() {
+                  _statuses.remove(key);
+                });
               },
               child: const Text('Remove'),
             ),
@@ -143,16 +159,26 @@ class _ServersScreenState extends State<ServersScreen> {
                       itemCount: _viewModel.servers.length,
                       itemBuilder: (context, index) {
                         final server = _viewModel.servers[index];
+                        final key = '${server.ip}:${server.port}';
+                        final status = _statuses[key] ?? 'unknown';
+                        final Color statusColor = _statusColor(status);
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),
                           child: ListTile(
                             title: Text(
-                              '${server.ip}:${server.port}',
+                              '${server.isHttps ? 'https' : 'http'}://${server.ip}:${server.port}',
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),
-                            subtitle: Text(
-                              'User: ${server.username}\nProtocol: ${server.isHttps ? 'https' : 'http'}',
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('User: ${server.username}'),
+                                Text(
+                                  'Status: ${status}',
+                                  style: TextStyle(color: statusColor),
+                                ),
+                              ],
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.more_vert),
@@ -233,5 +259,16 @@ class _ServersScreenState extends State<ServersScreen> {
         ),
       ),
     );
+  }
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'online':
+        return Colors.green;
+      case 'offline':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }

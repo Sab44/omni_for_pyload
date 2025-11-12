@@ -126,6 +126,7 @@ class _ServersScreenState extends State<ServersScreen> {
                     onPressed: () {
                       // Settings button click listener
                     },
+                    shape: const CircleBorder(),
                     child: const Icon(Icons.settings),
                   ),
                 ],

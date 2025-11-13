@@ -5,35 +5,61 @@ import 'package:omni_for_pyload/domain/models/server.dart';
 class PyLoadApiRepository {
   static const Duration _connectionTimeout = Duration(seconds: 5);
 
-  /// Test the connection to a PyLoad server and authenticate
+  // Singleton instances for client and API
+  static ApiClient? _cachedApiClient;
+  static PyLoadRESTApi? _cachedApi;
+
+  /// Configures and returns a PyLoadRESTApi instance with proper authentication
   ///
-  /// This method verifies that the server is reachable and the credentials are valid
-  /// by attempting to get the server status.
+  /// Uses singleton pattern to cache the API instance for the same server.
+  /// Creates a new instance if the server configuration changes.
   ///
-  /// Throws an exception if:
-  /// - The server is unreachable
-  /// - Authentication fails
-  /// - Connection times out (5 seconds)
-  /// - Any other network/API error occurs
-  static Future<void> testServerConnection(Server server) async {
+  /// Parameters:
+  /// - [server]: The server configuration with IP, port, username, and password
+  ///
+  /// Returns a configured PyLoadRESTApi instance
+  static PyLoadRESTApi _configureApi(Server server) {
     final protocol = server.isHttps ? 'https' : 'http';
     final basePath = '$protocol://${server.ip}:${server.port}';
 
-    // Set up HTTP Basic Auth
+    // Return cached API if the server hasn't changed
+    if (_cachedApiClient?.basePath == basePath && _cachedApi != null) {
+      return _cachedApi!;
+    }
+
     final basicAuth = HttpBasicAuth();
     basicAuth.username = server.username;
     basicAuth.password = server.password;
 
     // Create API client with the server configuration and authentication
-    final apiClient = ApiClient(basePath: basePath, authentication: basicAuth);
+    _cachedApiClient = ApiClient(basePath: basePath, authentication: basicAuth);
 
     // Create API instance with the configured client
-    final api = PyLoadRESTApi(apiClient);
+    _cachedApi = PyLoadRESTApi(_cachedApiClient);
 
+    return _cachedApi!;
+  }
+
+  /// Executes a network request with timeout and error handling
+  ///
+  /// Wraps any Future-returning API call with:
+  /// - Timeout handling (5 seconds default)
+  /// - API exception handling with user-friendly messages
+  /// - Generic error handling
+  ///
+  /// Parameters:
+  /// - [request]: A Future that represents the API call
+  /// - [timeout]: Optional custom timeout duration
+  ///
+  /// Throws:
+  /// - String with user-friendly error message on failure
+  static Future<T> executeNetworkRequest<T>(
+    Future<T> Function() request, {
+    Duration timeout = _connectionTimeout,
+  }) async {
     try {
-      // Attempt to get server status to verify connection and auth
-      await api.apiStatusServerGet().timeout(
-        _connectionTimeout,
+      return await request().timeout(
+        timeout,
         onTimeout: () => throw TimeoutException('Connection timeout'),
       );
     } on TimeoutException {
@@ -52,5 +78,14 @@ class PyLoadApiRepository {
         throw 'Failed to connect to server: $e';
       }
     }
+  }
+
+  /// Test the connection to a PyLoad server and authenticate
+  ///
+  /// This method verifies that the server is reachable and the credentials are valid
+  /// by attempting to get the server status.
+  static Future<void> testServerConnection(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiStatusServerGet());
   }
 }

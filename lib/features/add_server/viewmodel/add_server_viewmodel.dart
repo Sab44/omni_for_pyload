@@ -1,8 +1,17 @@
-import 'package:omni_for_pyload/data/repositories/pyload_api_repository.dart';
-import 'package:omni_for_pyload/data/repositories/server_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class AddServerViewModel {
+  final IServerRepository _serverRepository;
+  final IPyLoadApiRepository _pyLoadApiRepository;
+
+  AddServerViewModel({
+    required IServerRepository serverRepository,
+    required IPyLoadApiRepository pyLoadApiRepository,
+  }) : _serverRepository = serverRepository,
+       _pyLoadApiRepository = pyLoadApiRepository;
+
   /// Validate and add a server
   /// Returns the server if successful, or throws an exception with error message
   Future<Server> validateAndAddServer({
@@ -40,7 +49,7 @@ class AddServerViewModel {
     }
 
     // Check if server with same IP and port already exists
-    final exists = await ServerRepository.serverExists(ip, portNumber);
+    final exists = await _serverRepository.serverExists(ip, portNumber);
     if (exists) {
       throw 'A server with this IP and port already exists';
     }
@@ -54,9 +63,9 @@ class AddServerViewModel {
     );
 
     // Test the connection to the server and verify authentication
-    await PyLoadApiRepository.testServerConnection(server);
+    await _pyLoadApiRepository.testServerConnection(server);
 
-    await ServerRepository.addServer(server);
+    await _serverRepository.addServer(server);
 
     return server;
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:omni_for_pyload/data/repositories/server_repository.dart';
+import 'package:omni_for_pyload/core/service_locator.dart';
 import 'features/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ServerRepository.initialize();
+  await setupServiceLocator();
   runApp(const App());
 }

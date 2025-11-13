@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/core/service_locator.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overview_viewmodel.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
@@ -16,7 +18,9 @@ class _ServersScreenState extends State<ServersScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = ServerOverviewViewModel();
+    _viewModel = ServerOverviewViewModel(
+      serverRepository: getIt<IServerRepository>(),
+    );
     _viewModel.addListener(_onViewModelChanged);
     _loadServers();
   }

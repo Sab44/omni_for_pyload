@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/core/service_locator.dart';
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/add_server/viewmodel/add_server_viewmodel.dart';
 
 class AddServerScreen extends StatefulWidget {
@@ -22,7 +25,10 @@ class _AddServerScreenState extends State<AddServerScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = AddServerViewModel();
+    _viewModel = AddServerViewModel(
+      serverRepository: getIt<IServerRepository>(),
+      pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
+    );
   }
 
   @override
@@ -187,7 +193,9 @@ class _AddServerScreenState extends State<AddServerScreen> {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                               ),
                             ],

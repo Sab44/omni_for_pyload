@@ -1,24 +1,24 @@
 import 'dart:async';
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 
-class PyLoadApiRepository {
+class PyLoadApiRepository implements IPyLoadApiRepository {
   static const Duration _connectionTimeout = Duration(seconds: 5);
 
-  // Singleton instances for client and API
-  static ApiClient? _cachedApiClient;
-  static PyLoadRESTApi? _cachedApi;
+  ApiClient? _cachedApiClient;
+  PyLoadRESTApi? _cachedApi;
 
   /// Configures and returns a PyLoadRESTApi instance with proper authentication
   ///
-  /// Uses singleton pattern to cache the API instance for the same server.
+  /// Uses caching for the same server configuration.
   /// Creates a new instance if the server configuration changes.
   ///
   /// Parameters:
   /// - [server]: The server configuration with IP, port, username, and password
   ///
   /// Returns a configured PyLoadRESTApi instance
-  static PyLoadRESTApi _configureApi(Server server) {
+  PyLoadRESTApi _configureApi(Server server) {
     final basePath = '${server.protocol}://${server.ip}:${server.port}';
 
     // Return cached API if the server hasn't changed
@@ -52,7 +52,7 @@ class PyLoadApiRepository {
   ///
   /// Throws:
   /// - String with user-friendly error message on failure
-  static Future<T> executeNetworkRequest<T>(
+  Future<T> executeNetworkRequest<T>(
     Future<T> Function() request, {
     Duration timeout = _connectionTimeout,
   }) async {
@@ -83,7 +83,8 @@ class PyLoadApiRepository {
   ///
   /// This method verifies that the server is reachable and the credentials are valid
   /// by attempting to get the server status.
-  static Future<void> testServerConnection(Server server) async {
+  @override
+  Future<void> testServerConnection(Server server) async {
     final api = _configureApi(server);
     await executeNetworkRequest(() => api.apiStatusServerGet());
   }

@@ -10,7 +10,7 @@ class AddServerViewModel {
     required String port,
     required String username,
     required String password,
-    required bool isHttps,
+    required String protocol,
   }) async {
     // Validate IP/Hostname
     if (ip.isEmpty) {
@@ -45,19 +45,19 @@ class AddServerViewModel {
       throw 'A server with this IP and port already exists';
     }
 
-    // Create and save server
     final server = Server(
       ip: ip,
       port: portNumber,
       username: username,
       password: password,
-      isHttps: isHttps,
+      protocol: protocol,
     );
 
     // Test the connection to the server and verify authentication
     await PyLoadApiRepository.testServerConnection(server);
 
     await ServerRepository.addServer(server);
+
     return server;
   }
 }

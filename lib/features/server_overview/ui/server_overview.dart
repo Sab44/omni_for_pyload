@@ -167,7 +167,7 @@ class _ServersScreenState extends State<ServersScreen> {
                           margin: const EdgeInsets.only(bottom: 12.0),
                           child: ListTile(
                             title: Text(
-                              '${server.isHttps ? 'https' : 'http'}://${server.ip}:${server.port}',
+                              '${server.protocol}://${server.ip}:${server.port}',
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),

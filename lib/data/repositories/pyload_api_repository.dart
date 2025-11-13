@@ -19,8 +19,7 @@ class PyLoadApiRepository {
   ///
   /// Returns a configured PyLoadRESTApi instance
   static PyLoadRESTApi _configureApi(Server server) {
-    final protocol = server.isHttps ? 'https' : 'http';
-    final basePath = '$protocol://${server.ip}:${server.port}';
+    final basePath = '${server.protocol}://${server.ip}:${server.port}';
 
     // Return cached API if the server hasn't changed
     if (_cachedApiClient?.basePath == basePath && _cachedApi != null) {

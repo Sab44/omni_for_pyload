@@ -17,19 +17,18 @@ class Server extends HiveObject {
   late String password;
 
   @HiveField(4)
-  late bool isHttps;
+  late String protocol;
 
   Server({
     required this.ip,
     required this.port,
     required this.username,
     required this.password,
-    required this.isHttps,
+    required this.protocol,
   });
 
   /// Get the base URL for this server
   String get baseUrl {
-    final protocol = isHttps ? 'https' : 'http';
     return '$protocol://$ip:$port';
   }
 
@@ -39,14 +38,14 @@ class Server extends HiveObject {
     int? port,
     String? username,
     String? password,
-    bool? isHttps,
+    String? protocol,
   }) {
     return Server(
       ip: ip ?? this.ip,
       port: port ?? this.port,
       username: username ?? this.username,
       password: password ?? this.password,
-      isHttps: isHttps ?? this.isHttps,
+      protocol: protocol ?? this.protocol,
     );
   }
 
@@ -59,7 +58,7 @@ class Server extends HiveObject {
           port == other.port &&
           username == other.username &&
           password == other.password &&
-          isHttps == other.isHttps;
+          protocol == other.protocol;
 
   @override
   int get hashCode =>
@@ -67,5 +66,5 @@ class Server extends HiveObject {
       port.hashCode ^
       username.hashCode ^
       password.hashCode ^
-      isHttps.hashCode;
+      protocol.hashCode;
 }

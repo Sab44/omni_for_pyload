@@ -21,7 +21,7 @@ class ServerAdapter extends TypeAdapter<Server> {
       port: fields[1] as int,
       username: fields[2] as String,
       password: fields[3] as String,
-      isHttps: fields[4] as bool,
+      protocol: fields[4] as String,
     );
   }
 
@@ -38,7 +38,7 @@ class ServerAdapter extends TypeAdapter<Server> {
       ..writeByte(3)
       ..write(obj.password)
       ..writeByte(4)
-      ..write(obj.isHttps);
+      ..write(obj.protocol);
   }
 
   @override

@@ -63,7 +63,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
         port: _portController.text.trim(),
         username: _usernameController.text.trim(),
         password: _passwordController.text,
-        isHttps: !_isHttp,
+        protocol: _isHttp ? "http" : "https",
       );
 
       if (mounted) {

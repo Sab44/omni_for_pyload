@@ -1,3 +1,4 @@
+import 'package:omni_for_pyload/data/repositories/pyload_api_repository.dart';
 import 'package:omni_for_pyload/data/repositories/server_repository.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
@@ -52,6 +53,9 @@ class AddServerViewModel {
       password: password,
       isHttps: isHttps,
     );
+
+    // Test the connection to the server and verify authentication
+    await PyLoadApiRepository.testServerConnection(server);
 
     await ServerRepository.addServer(server);
     return server;

@@ -22,7 +22,7 @@ class AccountInfo {
     required this.type,
   });
 
-  num? validuntil;
+  double? validuntil;
 
   String login;
 
@@ -99,9 +99,7 @@ class AccountInfo {
       }());
 
       return AccountInfo(
-        validuntil: json[r'validuntil'] == null
-            ? null
-            : num.parse('${json[r'validuntil']}'),
+        validuntil: mapValueOfType<double>(json, r'validuntil'),
         login: mapValueOfType<String>(json, r'login')!,
         options: mapValueOfType<Object>(json, r'options')!,
         valid: mapValueOfType<bool>(json, r'valid')!,

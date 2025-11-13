@@ -176,7 +176,7 @@ class _ServersScreenState extends State<ServersScreen> {
                               children: [
                                 Text('User: ${server.username}'),
                                 Text(
-                                  'Status: ${status}',
+                                  'Status: $status',
                                   style: TextStyle(color: statusColor),
                                 ),
                               ],

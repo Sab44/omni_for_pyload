@@ -72,7 +72,7 @@ class ApiServiceCallPostRequest {
 
       return ApiServiceCallPostRequest(
         serviceName: mapValueOfType<String>(json, r'service_name'),
-        arguments: Object.listFromJson(json[r'arguments']),
+        arguments: (json[r'arguments'] as List).map((e) => e as Object).toList(),
         parseArguments: mapValueOfType<bool>(json, r'parse_arguments') ?? false,
       );
     }

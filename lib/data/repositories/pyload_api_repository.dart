@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class PyLoadApiRepository {
+  static const Duration _connectionTimeout = Duration(seconds: 5);
+
   /// Test the connection to a PyLoad server and authenticate
   ///
   /// This method verifies that the server is reachable and the credentials are valid
@@ -10,6 +13,7 @@ class PyLoadApiRepository {
   /// Throws an exception if:
   /// - The server is unreachable
   /// - Authentication fails
+  /// - Connection times out (5 seconds)
   /// - Any other network/API error occurs
   static Future<void> testServerConnection(Server server) async {
     final protocol = server.isHttps ? 'https' : 'http';
@@ -28,8 +32,12 @@ class PyLoadApiRepository {
 
     try {
       // Attempt to get server status to verify connection and auth
-      await api.apiStatusServerGet();
-      // If we get here without throwing, the connection is successful
+      await api.apiStatusServerGet().timeout(
+        _connectionTimeout,
+        onTimeout: () => throw TimeoutException('Connection timeout'),
+      );
+    } on TimeoutException {
+      throw 'Server connection timed out.';
     } catch (e) {
       // Re-throw with a user-friendly message
       if (e is ApiException) {

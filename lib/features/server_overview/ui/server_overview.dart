@@ -44,9 +44,10 @@ class _ServersScreenState extends State<ServersScreen> {
     _statuses.clear();
     for (final server in _viewModel.servers) {
       final key = '${server.ip}:${server.port}';
-      final status = await _viewModel.fetchOnlineStatus(server);
-      setState(() {
-        _statuses[key] = status;
+      _viewModel.fetchOnlineStatus(server).then((status) {
+        setState(() {
+          _statuses[key] = status;
+        });
       });
     }
   }

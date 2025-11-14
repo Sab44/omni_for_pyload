@@ -24,6 +24,8 @@ class _ServerScreenState extends State<ServerScreen> {
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
     );
     _viewModel.addListener(_onViewModelChanged);
+    // Start polling immediately since the first tab (Overview) is selected by default
+    _viewModel.setSelectedTab(0);
   }
 
   void _onViewModelChanged() {
@@ -74,7 +76,7 @@ class _ServerScreenState extends State<ServerScreen> {
   Widget _buildTabContent() {
     switch (_viewModel.selectedTabIndex) {
       case 0:
-        return const Center(child: Text('Overview Tab'));
+        return _buildOverviewTab();
       case 1:
         return const Center(child: Text('Queue Tab'));
       case 2:
@@ -82,5 +84,42 @@ class _ServerScreenState extends State<ServerScreen> {
       default:
         return const Center(child: Text('Overview Tab'));
     }
+  }
+
+  Widget _buildOverviewTab() {
+    if (_viewModel.isLoading && _viewModel.downloads.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_viewModel.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
+            const SizedBox(height: 16),
+            Text('Error: ${_viewModel.error}'),
+          ],
+        ),
+      );
+    }
+
+    if (_viewModel.downloads.isEmpty) {
+      return const Center(child: Text('No active downloads'));
+    }
+
+    return ListView.builder(
+      itemCount: _viewModel.downloads.length,
+      itemBuilder: (context, index) {
+        final download = _viewModel.downloads[index];
+        return ListTile(
+          title: Text(download.name),
+          subtitle: Text(
+            'Speed: ${(download.speed / 1048576).toStringAsFixed(2)} MB/s | Progress: ${download.percent}%',
+          ),
+          trailing: Text('${download.percent}%'),
+        );
+      },
+    );
   }
 }

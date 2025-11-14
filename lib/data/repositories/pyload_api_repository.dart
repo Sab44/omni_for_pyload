@@ -88,4 +88,17 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     final api = _configureApi(server);
     await executeNetworkRequest(() => api.apiStatusServerGet());
   }
+
+  /// Get the status of all currently running downloads
+  ///
+  /// Returns a list of DownloadInfo objects representing the current downloads.
+  /// Returns an empty list if no downloads are active.
+  @override
+  Future<List<DownloadInfo>> getDownloadStatus(Server server) async {
+    final api = _configureApi(server);
+    final downloadInfoList = await executeNetworkRequest(
+      () => api.apiStatusDownloadsGet(),
+    );
+    return downloadInfoList ?? [];
+  }
 }

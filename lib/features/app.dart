@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'server_overview/ui/server_overview.dart';
 import 'add_server/ui/add_server.dart';
+import 'server/ui/server.dart';
+import 'package:omni_for_pyload/domain/models/server.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -62,6 +64,15 @@ class App extends StatelessWidget {
       routes: {
         '/': (context) => const ServersScreen(),
         '/add-server': (context) => const AddServerScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/server') {
+          final server = settings.arguments as Server;
+          return MaterialPageRoute(
+            builder: (context) => ServerScreen(server: server),
+          );
+        }
+        return null;
       },
     );
   }

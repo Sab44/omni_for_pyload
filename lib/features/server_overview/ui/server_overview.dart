@@ -195,7 +195,11 @@ class _ServersScreenState extends State<ServersScreen> {
                             ),
                             isThreeLine: true,
                             onTap: () {
-                              // TODO: Navigate to server detail or control screen
+                              Navigator.pushNamed(
+                                context,
+                                '/server',
+                                arguments: server,
+                              );
                             },
                           ),
                         );

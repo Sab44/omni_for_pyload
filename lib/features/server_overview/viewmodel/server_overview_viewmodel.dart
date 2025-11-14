@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class ServerOverviewViewModel extends ChangeNotifier {
   final IServerRepository _serverRepository;
+  final IPyLoadApiRepository _pyLoadApiRepository;
   List<Server> _servers = [];
 
-  ServerOverviewViewModel({required IServerRepository serverRepository})
-    : _serverRepository = serverRepository;
+  ServerOverviewViewModel({
+    required IServerRepository serverRepository,
+    required IPyLoadApiRepository pyLoadApiRepository,
+  }) : _serverRepository = serverRepository,
+       _pyLoadApiRepository = pyLoadApiRepository;
 
   List<Server> get servers => _servers;
 
@@ -32,8 +37,11 @@ class ServerOverviewViewModel extends ChangeNotifier {
 
   /// Fetch online status for a given server.
   Future<String> fetchOnlineStatus(Server server) async {
-    // TODO: Implement real network/status check
-    await Future.delayed(const Duration(seconds: 3)); // Simulate network delay
-    return 'offline';
+    try {
+      await _pyLoadApiRepository.testServerConnection(server);
+      return 'online';
+    } catch (e) {
+      return 'offline';
+    }
   }
 }

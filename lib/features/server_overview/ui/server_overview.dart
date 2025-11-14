@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overview_viewmodel.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
@@ -20,6 +21,7 @@ class _ServersScreenState extends State<ServersScreen> {
     super.initState();
     _viewModel = ServerOverviewViewModel(
       serverRepository: getIt<IServerRepository>(),
+      pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
     );
     _viewModel.addListener(_onViewModelChanged);
     _loadServers();
@@ -166,7 +168,7 @@ class _ServersScreenState extends State<ServersScreen> {
                       itemBuilder: (context, index) {
                         final server = _viewModel.servers[index];
                         final key = '${server.ip}:${server.port}';
-                        final status = _statuses[key] ?? 'unknown';
+                        final status = _statuses[key] ?? 'fetching...';
                         final Color statusColor = _statusColor(status);
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),

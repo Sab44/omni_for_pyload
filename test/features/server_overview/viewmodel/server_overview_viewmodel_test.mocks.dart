@@ -7,6 +7,8 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:omni_for_pyload/domain/models/server.dart' as _i4;
+import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart'
+    as _i5;
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart'
     as _i2;
 
@@ -91,6 +93,27 @@ class MockIServerRepository extends _i1.Mock implements _i2.IServerRepository {
         Invocation.method(
           #clearAllServers,
           [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+}
+
+/// A class which mocks [IPyLoadApiRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIPyLoadApiRepository extends _i1.Mock
+    implements _i5.IPyLoadApiRepository {
+  MockIPyLoadApiRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<void> testServerConnection(_i4.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #testServerConnection,
+          [server],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),

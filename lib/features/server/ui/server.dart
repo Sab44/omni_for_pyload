@@ -112,12 +112,68 @@ class _ServerScreenState extends State<ServerScreen> {
       itemCount: _viewModel.downloads.length,
       itemBuilder: (context, index) {
         final download = _viewModel.downloads[index];
-        return ListTile(
-          title: Text(download.name),
-          subtitle: Text(
-            'Speed: ${(download.speed / 1048576).toStringAsFixed(2)} MB/s | Progress: ${download.percent}%',
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Download name with marquee effect
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  download.name,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Progress bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: download.percent / 100,
+                  minHeight: 6,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.blue[400] ?? Colors.blue,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Row with speed, percentage, and format size
+              Row(
+                children: [
+                  // Left-aligned: speed
+                  Expanded(
+                    child: Text(
+                      'Speed: ${(download.speed / 1048576).toStringAsFixed(2)} MB/s',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  // Center-aligned: percentage
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        '${download.percent}%',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                  // Right-aligned: format size
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        download.formatSize,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          trailing: Text('${download.percent}%'),
         );
       },
     );

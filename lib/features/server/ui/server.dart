@@ -87,10 +87,6 @@ class _ServerScreenState extends State<ServerScreen> {
   }
 
   Widget _buildOverviewTab() {
-    if (_viewModel.isLoading && _viewModel.downloads.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     if (_viewModel.error != null) {
       return Center(
         child: Column(

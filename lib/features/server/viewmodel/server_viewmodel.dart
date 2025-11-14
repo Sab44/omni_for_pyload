@@ -10,7 +10,6 @@ class ServerViewModel extends ChangeNotifier {
   final Server server;
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
-  bool _isLoading = false;
   String? _error;
   Timer? _pollTimer;
 
@@ -21,7 +20,6 @@ class ServerViewModel extends ChangeNotifier {
 
   int get selectedTabIndex => _selectedTabIndex;
   List<DownloadInfo> get downloads => _downloads;
-  bool get isLoading => _isLoading;
   String? get error => _error;
 
   void setSelectedTab(int index) {
@@ -39,7 +37,6 @@ class ServerViewModel extends ChangeNotifier {
   /// Fetch the current download status from the server
   Future<void> _fetchDownloadStatus() async {
     try {
-      _isLoading = true;
       _error = null;
       notifyListeners();
 
@@ -48,7 +45,6 @@ class ServerViewModel extends ChangeNotifier {
     } catch (e) {
       _error = e.toString();
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }

@@ -115,6 +115,7 @@ class _ServerScreenState extends State<ServerScreen> {
         currentIndex: _viewModel.selectedTabIndex,
         onTap: (index) {
           _viewModel.setSelectedTab(index);
+          _expandedQueueItems.clear();
         },
         items: const [
           BottomNavigationBarItem(

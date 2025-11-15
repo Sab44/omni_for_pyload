@@ -26,4 +26,12 @@ abstract class IPyLoadApiRepository {
   ///
   /// Throws: String with user-friendly error message on failure
   Future<List<PackageData>> getQueueData(Server server);
+
+  /// Get the collector data of all packages
+  ///
+  /// Returns a list of PackageData objects representing the packages in the collector.
+  /// Returns an empty list if no packages are in the collector.
+  ///
+  /// Throws: String with user-friendly error message on failure
+  Future<List<PackageData>> getCollectorData(Server server);
 }

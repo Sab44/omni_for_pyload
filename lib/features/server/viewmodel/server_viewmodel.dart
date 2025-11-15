@@ -11,6 +11,7 @@ class ServerViewModel extends ChangeNotifier {
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
   List<PackageData> _queueData = [];
+  List<PackageData> _collectorData = [];
   String? _error;
   Timer? _pollTimer;
 
@@ -22,6 +23,7 @@ class ServerViewModel extends ChangeNotifier {
   int get selectedTabIndex => _selectedTabIndex;
   List<DownloadInfo> get downloads => _downloads;
   List<PackageData> get queueData => _queueData;
+  List<PackageData> get collectorData => _collectorData;
   String? get error => _error;
 
   void setSelectedTab(int index) {
@@ -32,6 +34,9 @@ class ServerViewModel extends ChangeNotifier {
     } else if (index == 1) {
       // Start polling when Queue tab is selected
       _startPollingQueue();
+    } else if (index == 2) {
+      // Start polling when Collector tab is selected
+      _startPollingCollector();
     } else {
       // Stop polling when another tab is selected
       _stopPolling();
@@ -69,6 +74,21 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
+  /// Fetch the collector data from the server
+  Future<void> _fetchCollectorData() async {
+    try {
+      _error = null;
+      notifyListeners();
+
+      _collectorData = await _pyLoadApiRepository.getCollectorData(server);
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
   /// Start polling downloads every second
   void _startPollingDownloads() {
     // Stop any existing timer
@@ -96,6 +116,21 @@ class ServerViewModel extends ChangeNotifier {
     _pollTimer = Timer.periodic(
       const Duration(seconds: 10),
       (_) => _fetchQueueData(),
+    );
+  }
+
+  /// Start polling collector data every 10 seconds
+  void _startPollingCollector() {
+    // Stop any existing timer
+    _stopPolling();
+
+    // Fetch immediately
+    _fetchCollectorData();
+
+    // Then poll every 10 seconds
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => _fetchCollectorData(),
     );
   }
 

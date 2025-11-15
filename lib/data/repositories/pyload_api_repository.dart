@@ -114,4 +114,17 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     );
     return queueDataList ?? [];
   }
+
+  /// Get the collector data of all packages
+  ///
+  /// Returns a list of PackageData objects representing the packages in the collector.
+  /// Returns an empty list if no packages are in the collector.
+  @override
+  Future<List<PackageData>> getCollectorData(Server server) async {
+    final api = _configureApi(server);
+    final collectorDataList = await executeNetworkRequest(
+      () => api.apiGetCollectorDataGet(),
+    );
+    return collectorDataList ?? [];
+  }
 }

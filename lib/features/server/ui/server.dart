@@ -135,7 +135,7 @@ class _ServerScreenState extends State<ServerScreen> {
       case 1:
         return _buildQueueTab();
       case 2:
-        return const Center(child: Text('Collector Tab'));
+        return _buildCollectorTab();
       default:
         return const Center(child: Text('Overview Tab'));
     }
@@ -231,6 +231,23 @@ class _ServerScreenState extends State<ServerScreen> {
   }
 
   Widget _buildQueueTab() {
+    return _buildPackageListTab(
+      packages: _viewModel.queueData,
+      emptyMessage: 'No packages in queue',
+    );
+  }
+
+  Widget _buildCollectorTab() {
+    return _buildPackageListTab(
+      packages: _viewModel.collectorData,
+      emptyMessage: 'No packages in collector',
+    );
+  }
+
+  Widget _buildPackageListTab({
+    required List<PackageData> packages,
+    required String emptyMessage,
+  }) {
     if (_viewModel.error != null) {
       return Center(
         child: Column(
@@ -244,14 +261,14 @@ class _ServerScreenState extends State<ServerScreen> {
       );
     }
 
-    if (_viewModel.queueData.isEmpty) {
-      return const Center(child: Text('No packages in queue'));
+    if (packages.isEmpty) {
+      return Center(child: Text(emptyMessage));
     }
 
     return ListView.builder(
-      itemCount: _viewModel.queueData.length,
+      itemCount: packages.length,
       itemBuilder: (context, index) {
-        final package = _viewModel.queueData[index];
+        final package = packages[index];
         final isExpanded = _expandedQueueItems.contains(index);
         final linksDone = package.linksdone ?? 0;
         final linksTotal = package.links?.length ?? 0;

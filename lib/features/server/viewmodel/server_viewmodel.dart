@@ -65,7 +65,8 @@ class ServerViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      _queueData = await _pyLoadApiRepository.getQueueData(server);
+      List<PackageData> queue = await _pyLoadApiRepository.getQueueData(server);
+      _queueData = queue.reversed.toList();
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -80,7 +81,10 @@ class ServerViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      _collectorData = await _pyLoadApiRepository.getCollectorData(server);
+      List<PackageData> collector = await _pyLoadApiRepository.getCollectorData(
+        server,
+      );
+      _collectorData = collector.reversed.toList();
       _error = null;
     } catch (e) {
       _error = e.toString();

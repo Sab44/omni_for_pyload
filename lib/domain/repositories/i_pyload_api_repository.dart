@@ -18,4 +18,12 @@ abstract class IPyLoadApiRepository {
   ///
   /// Throws: String with user-friendly error message on failure
   Future<List<DownloadInfo>> getDownloadStatus(Server server);
+
+  /// Get the queue data of all packages
+  ///
+  /// Returns a list of PackageData objects representing the packages in the queue.
+  /// Returns an empty list if no packages are queued.
+  ///
+  /// Throws: String with user-friendly error message on failure
+  Future<List<PackageData>> getQueueData(Server server);
 }

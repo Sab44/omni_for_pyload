@@ -10,6 +10,7 @@ class ServerViewModel extends ChangeNotifier {
   final Server server;
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
+  List<PackageData> _queueData = [];
   String? _error;
   Timer? _pollTimer;
 
@@ -20,13 +21,17 @@ class ServerViewModel extends ChangeNotifier {
 
   int get selectedTabIndex => _selectedTabIndex;
   List<DownloadInfo> get downloads => _downloads;
+  List<PackageData> get queueData => _queueData;
   String? get error => _error;
 
   void setSelectedTab(int index) {
     _selectedTabIndex = index;
     if (index == 0) {
       // Start polling when Overview tab is selected
-      _startPolling();
+      _startPollingDownloads();
+    } else if (index == 1) {
+      // Start polling when Queue tab is selected
+      _startPollingQueue();
     } else {
       // Stop polling when another tab is selected
       _stopPolling();
@@ -49,8 +54,23 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
+  /// Fetch the queue data from the server
+  Future<void> _fetchQueueData() async {
+    try {
+      _error = null;
+      notifyListeners();
+
+      _queueData = await _pyLoadApiRepository.getQueueData(server);
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
   /// Start polling downloads every second
-  void _startPolling() {
+  void _startPollingDownloads() {
     // Stop any existing timer
     _stopPolling();
 
@@ -61,6 +81,21 @@ class ServerViewModel extends ChangeNotifier {
     _pollTimer = Timer.periodic(
       const Duration(seconds: 1),
       (_) => _fetchDownloadStatus(),
+    );
+  }
+
+  /// Start polling queue data every second
+  void _startPollingQueue() {
+    // Stop any existing timer
+    _stopPolling();
+
+    // Fetch immediately
+    _fetchQueueData();
+
+    // Then poll every 10 seconds
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => _fetchQueueData(),
     );
   }
 

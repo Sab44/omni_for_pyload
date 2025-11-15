@@ -15,10 +15,12 @@ class ServerScreen extends StatefulWidget {
 
 class _ServerScreenState extends State<ServerScreen> {
   late ServerViewModel _viewModel;
+  late Set<int> _expandedQueueItems;
 
   @override
   void initState() {
     super.initState();
+    _expandedQueueItems = {};
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
@@ -37,6 +39,38 @@ class _ServerScreenState extends State<ServerScreen> {
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
     super.dispose();
+  }
+
+  /// Format bytes to the next higher unit (KB, MB, GB, TB)
+  /// until the whole number is below 1000 or TB is reached
+  String _formatBytes(int? bytes) {
+    if (bytes == null || bytes == 0) return '0 B';
+
+    final units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    double size = bytes.toDouble();
+    int unitIndex = 0;
+
+    while (size >= 1000 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    if (unitIndex == 0) {
+      return '${size.toInt()} ${units[unitIndex]}';
+    } else {
+      return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
+    }
+  }
+
+  void _toggleQueueItem(int index) {
+    setState(() {
+      if (_expandedQueueItems.contains(index)) {
+        _expandedQueueItems.remove(index);
+      } else {
+        _expandedQueueItems.clear();
+        _expandedQueueItems.add(index);
+      }
+    });
   }
 
   @override
@@ -78,7 +112,7 @@ class _ServerScreenState extends State<ServerScreen> {
       case 0:
         return _buildOverviewTab();
       case 1:
-        return const Center(child: Text('Queue Tab'));
+        return _buildQueueTab();
       case 2:
         return const Center(child: Text('Collector Tab'));
       default:
@@ -169,6 +203,150 @@ class _ServerScreenState extends State<ServerScreen> {
                 ],
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildQueueTab() {
+    if (_viewModel.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
+            const SizedBox(height: 16),
+            Text('Error: ${_viewModel.error}'),
+          ],
+        ),
+      );
+    }
+
+    if (_viewModel.queueData.isEmpty) {
+      return const Center(child: Text('No packages in queue'));
+    }
+
+    return ListView.builder(
+      itemCount: _viewModel.queueData.length,
+      itemBuilder: (context, index) {
+        final package = _viewModel.queueData[index];
+        final isExpanded = _expandedQueueItems.contains(index);
+        final linksDone = package.linksdone ?? 0;
+        final linksTotal = package.links?.length ?? 0;
+
+        return GestureDetector(
+          onTap: () => _toggleQueueItem(index),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Package name spanning full width at the top
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        package.name,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  // Progress bar
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: linksTotal > 0 ? linksDone / linksTotal : 0,
+                        minHeight: 6,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.blue[400] ?? Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Row with size, percentage, and links
+                              Row(
+                                children: [
+                                  // Left-aligned: size
+                                  Expanded(
+                                    child: Text(
+                                      '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                  // Right-aligned: links
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '$linksDone / $linksTotal',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Arrow indicator on the right edge
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            12.0,
+                            12.0,
+                            0,
+                            12.0,
+                          ),
+                          child: Icon(
+                            isExpanded ? Icons.expand_less : Icons.expand_more,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Expanded state - show dummy content
+                  if (isExpanded)
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey[300]!),
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      child: const Text(
+                        'Package details will be shown here',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         );
       },

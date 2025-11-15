@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
@@ -71,6 +72,26 @@ class _ServerScreenState extends State<ServerScreen> {
         _expandedQueueItems.add(index);
       }
     });
+  }
+
+  /// Get icon based on file download status
+  IconData? _getStatusIcon(DownloadStatus status) {
+    switch (status) {
+      case DownloadStatus.FAILED:
+      case DownloadStatus.ABORTED:
+      case DownloadStatus.OFFLINE:
+        return Icons.cancel;
+      case DownloadStatus.FINISHED:
+        return Icons.download_done;
+      case DownloadStatus.WAITING:
+        return Icons.access_time;
+      case DownloadStatus.SKIPPED:
+        return Icons.arrow_forward;
+      case DownloadStatus.DOWNLOADING:
+        return Icons.downloading;
+      default:
+        return null;
+    }
   }
 
   @override
@@ -329,8 +350,10 @@ class _ServerScreenState extends State<ServerScreen> {
                       ],
                     ),
                   ),
-                  // Expanded state - show dummy content
-                  if (isExpanded)
+                  // Expanded state - show file list
+                  if (isExpanded &&
+                      package.links != null &&
+                      package.links!.isNotEmpty)
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -338,10 +361,117 @@ class _ServerScreenState extends State<ServerScreen> {
                           top: BorderSide(color: Colors.grey[300]!),
                         ),
                       ),
-                      padding: const EdgeInsets.all(12.0),
-                      child: const Text(
-                        'Package details will be shown here',
-                        style: TextStyle(color: Colors.grey),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: package.links!.length,
+                        itemBuilder: (context, fileIndex) {
+                          final file = package.links![fileIndex];
+                          final statusIcon = _getStatusIcon(file.status);
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: fileIndex < package.links!.length - 1
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey[200]!,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Status icon on the left
+                                if (statusIcon != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: Icon(
+                                      statusIcon,
+                                      color: Colors.grey[600],
+                                      size: 20,
+                                    ),
+                                  ),
+                                // File details on the right
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // File name with marquee effect
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Text(
+                                          file.name,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Bottom row with statusmsg, size, and plugin
+                                      Row(
+                                        children: [
+                                          // Left-aligned: statusmsg
+                                          Expanded(
+                                            child: Text(
+                                              file.statusmsg,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.copyWith(
+                                                    color: Colors.grey[600],
+                                                    fontSize: 11,
+                                                  ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          // Center-aligned: size
+                                          Expanded(
+                                            child: Center(
+                                              child: Text(
+                                                _formatBytes(file.size),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 11,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                          // Right-aligned: plugin
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                file.plugin,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 11,
+                                                    ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                 ],

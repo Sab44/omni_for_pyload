@@ -324,7 +324,7 @@ class PyLoadRESTApi {
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<Response> apiCheckAuthPostWithHttpInfo(String username, String password,) async {
+  Future<Response> apiCheckAuthGetWithHttpInfo(String username, String password,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/check_auth';
 
@@ -343,7 +343,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -361,8 +361,8 @@ class PyLoadRESTApi {
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<Map<String, Object>?> apiCheckAuthPost(String username, String password,) async {
-    final response = await apiCheckAuthPostWithHttpInfo(username, password,);
+  Future<Map<String, Object>?> apiCheckAuthGet(String username, String password,) async {
+    final response = await apiCheckAuthGetWithHttpInfo(username, password,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -629,7 +629,7 @@ class PyLoadRESTApi {
   /// Deletes all finished files and completely finished packages.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiDeleteFinishedGetWithHttpInfo() async {
+  Future<Response> apiDeleteFinishedPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/delete_finished';
 
@@ -645,7 +645,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -657,8 +657,8 @@ class PyLoadRESTApi {
   /// Deletes all finished files and completely finished packages.
   ///
   /// Deletes all finished files and completely finished packages.
-  Future<List<int>?> apiDeleteFinishedGet() async {
-    final response = await apiDeleteFinishedGetWithHttpInfo();
+  Future<List<int>?> apiDeleteFinishedPost() async {
+    final response = await apiDeleteFinishedPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -947,7 +947,7 @@ class PyLoadRESTApi {
   ///
   /// * [bool] refresh (required):
   ///   reload account info
-  Future<Response> apiGetAccountsPostWithHttpInfo(bool refresh,) async {
+  Future<Response> apiGetAccountsGetWithHttpInfo(bool refresh,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_accounts';
 
@@ -965,7 +965,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -982,8 +982,8 @@ class PyLoadRESTApi {
   ///
   /// * [bool] refresh (required):
   ///   reload account info
-  Future<List<AccountInfo>?> apiGetAccountsPost(bool refresh,) async {
-    final response = await apiGetAccountsPostWithHttpInfo(refresh,);
+  Future<List<AccountInfo>?> apiGetAccountsGet(bool refresh,) async {
+    final response = await apiGetAccountsGetWithHttpInfo(refresh,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1202,7 +1202,7 @@ class PyLoadRESTApi {
   ///
   /// * [bool] exclusive:
   ///   unused
-  Future<Response> apiGetCaptchaTaskPostWithHttpInfo({ bool? exclusive, }) async {
+  Future<Response> apiGetCaptchaTaskGetWithHttpInfo({ bool? exclusive, }) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_captcha_task';
 
@@ -1222,7 +1222,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1239,8 +1239,8 @@ class PyLoadRESTApi {
   ///
   /// * [bool] exclusive:
   ///   unused
-  Future<CaptchaTask?> apiGetCaptchaTaskPost({ bool? exclusive, }) async {
-    final response = await apiGetCaptchaTaskPostWithHttpInfo( exclusive: exclusive, );
+  Future<CaptchaTask?> apiGetCaptchaTaskGet({ bool? exclusive, }) async {
+    final response = await apiGetCaptchaTaskGetWithHttpInfo( exclusive: exclusive, );
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1264,7 +1264,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] tid (required):
   ///   task id
-  Future<Response> apiGetCaptchaTaskStatusPostWithHttpInfo(int tid,) async {
+  Future<Response> apiGetCaptchaTaskStatusGetWithHttpInfo(int tid,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_captcha_task_status';
 
@@ -1282,7 +1282,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1299,8 +1299,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] tid (required):
   ///   task id
-  Future<String?> apiGetCaptchaTaskStatusPost(int tid,) async {
-    final response = await apiGetCaptchaTaskStatusPostWithHttpInfo(tid,);
+  Future<String?> apiGetCaptchaTaskStatusGet(int tid,) async {
+    final response = await apiGetCaptchaTaskStatusGetWithHttpInfo(tid,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1528,7 +1528,7 @@ class PyLoadRESTApi {
   ///
   /// * [String] section:
   ///   'plugin' or 'core'
-  Future<Response> apiGetConfigValuePostWithHttpInfo(String category, String option, { String? section, }) async {
+  Future<Response> apiGetConfigValueGetWithHttpInfo(String category, String option, { String? section, }) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_config_value';
 
@@ -1550,7 +1550,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1573,8 +1573,8 @@ class PyLoadRESTApi {
   ///
   /// * [String] section:
   ///   'plugin' or 'core'
-  Future<Object?> apiGetConfigValuePost(String category, String option, { String? section, }) async {
-    final response = await apiGetConfigValuePostWithHttpInfo(category, option,  section: section, );
+  Future<Object?> apiGetConfigValueGet(String category, String option, { String? section, }) async {
+    final response = await apiGetConfigValueGetWithHttpInfo(category, option,  section: section, );
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1597,7 +1597,7 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [String] uuid (required):
-  Future<Response> apiGetEventsPostWithHttpInfo(String uuid,) async {
+  Future<Response> apiGetEventsGetWithHttpInfo(String uuid,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_events';
 
@@ -1615,7 +1615,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1631,8 +1631,8 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [String] uuid (required):
-  Future<List<EventInfo>?> apiGetEventsPost(String uuid,) async {
-    final response = await apiGetEventsPostWithHttpInfo(uuid,);
+  Future<List<EventInfo>?> apiGetEventsGet(String uuid,) async {
+    final response = await apiGetEventsGetWithHttpInfo(uuid,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1659,7 +1659,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] fileId (required):
   ///   file id
-  Future<Response> apiGetFileDataPostWithHttpInfo(int fileId,) async {
+  Future<Response> apiGetFileDataGetWithHttpInfo(int fileId,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_file_data';
 
@@ -1677,7 +1677,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1694,8 +1694,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] fileId (required):
   ///   file id
-  Future<FileData?> apiGetFileDataPost(int fileId,) async {
-    final response = await apiGetFileDataPostWithHttpInfo(fileId,);
+  Future<FileData?> apiGetFileDataGet(int fileId,) async {
+    final response = await apiGetFileDataGetWithHttpInfo(fileId,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1718,7 +1718,7 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [int] packageId (required):
-  Future<Response> apiGetFileOrderPostWithHttpInfo(int packageId,) async {
+  Future<Response> apiGetFileOrderGetWithHttpInfo(int packageId,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_file_order';
 
@@ -1736,7 +1736,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1752,8 +1752,8 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [int] packageId (required):
-  Future<Map<String, int>?> apiGetFileOrderPost(int packageId,) async {
-    final response = await apiGetFileOrderPostWithHttpInfo(packageId,);
+  Future<Map<String, int>?> apiGetFileOrderGet(int packageId,) async {
+    final response = await apiGetFileOrderGetWithHttpInfo(packageId,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1777,7 +1777,7 @@ class PyLoadRESTApi {
   ///
   /// * [String] plugin (required):
   ///   pluginname
-  Future<Response> apiGetInfoByPluginPostWithHttpInfo(String plugin,) async {
+  Future<Response> apiGetInfoByPluginGetWithHttpInfo(String plugin,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_info_by_plugin';
 
@@ -1795,7 +1795,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1812,8 +1812,8 @@ class PyLoadRESTApi {
   ///
   /// * [String] plugin (required):
   ///   pluginname
-  Future<Map<String, String>?> apiGetInfoByPluginPost(String plugin,) async {
-    final response = await apiGetInfoByPluginPostWithHttpInfo(plugin,);
+  Future<Map<String, String>?> apiGetInfoByPluginGet(String plugin,) async {
+    final response = await apiGetInfoByPluginGetWithHttpInfo(plugin,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1837,7 +1837,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] offset:
   ///   line offset
-  Future<Response> apiGetLogPostWithHttpInfo({ int? offset, }) async {
+  Future<Response> apiGetLogGetWithHttpInfo({ int? offset, }) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_log';
 
@@ -1857,7 +1857,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1874,8 +1874,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] offset:
   ///   line offset
-  Future<List<String>?> apiGetLogPost({ int? offset, }) async {
-    final response = await apiGetLogPostWithHttpInfo( offset: offset, );
+  Future<List<String>?> apiGetLogGet({ int? offset, }) async {
+    final response = await apiGetLogGetWithHttpInfo( offset: offset, );
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1902,7 +1902,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] packageId (required):
   ///   package id
-  Future<Response> apiGetPackageDataPostWithHttpInfo(int packageId,) async {
+  Future<Response> apiGetPackageDataGetWithHttpInfo(int packageId,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_package_data';
 
@@ -1920,7 +1920,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1937,8 +1937,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] packageId (required):
   ///   package id
-  Future<PackageData?> apiGetPackageDataPost(int packageId,) async {
-    final response = await apiGetPackageDataPostWithHttpInfo(packageId,);
+  Future<PackageData?> apiGetPackageDataGet(int packageId,) async {
+    final response = await apiGetPackageDataGetWithHttpInfo(packageId,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -1962,7 +1962,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] packageId (required):
   ///   package id
-  Future<Response> apiGetPackageInfoPostWithHttpInfo(int packageId,) async {
+  Future<Response> apiGetPackageInfoGetWithHttpInfo(int packageId,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_package_info';
 
@@ -1980,7 +1980,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -1997,8 +1997,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] packageId (required):
   ///   package id
-  Future<PackageData?> apiGetPackageInfoPost(int packageId,) async {
-    final response = await apiGetPackageInfoPostWithHttpInfo(packageId,);
+  Future<PackageData?> apiGetPackageInfoGet(int packageId,) async {
+    final response = await apiGetPackageInfoGetWithHttpInfo(packageId,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -2022,7 +2022,7 @@ class PyLoadRESTApi {
   ///
   /// * [Destination] destination (required):
   ///   `Destination`
-  Future<Response> apiGetPackageOrderPostWithHttpInfo(Destination destination,) async {
+  Future<Response> apiGetPackageOrderGetWithHttpInfo(Destination destination,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_package_order';
 
@@ -2040,7 +2040,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -2057,8 +2057,8 @@ class PyLoadRESTApi {
   ///
   /// * [Destination] destination (required):
   ///   `Destination`
-  Future<Map<String, int>?> apiGetPackageOrderPost(Destination destination,) async {
-    final response = await apiGetPackageOrderPostWithHttpInfo(destination,);
+  Future<Map<String, int>?> apiGetPackageOrderGet(Destination destination,) async {
+    final response = await apiGetPackageOrderGetWithHttpInfo(destination,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -2366,9 +2366,9 @@ class PyLoadRESTApi {
     return null;
   }
 
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData type.
   ///
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData type.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
@@ -2377,7 +2377,7 @@ class PyLoadRESTApi {
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<Response> apiGetUserDataPostWithHttpInfo(String username, String password,) async {
+  Future<Response> apiGetUserDataGetWithHttpInfo(String username, String password,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/getUserData';
 
@@ -2396,7 +2396,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -2405,17 +2405,17 @@ class PyLoadRESTApi {
     );
   }
 
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData type.
   ///
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData type.
   ///
   /// Parameters:
   ///
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<OldUserData?> apiGetUserDataPost(String username, String password,) async {
-    final response = await apiGetUserDataPostWithHttpInfo(username, password,);
+  Future<OldUserData?> apiGetUserDataGet(String username, String password,) async {
+    final response = await apiGetUserDataGetWithHttpInfo(username, password,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -2429,9 +2429,9 @@ class PyLoadRESTApi {
     return null;
   }
 
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData pe.
   ///
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData pe.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
@@ -2440,7 +2440,7 @@ class PyLoadRESTApi {
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<Response> apiGetUserdataPostWithHttpInfo(String username, String password,) async {
+  Future<Response> apiGetUserdataGetWithHttpInfo(String username, String password,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/get_userdata';
 
@@ -2459,7 +2459,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -2468,17 +2468,17 @@ class PyLoadRESTApi {
     );
   }
 
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData pe.
   ///
-  /// similar to `check_auth` but returns UserData thrift type.
+  /// similar to `check_auth` but returns UserData pe.
   ///
   /// Parameters:
   ///
   /// * [String] username (required):
   ///
   /// * [String] password (required):
-  Future<UserData?> apiGetUserdataPost(String username, String password,) async {
-    final response = await apiGetUserdataPostWithHttpInfo(username, password,);
+  Future<UserData?> apiGetUserdataGet(String username, String password,) async {
+    final response = await apiGetUserdataGetWithHttpInfo(username, password,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -2551,7 +2551,7 @@ class PyLoadRESTApi {
   /// * [String] plugin (required):
   ///
   /// * [String] funcName (required):
-  Future<Response> apiHasServicePostWithHttpInfo(String plugin, String funcName,) async {
+  Future<Response> apiHasServiceGetWithHttpInfo(String plugin, String funcName,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/has_service';
 
@@ -2570,7 +2570,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -2588,8 +2588,8 @@ class PyLoadRESTApi {
   /// * [String] plugin (required):
   ///
   /// * [String] funcName (required):
-  Future<bool?> apiHasServicePost(String plugin, String funcName,) async {
-    final response = await apiHasServicePostWithHttpInfo(plugin, funcName,);
+  Future<bool?> apiHasServiceGet(String plugin, String funcName,) async {
+    final response = await apiHasServiceGetWithHttpInfo(plugin, funcName,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -2808,7 +2808,7 @@ class PyLoadRESTApi {
   /// Clean way to quit pyLoad.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiKillGetWithHttpInfo() async {
+  Future<Response> apiKillPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/kill';
 
@@ -2824,7 +2824,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -2836,8 +2836,8 @@ class PyLoadRESTApi {
   /// Clean way to quit pyLoad.
   ///
   /// Clean way to quit pyLoad.
-  Future<void> apiKillGet() async {
-    final response = await apiKillGetWithHttpInfo();
+  Future<void> apiKillPost() async {
+    final response = await apiKillPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -3125,7 +3125,7 @@ class PyLoadRESTApi {
   /// Pause server: It won't start any new downloads, but nothing gets aborted.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiPauseServerGetWithHttpInfo() async {
+  Future<Response> apiPauseServerPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/pause_server';
 
@@ -3141,7 +3141,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -3153,8 +3153,8 @@ class PyLoadRESTApi {
   /// Pause server: It won't start any new downloads, but nothing gets aborted.
   ///
   /// Pause server: It won't start any new downloads, but nothing gets aborted.
-  Future<void> apiPauseServerGet() async {
-    final response = await apiPauseServerGetWithHttpInfo();
+  Future<void> apiPauseServerPost() async {
+    final response = await apiPauseServerPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -3170,7 +3170,7 @@ class PyLoadRESTApi {
   ///
   /// * [int] rid (required):
   ///   `ResultID`
-  Future<Response> apiPollResultsPostWithHttpInfo(int rid,) async {
+  Future<Response> apiPollResultsGetWithHttpInfo(int rid,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/poll_results';
 
@@ -3188,7 +3188,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -3205,8 +3205,8 @@ class PyLoadRESTApi {
   ///
   /// * [int] rid (required):
   ///   `ResultID`
-  Future<OnlineCheck?> apiPollResultsPost(int rid,) async {
-    final response = await apiPollResultsPostWithHttpInfo(rid,);
+  Future<OnlineCheck?> apiPollResultsGet(int rid,) async {
+    final response = await apiPollResultsGetWithHttpInfo(rid,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -3496,7 +3496,7 @@ class PyLoadRESTApi {
   /// Restarts all failed failes.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiRestartFailedGetWithHttpInfo() async {
+  Future<Response> apiRestartFailedPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/restart_failed';
 
@@ -3512,7 +3512,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -3524,8 +3524,8 @@ class PyLoadRESTApi {
   /// Restarts all failed failes.
   ///
   /// Restarts all failed failes.
-  Future<void> apiRestartFailedGet() async {
-    final response = await apiRestartFailedGetWithHttpInfo();
+  Future<void> apiRestartFailedPost() async {
+    final response = await apiRestartFailedPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -3583,46 +3583,6 @@ class PyLoadRESTApi {
     }
   }
 
-  /// Restart pyload core.
-  ///
-  /// Restart pyload core.
-  ///
-  /// Note: This method returns the HTTP [Response].
-  Future<Response> apiRestartGetWithHttpInfo() async {
-    // ignore: prefer_const_declarations
-    final path = r'/api/restart';
-
-    // ignore: prefer_final_locals
-    Object? postBody;
-
-    final queryParams = <QueryParam>[];
-    final headerParams = <String, String>{};
-    final formParams = <String, String>{};
-
-    const contentTypes = <String>[];
-
-
-    return apiClient.invokeAPI(
-      path,
-      'GET',
-      queryParams,
-      postBody,
-      headerParams,
-      formParams,
-      contentTypes.isEmpty ? null : contentTypes.first,
-    );
-  }
-
-  /// Restart pyload core.
-  ///
-  /// Restart pyload core.
-  Future<void> apiRestartGet() async {
-    final response = await apiRestartGetWithHttpInfo();
-    if (response.statusCode >= HttpStatus.badRequest) {
-      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
-    }
-  }
-
   /// Restarts a package, resets every containing files.
   ///
   /// Restarts a package, resets every containing files.
@@ -3670,6 +3630,46 @@ class PyLoadRESTApi {
   ///   package id
   Future<void> apiRestartPackagePost(int packageId,) async {
     final response = await apiRestartPackagePostWithHttpInfo(packageId,);
+    if (response.statusCode >= HttpStatus.badRequest) {
+      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
+    }
+  }
+
+  /// Restart pyload core.
+  ///
+  /// Restart pyload core.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  Future<Response> apiRestartPostWithHttpInfo() async {
+    // ignore: prefer_const_declarations
+    final path = r'/api/restart';
+
+    // ignore: prefer_final_locals
+    Object? postBody;
+
+    final queryParams = <QueryParam>[];
+    final headerParams = <String, String>{};
+    final formParams = <String, String>{};
+
+    const contentTypes = <String>[];
+
+
+    return apiClient.invokeAPI(
+      path,
+      'POST',
+      queryParams,
+      postBody,
+      headerParams,
+      formParams,
+      contentTypes.isEmpty ? null : contentTypes.first,
+    );
+  }
+
+  /// Restart pyload core.
+  ///
+  /// Restart pyload core.
+  Future<void> apiRestartPost() async {
+    final response = await apiRestartPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4109,7 +4109,7 @@ class PyLoadRESTApi {
   /// Aborts all running downloads.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiStopAllDownloadsGetWithHttpInfo() async {
+  Future<Response> apiStopAllDownloadsPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/stop_all_downloads';
 
@@ -4125,7 +4125,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -4137,8 +4137,8 @@ class PyLoadRESTApi {
   /// Aborts all running downloads.
   ///
   /// Aborts all running downloads.
-  Future<void> apiStopAllDownloadsGet() async {
-    final response = await apiStopAllDownloadsGetWithHttpInfo();
+  Future<void> apiStopAllDownloadsPost() async {
+    final response = await apiStopAllDownloadsPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4197,7 +4197,7 @@ class PyLoadRESTApi {
   /// Toggle pause state.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiTogglePauseGetWithHttpInfo() async {
+  Future<Response> apiTogglePausePostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/toggle_pause';
 
@@ -4213,7 +4213,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -4225,8 +4225,8 @@ class PyLoadRESTApi {
   /// Toggle pause state.
   ///
   /// Toggle pause state.
-  Future<bool?> apiTogglePauseGet() async {
-    final response = await apiTogglePauseGetWithHttpInfo();
+  Future<bool?> apiTogglePausePost() async {
+    final response = await apiTogglePausePostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4245,7 +4245,7 @@ class PyLoadRESTApi {
   /// Toggle proxy activation.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiToggleProxyGetWithHttpInfo() async {
+  Future<Response> apiToggleProxyPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/toggle_proxy';
 
@@ -4261,7 +4261,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -4273,8 +4273,8 @@ class PyLoadRESTApi {
   /// Toggle proxy activation.
   ///
   /// Toggle proxy activation.
-  Future<bool?> apiToggleProxyGet() async {
-    final response = await apiToggleProxyGetWithHttpInfo();
+  Future<bool?> apiToggleProxyPost() async {
+    final response = await apiToggleProxyPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4293,7 +4293,7 @@ class PyLoadRESTApi {
   /// Toggle reconnect activation.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiToggleReconnectGetWithHttpInfo() async {
+  Future<Response> apiToggleReconnectPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/toggle_reconnect';
 
@@ -4309,7 +4309,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -4321,8 +4321,8 @@ class PyLoadRESTApi {
   /// Toggle reconnect activation.
   ///
   /// Toggle reconnect activation.
-  Future<bool?> apiToggleReconnectGet() async {
-    final response = await apiToggleReconnectGetWithHttpInfo();
+  Future<bool?> apiToggleReconnectPost() async {
+    final response = await apiToggleReconnectPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4341,7 +4341,7 @@ class PyLoadRESTApi {
   /// Unpause server: New Downloads will be started.
   ///
   /// Note: This method returns the HTTP [Response].
-  Future<Response> apiUnpauseServerGetWithHttpInfo() async {
+  Future<Response> apiUnpauseServerPostWithHttpInfo() async {
     // ignore: prefer_const_declarations
     final path = r'/api/unpause_server';
 
@@ -4357,7 +4357,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'GET',
+      'POST',
       queryParams,
       postBody,
       headerParams,
@@ -4369,8 +4369,8 @@ class PyLoadRESTApi {
   /// Unpause server: New Downloads will be started.
   ///
   /// Unpause server: New Downloads will be started.
-  Future<void> apiUnpauseServerGet() async {
-    final response = await apiUnpauseServerGetWithHttpInfo();
+  Future<void> apiUnpauseServerPost() async {
+    final response = await apiUnpauseServerPostWithHttpInfo();
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -4503,7 +4503,7 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [String] username (required):
-  Future<Response> apiUserExistsPostWithHttpInfo(String username,) async {
+  Future<Response> apiUserExistsGetWithHttpInfo(String username,) async {
     // ignore: prefer_const_declarations
     final path = r'/api/user_exists';
 
@@ -4521,7 +4521,7 @@ class PyLoadRESTApi {
 
     return apiClient.invokeAPI(
       path,
-      'POST',
+      'GET',
       queryParams,
       postBody,
       headerParams,
@@ -4537,8 +4537,8 @@ class PyLoadRESTApi {
   /// Parameters:
   ///
   /// * [String] username (required):
-  Future<bool?> apiUserExistsPost(String username,) async {
-    final response = await apiUserExistsPostWithHttpInfo(username,);
+  Future<bool?> apiUserExistsGet(String username,) async {
+    final response = await apiUserExistsGetWithHttpInfo(username,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }

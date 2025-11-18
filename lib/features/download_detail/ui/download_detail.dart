@@ -146,7 +146,7 @@ class _DownloadDetailScreenState extends State<DownloadDetailScreen> {
                 ? Border(bottom: BorderSide(color: Colors.grey[200]!))
                 : null,
           ),
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -162,14 +162,11 @@ class _DownloadDetailScreenState extends State<DownloadDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // File name with marquee effect
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Text(
-                        file.name,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Text(
+                      file.name,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     // Bottom row with statusmsg, size, and plugin

@@ -173,10 +173,20 @@ class _ServersScreenState extends State<ServersScreen> {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),
                           child: ListTile(
-                            title: Text(
-                              '${server.protocol}://${server.ip}:${server.port}',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  server.name,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${server.protocol}://${server.ip}:${server.port}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ],
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

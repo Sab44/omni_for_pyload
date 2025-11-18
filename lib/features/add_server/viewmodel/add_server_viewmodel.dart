@@ -15,12 +15,16 @@ class AddServerViewModel {
   /// Validate and add a server
   /// Returns the server if successful, or throws an exception with error message
   Future<Server> validateAndAddServer({
+    required String name,
     required String ip,
     required String port,
     required String username,
     required String password,
     required String protocol,
   }) async {
+    // Validate and default server name
+    final serverName = name.trim().isEmpty ? 'pyLoad' : name.trim();
+
     // Validate IP/Hostname
     if (ip.isEmpty) {
       throw 'IP or hostname is required';
@@ -60,6 +64,7 @@ class AddServerViewModel {
       username: username,
       password: password,
       protocol: protocol,
+      name: serverName,
     );
 
     // Test the connection to the server and verify authentication

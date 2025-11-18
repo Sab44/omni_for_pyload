@@ -3,14 +3,15 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:omni_for_pyload/domain/models/server.dart' as _i4;
+import 'package:omni_for_pyload/domain/models/server.dart' as _i5;
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart'
-    as _i5;
+    as _i6;
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart'
-    as _i2;
+    as _i3;
+import 'package:openapi_client/api.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,45 +26,55 @@ import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakePackageData_0 extends _i1.SmartFake implements _i2.PackageData {
+  _FakePackageData_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [IServerRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIServerRepository extends _i1.Mock implements _i2.IServerRepository {
+class MockIServerRepository extends _i1.Mock implements _i3.IServerRepository {
   MockIServerRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<void> initialize() => (super.noSuchMethod(
+  _i4.Future<void> initialize() => (super.noSuchMethod(
         Invocation.method(
           #initialize,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<List<_i4.Server>> getAllServers() => (super.noSuchMethod(
+  _i4.Future<List<_i5.Server>> getAllServers() => (super.noSuchMethod(
         Invocation.method(
           #getAllServers,
           [],
         ),
-        returnValue: _i3.Future<List<_i4.Server>>.value(<_i4.Server>[]),
-      ) as _i3.Future<List<_i4.Server>>);
+        returnValue: _i4.Future<List<_i5.Server>>.value(<_i5.Server>[]),
+      ) as _i4.Future<List<_i5.Server>>);
 
   @override
-  _i3.Future<void> addServer(_i4.Server? server) => (super.noSuchMethod(
+  _i4.Future<void> addServer(_i5.Server? server) => (super.noSuchMethod(
         Invocation.method(
           #addServer,
           [server],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<bool> serverExists(
+  _i4.Future<bool> serverExists(
     String? ip,
     int? port,
   ) =>
@@ -75,47 +86,127 @@ class MockIServerRepository extends _i1.Mock implements _i2.IServerRepository {
             port,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<void> removeServer(String? key) => (super.noSuchMethod(
+  _i4.Future<void> removeServer(String? key) => (super.noSuchMethod(
         Invocation.method(
           #removeServer,
           [key],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> clearAllServers() => (super.noSuchMethod(
+  _i4.Future<void> clearAllServers() => (super.noSuchMethod(
         Invocation.method(
           #clearAllServers,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [IPyLoadApiRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockIPyLoadApiRepository extends _i1.Mock
-    implements _i5.IPyLoadApiRepository {
+    implements _i6.IPyLoadApiRepository {
   MockIPyLoadApiRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<void> testServerConnection(_i4.Server? server) =>
+  _i4.Future<void> testServerConnection(_i5.Server? server) =>
       (super.noSuchMethod(
         Invocation.method(
           #testServerConnection,
           [server],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i2.DownloadInfo>> getDownloadStatus(_i5.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getDownloadStatus,
+          [server],
+        ),
+        returnValue:
+            _i4.Future<List<_i2.DownloadInfo>>.value(<_i2.DownloadInfo>[]),
+      ) as _i4.Future<List<_i2.DownloadInfo>>);
+
+  @override
+  _i4.Future<List<_i2.PackageData>> getQueueData(_i5.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getQueueData,
+          [server],
+        ),
+        returnValue:
+            _i4.Future<List<_i2.PackageData>>.value(<_i2.PackageData>[]),
+      ) as _i4.Future<List<_i2.PackageData>>);
+
+  @override
+  _i4.Future<List<_i2.PackageData>> getCollectorData(_i5.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCollectorData,
+          [server],
+        ),
+        returnValue:
+            _i4.Future<List<_i2.PackageData>>.value(<_i2.PackageData>[]),
+      ) as _i4.Future<List<_i2.PackageData>>);
+
+  @override
+  _i4.Future<List<_i2.PackageData>> getQueue(_i5.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getQueue,
+          [server],
+        ),
+        returnValue:
+            _i4.Future<List<_i2.PackageData>>.value(<_i2.PackageData>[]),
+      ) as _i4.Future<List<_i2.PackageData>>);
+
+  @override
+  _i4.Future<List<_i2.PackageData>> getCollector(_i5.Server? server) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCollector,
+          [server],
+        ),
+        returnValue:
+            _i4.Future<List<_i2.PackageData>>.value(<_i2.PackageData>[]),
+      ) as _i4.Future<List<_i2.PackageData>>);
+
+  @override
+  _i4.Future<_i2.PackageData> getPackageData(
+    _i5.Server? server,
+    int? packageId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPackageData,
+          [
+            server,
+            packageId,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.PackageData>.value(_FakePackageData_0(
+          this,
+          Invocation.method(
+            #getPackageData,
+            [
+              server,
+              packageId,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.PackageData>);
 }

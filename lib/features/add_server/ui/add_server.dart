@@ -12,6 +12,9 @@ class AddServerScreen extends StatefulWidget {
 }
 
 class _AddServerScreenState extends State<AddServerScreen> {
+  final TextEditingController _nameController = TextEditingController(
+    text: 'pyLoad',
+  );
   final TextEditingController _ipController = TextEditingController();
   final TextEditingController _portController = TextEditingController(
     text: '8000',
@@ -33,6 +36,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _ipController.dispose();
     _portController.dispose();
     _usernameController.dispose();
@@ -65,6 +69,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
 
     try {
       await _viewModel.validateAndAddServer(
+        name: _nameController.text.trim(),
         ip: _ipController.text.trim(),
         port: _portController.text.trim(),
         username: _usernameController.text.trim(),
@@ -100,6 +105,13 @@ class _AddServerScreenState extends State<AddServerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Server Name
+              TextFormField(
+                controller: _nameController,
+                enabled: !_isLoading,
+                decoration: const InputDecoration(labelText: 'Server name'),
+              ),
+              const SizedBox(height: 12),
               // IP / Hostname
               TextFormField(
                 controller: _ipController,

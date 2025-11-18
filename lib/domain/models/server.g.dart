@@ -22,13 +22,14 @@ class ServerAdapter extends TypeAdapter<Server> {
       username: fields[2] as String,
       password: fields[3] as String,
       protocol: fields[4] as String,
+      name: fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Server obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.ip)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class ServerAdapter extends TypeAdapter<Server> {
       ..writeByte(3)
       ..write(obj.password)
       ..writeByte(4)
-      ..write(obj.protocol);
+      ..write(obj.protocol)
+      ..writeByte(5)
+      ..write(obj.name);
   }
 
   @override

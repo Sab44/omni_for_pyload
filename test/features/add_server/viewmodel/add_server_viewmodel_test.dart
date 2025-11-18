@@ -26,6 +26,7 @@ void main() {
     test('validateAndAddServer throws error when IP is empty', () async {
       expect(
         () => viewModel.validateAndAddServer(
+          name: 'Test Server',
           ip: '',
           port: '8000',
           username: 'user',
@@ -45,6 +46,7 @@ void main() {
     test('validateAndAddServer throws error when port is invalid', () async {
       expect(
         () => viewModel.validateAndAddServer(
+          name: 'Test Server',
           ip: '192.168.1.1',
           port: 'invalid',
           username: 'user',
@@ -66,6 +68,7 @@ void main() {
       () async {
         expect(
           () => viewModel.validateAndAddServer(
+            name: 'Test Server',
             ip: '192.168.1.1',
             port: '99999',
             username: 'user',
@@ -86,6 +89,7 @@ void main() {
     test('validateAndAddServer throws error when username is empty', () async {
       expect(
         () => viewModel.validateAndAddServer(
+          name: 'Test Server',
           ip: '192.168.1.1',
           port: '8000',
           username: '',
@@ -105,6 +109,7 @@ void main() {
     test('validateAndAddServer throws error when password is empty', () async {
       expect(
         () => viewModel.validateAndAddServer(
+          name: 'Test Server',
           ip: '192.168.1.1',
           port: '8000',
           username: 'user',
@@ -130,6 +135,7 @@ void main() {
 
         expect(
           () => viewModel.validateAndAddServer(
+            name: 'Test Server',
             ip: '192.168.1.1',
             port: '8000',
             username: 'user',
@@ -159,6 +165,7 @@ void main() {
         ).thenAnswer((_) async => false);
 
         final server = await viewModel.validateAndAddServer(
+          name: 'Test Server',
           ip: '192.168.1.1',
           port: '8000',
           username: 'user',
@@ -171,6 +178,54 @@ void main() {
         expect(server.username, 'user');
         expect(server.password, 'pass');
         expect(server.protocol, 'http');
+        expect(server.name, 'Test Server');
+
+        verify(
+          mockServerRepository.serverExists('192.168.1.1', 8000),
+        ).called(1);
+      },
+    );
+
+    test('validateAndAddServer defaults name to pyLoad when empty', () async {
+      when(
+        mockServerRepository.serverExists('192.168.1.1', 8000),
+      ).thenAnswer((_) async => false);
+
+      final server = await viewModel.validateAndAddServer(
+        name: '',
+        ip: '192.168.1.1',
+        port: '8000',
+        username: 'user',
+        password: 'pass',
+        protocol: 'http',
+      );
+
+      expect(server.name, 'pyLoad');
+      expect(server.ip, '192.168.1.1');
+      expect(server.port, 8000);
+
+      verify(mockServerRepository.serverExists('192.168.1.1', 8000)).called(1);
+    });
+
+    test(
+      'validateAndAddServer defaults name to pyLoad when only whitespace',
+      () async {
+        when(
+          mockServerRepository.serverExists('192.168.1.1', 8000),
+        ).thenAnswer((_) async => false);
+
+        final server = await viewModel.validateAndAddServer(
+          name: '   ',
+          ip: '192.168.1.1',
+          port: '8000',
+          username: 'user',
+          password: 'pass',
+          protocol: 'http',
+        );
+
+        expect(server.name, 'pyLoad');
+        expect(server.ip, '192.168.1.1');
+        expect(server.port, 8000);
 
         verify(
           mockServerRepository.serverExists('192.168.1.1', 8000),

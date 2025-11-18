@@ -19,12 +19,16 @@ class Server extends HiveObject {
   @HiveField(4)
   late String protocol;
 
+  @HiveField(5)
+  late String name;
+
   Server({
     required this.ip,
     required this.port,
     required this.username,
     required this.password,
     required this.protocol,
+    this.name = 'pyLoad',
   });
 
   /// Get the base URL for this server
@@ -39,6 +43,7 @@ class Server extends HiveObject {
     String? username,
     String? password,
     String? protocol,
+    String? name,
   }) {
     return Server(
       ip: ip ?? this.ip,
@@ -46,6 +51,7 @@ class Server extends HiveObject {
       username: username ?? this.username,
       password: password ?? this.password,
       protocol: protocol ?? this.protocol,
+      name: name ?? this.name,
     );
   }
 
@@ -58,7 +64,8 @@ class Server extends HiveObject {
           port == other.port &&
           username == other.username &&
           password == other.password &&
-          protocol == other.protocol;
+          protocol == other.protocol &&
+          name == other.name;
 
   @override
   int get hashCode =>
@@ -66,5 +73,6 @@ class Server extends HiveObject {
       port.hashCode ^
       username.hashCode ^
       password.hashCode ^
-      protocol.hashCode;
+      protocol.hashCode ^
+      name.hashCode;
 }

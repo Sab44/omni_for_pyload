@@ -253,75 +253,78 @@ class _ServerScreenState extends State<ServerScreen> {
               arguments: {'server': widget.server, 'packageId': package.pid},
             );
           },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Package name
-                    Text(
-                      package.name,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    // Progress bar
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: linksTotal > 0 ? linksDone / linksTotal : 0,
-                        minHeight: 6,
-                        backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          progressBarColor,
-                        ),
+          child: Container(
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Package name
+                      Text(
+                        package.name,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Row with size and links
-                    Row(
-                      children: [
-                        // Left-aligned: size
-                        Expanded(
-                          child: Text(
-                            '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
-                            style: Theme.of(context).textTheme.bodySmall,
+                      const SizedBox(height: 8),
+                      // Progress bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: linksTotal > 0 ? linksDone / linksTotal : 0,
+                          minHeight: 6,
+                          backgroundColor: Colors.grey[300],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            progressBarColor,
                           ),
                         ),
-                        // Right-aligned: links
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
+                      ),
+                      const SizedBox(height: 8),
+                      // Row with size and links
+                      Row(
+                        children: [
+                          // Left-aligned: size
+                          Expanded(
                             child: Text(
-                              '$linksDone / $linksTotal',
+                              '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    // Arrow indicator row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[600],
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                          // Right-aligned: links
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                '$linksDone / $linksTotal',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Arrow indicator row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[600],
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
-              ),
-              if (index < packages.length - 1)
-                Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
-            ],
+                if (index < packages.length - 1)
+                  Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
+              ],
+            ),
           ),
         );
       },

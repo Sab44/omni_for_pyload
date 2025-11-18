@@ -282,53 +282,40 @@ class _ServerScreenState extends State<ServerScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    // Row with size and links
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // Left-aligned: size
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Row with size and links
-                              Row(
-                                children: [
-                                  // Left-aligned: size
-                                  Expanded(
-                                    child: Text(
-                                      '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                    ),
-                                  ),
-                                  // Right-aligned: links
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        '$linksDone / $linksTotal',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodySmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                          child: Text(
+                            '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
-                        // Arrow indicator on the right edge
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey[600],
-                            size: 16,
+                        // Right-aligned: links
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              '$linksDone / $linksTotal',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                         ),
                       ],
                     ),
+                    // Arrow indicator row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.grey[600],
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),

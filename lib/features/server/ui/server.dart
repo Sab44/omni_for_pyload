@@ -61,6 +61,14 @@ class _ServerScreenState extends State<ServerScreen> {
     }
   }
 
+  Color _getProgressBarColor(int linksDone, int linksTotal) {
+    if (linksDone == linksTotal) {
+      return Colors.lightGreen[400] ?? Colors.lightGreen;
+    } else {
+      return Colors.blue[400] ?? Colors.blue;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -235,6 +243,7 @@ class _ServerScreenState extends State<ServerScreen> {
         final package = packages[index];
         final linksDone = package.linksdone ?? 0;
         final linksTotal = package.linkstotal ?? 0;
+        final progressBarColor = _getProgressBarColor(linksDone, linksTotal);
 
         return GestureDetector(
           onTap: () {
@@ -244,51 +253,43 @@ class _ServerScreenState extends State<ServerScreen> {
               arguments: {'server': widget.server, 'packageId': package.pid},
             );
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Package name
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
-                    child: Expanded(
-                      child: Text(
-                        package.name,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Package name
+                    Text(
+                      package.name,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
-                  // Progress bar
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 0),
-                    child: ClipRRect(
+                    const SizedBox(height: 8),
+                    // Progress bar
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: linksTotal > 0 ? linksDone / linksTotal : 0,
                         minHeight: 6,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.blue[400] ?? Colors.blue,
+                          progressBarColor,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 0),
-                    child: Row(
+                    const SizedBox(height: 8),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Row with size, percentage, and links
+                              // Row with size and links
                               Row(
                                 children: [
                                   // Left-aligned: size
@@ -319,12 +320,7 @@ class _ServerScreenState extends State<ServerScreen> {
                         ),
                         // Arrow indicator on the right edge
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            12.0,
-                            12.0,
-                            0,
-                            12.0,
-                          ),
+                          padding: const EdgeInsets.only(left: 12.0),
                           child: Icon(
                             Icons.arrow_forward_ios,
                             color: Colors.grey[600],
@@ -333,10 +329,12 @@ class _ServerScreenState extends State<ServerScreen> {
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              if (index < packages.length - 1)
+                Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
+            ],
           ),
         );
       },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'server_overview/ui/server_overview.dart';
 import 'add_server/ui/add_server.dart';
 import 'server/ui/server.dart';
+import 'download_detail/ui/download_detail.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class App extends StatelessWidget {
@@ -70,6 +71,15 @@ class App extends StatelessWidget {
           final server = settings.arguments as Server;
           return MaterialPageRoute(
             builder: (context) => ServerScreen(server: server),
+          );
+        }
+        if (settings.name == '/download-detail') {
+          final args = settings.arguments as Map<String, dynamic>;
+          final server = args['server'] as Server;
+          final packageId = args['packageId'] as int;
+          return MaterialPageRoute(
+            builder: (context) =>
+                DownloadDetailScreen(server: server, packageId: packageId),
           );
         }
         return null;

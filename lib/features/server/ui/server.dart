@@ -16,12 +16,10 @@ class ServerScreen extends StatefulWidget {
 
 class _ServerScreenState extends State<ServerScreen> {
   late ServerViewModel _viewModel;
-  late Set<int> _expandedQueueItems;
 
   @override
   void initState() {
     super.initState();
-    _expandedQueueItems = {};
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
@@ -63,37 +61,6 @@ class _ServerScreenState extends State<ServerScreen> {
     }
   }
 
-  void _toggleQueueItem(int index) {
-    setState(() {
-      if (_expandedQueueItems.contains(index)) {
-        _expandedQueueItems.remove(index);
-      } else {
-        _expandedQueueItems.clear();
-        _expandedQueueItems.add(index);
-      }
-    });
-  }
-
-  /// Get icon based on file download status
-  IconData? _getStatusIcon(DownloadStatus status) {
-    switch (status) {
-      case DownloadStatus.FAILED:
-      case DownloadStatus.ABORTED:
-      case DownloadStatus.OFFLINE:
-        return Icons.cancel;
-      case DownloadStatus.FINISHED:
-        return Icons.download_done;
-      case DownloadStatus.WAITING:
-        return Icons.access_time;
-      case DownloadStatus.SKIPPED:
-        return Icons.arrow_forward;
-      case DownloadStatus.DOWNLOADING:
-        return Icons.downloading;
-      default:
-        return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,7 +82,6 @@ class _ServerScreenState extends State<ServerScreen> {
         currentIndex: _viewModel.selectedTabIndex,
         onTap: (index) {
           _viewModel.setSelectedTab(index);
-          _expandedQueueItems.clear();
         },
         items: const [
           BottomNavigationBarItem(
@@ -270,12 +236,17 @@ class _ServerScreenState extends State<ServerScreen> {
       itemCount: packages.length,
       itemBuilder: (context, index) {
         final package = packages[index];
-        final isExpanded = _expandedQueueItems.contains(index);
         final linksDone = package.linksdone ?? 0;
         final linksTotal = package.links?.length ?? 0;
 
         return GestureDetector(
-          onTap: () => _toggleQueueItem(index),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              '/download-detail',
+              arguments: {'server': widget.server, 'packageId': package.pid},
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
@@ -361,137 +332,14 @@ class _ServerScreenState extends State<ServerScreen> {
                             12.0,
                           ),
                           child: Icon(
-                            isExpanded ? Icons.expand_less : Icons.expand_more,
+                            Icons.arrow_forward_ios,
                             color: Colors.grey[600],
+                            size: 16,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // Expanded state - show file list
-                  if (isExpanded &&
-                      package.links != null &&
-                      package.links!.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: Colors.grey[300]!),
-                        ),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: package.links!.length,
-                        itemBuilder: (context, fileIndex) {
-                          final file = package.links![fileIndex];
-                          final statusIcon = _getStatusIcon(file.status);
-
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: fileIndex < package.links!.length - 1
-                                  ? Border(
-                                      bottom: BorderSide(
-                                        color: Colors.grey[200]!,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // Status icon on the left
-                                if (statusIcon != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: Icon(
-                                      statusIcon,
-                                      color: Colors.grey[600],
-                                      size: 20,
-                                    ),
-                                  ),
-                                // File details on the right
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // File name with marquee effect
-                                      SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Text(
-                                          file.name,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      // Bottom row with statusmsg, size, and plugin
-                                      Row(
-                                        children: [
-                                          // Left-aligned: statusmsg
-                                          Expanded(
-                                            child: Text(
-                                              file.statusmsg,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                    color: Colors.grey[600],
-                                                    fontSize: 11,
-                                                  ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          // Center-aligned: size
-                                          Expanded(
-                                            child: Center(
-                                              child: Text(
-                                                _formatBytes(file.size),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall
-                                                    ?.copyWith(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 11,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                          // Right-aligned: plugin
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Text(
-                                                file.plugin,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall
-                                                    ?.copyWith(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 11,
-                                                    ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
                 ],
               ),
             ),

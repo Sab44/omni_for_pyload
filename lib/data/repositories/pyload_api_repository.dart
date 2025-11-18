@@ -127,4 +127,43 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     );
     return collectorDataList ?? [];
   }
+
+  /// Get the queue packages (without file details)
+  ///
+  /// Returns a list of PackageData objects representing the packages in the queue.
+  /// Does not include file details - use getPackageData for full details.
+  @override
+  Future<List<PackageData>> getQueue(Server server) async {
+    final api = _configureApi(server);
+    final queueList = await executeNetworkRequest(() => api.apiGetQueueGet());
+    return queueList ?? [];
+  }
+
+  /// Get the collector packages (without file details)
+  ///
+  /// Returns a list of PackageData objects representing the packages in the collector.
+  /// Does not include file details - use getPackageData for full details.
+  @override
+  Future<List<PackageData>> getCollector(Server server) async {
+    final api = _configureApi(server);
+    final collectorList = await executeNetworkRequest(
+      () => api.apiGetCollectorGet(),
+    );
+    return collectorList ?? [];
+  }
+
+  /// Get complete information about a package, including files
+  ///
+  /// Returns PackageData with complete information including all files.
+  @override
+  Future<PackageData> getPackageData(Server server, int packageId) async {
+    final api = _configureApi(server);
+    final packageData = await executeNetworkRequest(
+      () => api.apiGetPackageDataGet(packageId),
+    );
+    if (packageData == null) {
+      throw 'Package data not found for package ID: $packageId';
+    }
+    return packageData;
+  }
 }

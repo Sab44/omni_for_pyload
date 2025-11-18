@@ -135,14 +135,11 @@ class _ServerScreenState extends State<ServerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Download name with marquee effect
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              // Download name
+              Expanded(
                 child: Text(
                   download.name,
                   style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(height: 8),
@@ -237,7 +234,7 @@ class _ServerScreenState extends State<ServerScreen> {
       itemBuilder: (context, index) {
         final package = packages[index];
         final linksDone = package.linksdone ?? 0;
-        final linksTotal = package.links?.length ?? 0;
+        final linksTotal = package.linkstotal ?? 0;
 
         return GestureDetector(
           onTap: () {
@@ -257,16 +254,13 @@ class _ServerScreenState extends State<ServerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Package name spanning full width at the top
+                  // Package name
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
+                    child: Expanded(
                       child: Text(
                         package.name,
                         style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

@@ -356,11 +356,9 @@ class _ServerScreenState extends State<ServerScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Download name
-              Expanded(
-                child: Text(
-                  download.name,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+              Text(
+                download.name,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               // Progress bar

@@ -76,6 +76,12 @@ class _ServerScreenState extends State<ServerScreen> {
     }
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -243,7 +249,16 @@ class _ServerScreenState extends State<ServerScreen> {
       actions: [
         IconButton(
           icon: const Icon(Icons.delete),
-          onPressed: () => _viewModel.deleteSelectedPackages(),
+          onPressed: () async {
+            final success = await _viewModel.deleteSelectedPackages();
+            if (mounted) {
+              _showSnackBar(
+                success
+                    ? 'Success: Package(s) deleted.'
+                    : 'Error: Package deletion failed.',
+              );
+            }
+          },
         ),
         IconButton(
           icon: const Icon(Icons.restart_alt),

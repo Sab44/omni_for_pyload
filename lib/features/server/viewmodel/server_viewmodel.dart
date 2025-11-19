@@ -164,9 +164,18 @@ class ServerViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteSelectedPackages() {
-    // TODO: Implement delete
-    clearSelection();
+  Future<bool> deleteSelectedPackages() async {
+    try {
+      List<int> deletePids = _selectedPackageIds.toList();
+      clearSelection();
+
+      await _pyLoadApiRepository.deletePackages(server, deletePids);
+      // Refresh the current tab
+      setSelectedTab(_selectedTabIndex);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   void restartSelectedPackages() {

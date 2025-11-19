@@ -166,4 +166,17 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     }
     return packageData;
   }
+
+  /// Deletes packages by their IDs
+  @override
+  Future<void> deletePackages(Server server, List<int> packageIds) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(
+      () => api.apiDeletePackagesPost(
+        apiDeletePackagesPostRequest: ApiDeletePackagesPostRequest(
+          packageIds: packageIds,
+        ),
+      ),
+    );
+  }
 }

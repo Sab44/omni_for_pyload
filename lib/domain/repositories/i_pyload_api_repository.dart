@@ -57,4 +57,9 @@ abstract class IPyLoadApiRepository {
   ///
   /// Throws: String with user-friendly error message on failure
   Future<PackageData> getPackageData(Server server, int packageId);
+
+  /// Deletes packages by their IDs
+  ///
+  /// Throws: String with user-friendly error message on failure
+  Future<void> deletePackages(Server server, List<int> packageIds);
 }

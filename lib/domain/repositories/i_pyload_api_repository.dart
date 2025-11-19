@@ -1,6 +1,8 @@
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
+enum RestartResult { success, partial, failure }
+
 /// Interface for PyLoad API interactions
 abstract class IPyLoadApiRepository {
   /// Test the connection to a PyLoad server and authenticate
@@ -62,4 +64,9 @@ abstract class IPyLoadApiRepository {
   ///
   /// Throws: String with user-friendly error message on failure
   Future<void> deletePackages(Server server, List<int> packageIds);
+
+  /// Restarts packages by their IDs
+  ///
+  /// Returns a RestartResult indicating success, partial success, or failure.
+  Future<RestartResult> restartPackages(Server server, List<int> packageIds);
 }

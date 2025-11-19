@@ -179,4 +179,33 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
       ),
     );
   }
+
+  /// Restarts packages by their IDs
+  @override
+  Future<RestartResult> restartPackages(
+    Server server,
+    List<int> packageIds,
+  ) async {
+    final api = _configureApi(server);
+    int successCount = 0;
+
+    await Future.wait(
+      packageIds.map((id) async {
+        try {
+          await executeNetworkRequest(() => api.apiRestartPackagePost(id));
+          successCount++;
+        } catch (e) {
+          // Ignore individual failures but track success count
+        }
+      }),
+    );
+
+    if (successCount == packageIds.length) {
+      return RestartResult.success;
+    } else if (successCount > 0) {
+      return RestartResult.partial;
+    } else {
+      return RestartResult.failure;
+    }
+  }
 }

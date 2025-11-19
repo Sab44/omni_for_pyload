@@ -262,7 +262,24 @@ class _ServerScreenState extends State<ServerScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.restart_alt),
-          onPressed: () => _viewModel.restartSelectedPackages(),
+          onPressed: () async {
+            final result = await _viewModel.restartSelectedPackages();
+            if (mounted) {
+              String message;
+              switch (result) {
+                case RestartResult.success:
+                  message = 'Success: Package(s) restarted.';
+                  break;
+                case RestartResult.partial:
+                  message = 'Error: Some packages failed to restart.';
+                  break;
+                case RestartResult.failure:
+                  message = 'Error: Package(s) failed to restart.';
+                  break;
+              }
+              _showSnackBar(message);
+            }
+          },
         ),
         PopupMenuButton<String>(
           onSelected: (value) {

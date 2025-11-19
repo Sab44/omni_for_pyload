@@ -178,9 +178,21 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
-  void restartSelectedPackages() {
-    // TODO: Implement restart
-    clearSelection();
+  Future<RestartResult> restartSelectedPackages() async {
+    try {
+      List<int> restartPids = _selectedPackageIds.toList();
+      clearSelection();
+
+      final result = await _pyLoadApiRepository.restartPackages(
+        server,
+        restartPids.toList(),
+      );
+      // Refresh the current tab
+      setSelectedTab(_selectedTabIndex);
+      return result;
+    } catch (e) {
+      return RestartResult.failure;
+    }
   }
 
   void moveSelectedPackages() {

@@ -32,7 +32,7 @@ class ServerStatus {
 
   int total;
 
-  int speed;
+  double speed;
 
   bool download;
 
@@ -107,7 +107,7 @@ class ServerStatus {
         active: mapValueOfType<int>(json, r'active')!,
         queue: mapValueOfType<int>(json, r'queue')!,
         total: mapValueOfType<int>(json, r'total')!,
-        speed: mapValueOfType<int>(json, r'speed')!,
+        speed: mapValueOfType<double>(json, r'speed')!,
         download: mapValueOfType<bool>(json, r'download')!,
         reconnect: mapValueOfType<bool>(json, r'reconnect')!,
         captcha: mapValueOfType<bool>(json, r'captcha')!,

@@ -39,6 +39,12 @@ class App extends StatelessWidget {
           backgroundColor: Color(0xFF1E3A5F),
           foregroundColor: Colors.white,
         ),
+        popupMenuTheme: PopupMenuThemeData(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -66,6 +72,12 @@ class App extends StatelessWidget {
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF1E3A5F),
+        ),
+        popupMenuTheme: PopupMenuThemeData(
+          color: const Color(0xFF1E3A5F),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
       themeMode: ThemeMode.system,

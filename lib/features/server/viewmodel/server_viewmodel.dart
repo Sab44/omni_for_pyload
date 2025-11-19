@@ -184,6 +184,30 @@ class ServerViewModel extends ChangeNotifier {
     clearSelection();
   }
 
+  void resumeQueue() {
+    // TODO: Implement resume queue
+  }
+
+  void pauseQueue() {
+    // TODO: Implement pause queue
+  }
+
+  void stopQueue() {
+    // TODO: Implement stop queue
+  }
+
+  void addPackage() {
+    // TODO: Implement add package
+  }
+
+  void clearFinished() {
+    // TODO: Implement clear finished
+  }
+
+  void restartFailed() {
+    // TODO: Implement restart failed
+  }
+
   @override
   void dispose() {
     _stopPolling();

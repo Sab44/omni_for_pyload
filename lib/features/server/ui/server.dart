@@ -15,6 +15,13 @@ class ServerScreen extends StatefulWidget {
 }
 
 class _ServerScreenState extends State<ServerScreen> {
+  static const String _menuResumeQueue = 'Resume Queue';
+  static const String _menuPauseQueue = 'Pause Queue';
+  static const String _menuStopQueue = 'Stop Queue';
+  static const String _menuAddPackage = 'Add Package';
+  static const String _menuClearFinished = 'Clear Finished';
+  static const String _menuRestartFailed = 'Restart Failed';
+
   late ServerViewModel _viewModel;
 
   @override
@@ -121,6 +128,108 @@ class _ServerScreenState extends State<ServerScreen> {
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
+      actions: [
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) {
+            switch (value) {
+              case _menuResumeQueue:
+                _viewModel.resumeQueue();
+                break;
+              case _menuPauseQueue:
+                _viewModel.pauseQueue();
+                break;
+              case _menuStopQueue:
+                _viewModel.stopQueue();
+                break;
+              case _menuAddPackage:
+                _viewModel.addPackage();
+                break;
+              case _menuClearFinished:
+                _viewModel.clearFinished();
+                break;
+              case _menuRestartFailed:
+                _viewModel.restartFailed();
+                break;
+            }
+          },
+          itemBuilder: (BuildContext context) {
+            final List<PopupMenuEntry<String>> items = [
+              const PopupMenuItem(
+                value: _menuResumeQueue,
+                child: Row(
+                  children: [
+                    Icon(Icons.play_arrow, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text(_menuResumeQueue),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: _menuPauseQueue,
+                child: Row(
+                  children: [
+                    Icon(Icons.pause, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text(_menuPauseQueue),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: _menuStopQueue,
+                child: Row(
+                  children: [
+                    Icon(Icons.stop, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text(_menuStopQueue),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: _menuAddPackage,
+                child: Row(
+                  children: [
+                    Icon(Icons.add, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text(_menuAddPackage),
+                  ],
+                ),
+              ),
+            ];
+
+            if (_viewModel.selectedTabIndex == 1 ||
+                _viewModel.selectedTabIndex == 2) {
+              items.add(const PopupMenuDivider());
+              items.add(
+                const PopupMenuItem(
+                  value: _menuClearFinished,
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.black54),
+                      SizedBox(width: 8),
+                      Text(_menuClearFinished),
+                    ],
+                  ),
+                ),
+              );
+              items.add(
+                const PopupMenuItem(
+                  value: _menuRestartFailed,
+                  child: Row(
+                    children: [
+                      Icon(Icons.restart_alt, color: Colors.black54),
+                      SizedBox(width: 8),
+                      Text(_menuRestartFailed),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return items;
+          },
+        ),
+      ],
     );
   }
 

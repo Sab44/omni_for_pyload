@@ -21,6 +21,9 @@ class App extends StatelessWidget {
           backgroundColor: Color(0xFFF5F5F5),
           elevation: 0,
         ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFFECECEC),
+        ),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Color(0xFF1E3A5F)),
           bodyMedium: TextStyle(color: Color(0xFF1E3A5F)),
@@ -40,11 +43,14 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFF1E3A5F),
+        scaffoldBackgroundColor: const Color(0xFF12253F),
         primaryColor: Colors.white,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1E3A5F),
+          backgroundColor: Color(0xFF12253F),
           elevation: 0,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFF07051F),
         ),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),

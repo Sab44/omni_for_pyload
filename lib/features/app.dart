@@ -16,6 +16,7 @@ class App extends StatelessWidget {
         brightness: Brightness.light,
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        primaryColor: const Color(0xFF1E3A5F),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFF5F5F5),
           elevation: 0,
@@ -40,6 +41,7 @@ class App extends StatelessWidget {
         brightness: Brightness.dark,
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF1E3A5F),
+        primaryColor: Colors.white,
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF1E3A5F),
           elevation: 0,

@@ -72,30 +72,9 @@ class _ServerScreenState extends State<ServerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              widget.server.name,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '${widget.server.protocol}://${widget.server.ip}:${widget.server.port}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(fontSize: 12),
-            ),
-          ],
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: _viewModel.isSelectionMode
+          ? _buildSelectionAppBar()
+          : _buildDefaultAppBar(),
       body: _buildTabContent(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _viewModel.selectedTabIndex,
@@ -111,6 +90,83 @@ class _ServerScreenState extends State<ServerScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: 'Collector'),
         ],
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildDefaultAppBar() {
+    return AppBar(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.server.name,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            '${widget.server.protocol}://${widget.server.ip}:${widget.server.port}',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontSize: 12),
+          ),
+        ],
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildSelectionAppBar() {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => _viewModel.clearSelection(),
+      ),
+      title: Text('${_viewModel.selectedPackageIds.length}'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () => _viewModel.deleteSelectedPackages(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.restart_alt),
+          onPressed: () => _viewModel.restartSelectedPackages(),
+        ),
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'Move') _viewModel.moveSelectedPackages();
+            if (value == 'Extract') _viewModel.extractSelectedPackages();
+          },
+          itemBuilder: (BuildContext context) {
+            return [
+              const PopupMenuItem(
+                value: 'Move',
+                child: Row(
+                  children: [
+                    Icon(Icons.drive_file_move, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text('Move'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'Extract',
+                child: Row(
+                  children: [
+                    Icon(Icons.unarchive, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text('Extract'),
+                  ],
+                ),
+              ),
+            ];
+          },
+        ),
+      ],
     );
   }
 
@@ -255,17 +311,30 @@ class _ServerScreenState extends State<ServerScreen> {
         final linksDone = package.linksdone ?? 0;
         final linksTotal = package.linkstotal ?? 0;
         final progressBarColor = _getProgressBarColor(linksDone, linksTotal);
+        final isSelected = _viewModel.selectedPackageIds.contains(package.pid);
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/download-detail',
-              arguments: {'server': widget.server, 'packageId': package.pid},
-            );
-          },
-          child: Container(
-            color: Colors.transparent,
+        return Material(
+          color: isSelected
+              ? Theme.of(context).primaryColor.withAlpha(100)
+              : Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              if (_viewModel.isSelectionMode) {
+                _viewModel.toggleSelection(package.pid);
+              } else {
+                Navigator.pushNamed(
+                  context,
+                  '/download-detail',
+                  arguments: {
+                    'server': widget.server,
+                    'packageId': package.pid,
+                  },
+                );
+              }
+            },
+            onLongPress: () {
+              _viewModel.toggleSelection(package.pid);
+            },
             child: Column(
               children: [
                 Padding(

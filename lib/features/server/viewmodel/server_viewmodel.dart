@@ -12,6 +12,7 @@ class ServerViewModel extends ChangeNotifier {
   List<DownloadInfo> _downloads = [];
   List<PackageData> _queueData = [];
   List<PackageData> _collectorData = [];
+  final Set<int> _selectedPackageIds = {};
   String? _error;
   Timer? _pollTimer;
 
@@ -24,9 +25,14 @@ class ServerViewModel extends ChangeNotifier {
   List<DownloadInfo> get downloads => _downloads;
   List<PackageData> get queueData => _queueData;
   List<PackageData> get collectorData => _collectorData;
+  Set<int> get selectedPackageIds => _selectedPackageIds;
+  bool get isSelectionMode => _selectedPackageIds.isNotEmpty;
   String? get error => _error;
 
   void setSelectedTab(int index) {
+    if (_selectedTabIndex != index) {
+      clearSelection();
+    }
     _selectedTabIndex = index;
     if (index == 0) {
       // Start polling when Overview tab is selected
@@ -142,6 +148,40 @@ class ServerViewModel extends ChangeNotifier {
   void _stopPolling() {
     _pollTimer?.cancel();
     _pollTimer = null;
+  }
+
+  void toggleSelection(int packageId) {
+    if (_selectedPackageIds.contains(packageId)) {
+      _selectedPackageIds.remove(packageId);
+    } else {
+      _selectedPackageIds.add(packageId);
+    }
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedPackageIds.clear();
+    notifyListeners();
+  }
+
+  void deleteSelectedPackages() {
+    // TODO: Implement delete
+    clearSelection();
+  }
+
+  void restartSelectedPackages() {
+    // TODO: Implement restart
+    clearSelection();
+  }
+
+  void moveSelectedPackages() {
+    // TODO: Implement move
+    clearSelection();
+  }
+
+  void extractSelectedPackages() {
+    // TODO: Implement extract
+    clearSelection();
   }
 
   @override

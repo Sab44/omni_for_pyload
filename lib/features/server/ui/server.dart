@@ -49,7 +49,7 @@ class _ServerScreenState extends State<ServerScreen> {
 
   /// Format bytes to the next higher unit (KB, MB, GB, TB)
   /// until the whole number is below 1000 or TB is reached
-  String _formatBytes(int? bytes) {
+  String _formatBytes(num? bytes) {
     if (bytes == null || bytes == 0) return '0 B';
 
     final units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -380,7 +380,7 @@ class _ServerScreenState extends State<ServerScreen> {
                   // Left-aligned: speed
                   Expanded(
                     child: Text(
-                      'Speed: ${(download.speed / 1048576).toStringAsFixed(2)} MB/s',
+                      'Speed: ${(_formatBytes(download.speed))}/s',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),

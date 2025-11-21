@@ -76,6 +76,20 @@ class _ServerScreenState extends State<ServerScreen> {
     }
   }
 
+  Color _getStatusColor(DownloadStatus status) {
+    if (status == DownloadStatus.WAITING) {
+      return const Color(0xFFF0AD4E);
+    } else if (status == DownloadStatus.STARTING) {
+      return const Color(0xFF5BC0DE);
+    } else if (status == DownloadStatus.DOWNLOADING) {
+      return const Color(0xFF5CB85C);
+    } else if (status == DownloadStatus.PROCESSING) {
+      return const Color(0xFF337AB7);
+    } else {
+      return const Color(0xFF777777);
+    }
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
@@ -404,6 +418,21 @@ class _ServerScreenState extends State<ServerScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Chip(
+                  label: Text(
+                    download.statusmsg,
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                  backgroundColor: _getStatusColor(download.status),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                ),
               ),
             ],
           ),

@@ -364,78 +364,100 @@ class _ServerScreenState extends State<ServerScreen> {
       itemCount: _viewModel.downloads.length,
       itemBuilder: (context, index) {
         final download = _viewModel.downloads[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Download name
-              Text(
-                download.name,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              // Progress bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: download.percent / 100,
-                  minHeight: 6,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.blue[400] ?? Colors.blue,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              // Row with speed, percentage, and format size
-              Row(
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Left-aligned: speed
-                  Expanded(
-                    child: Text(
-                      'Speed: ${(_formatBytes(download.speed))}/s',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                  // Download name
+                  Text(
+                    download.name,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  // Center-aligned: percentage
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        '${download.percent}%',
-                        style: Theme.of(context).textTheme.bodySmall,
+                  const SizedBox(height: 8),
+                  // Row with size downloaded, percentage, and total size
+                  Row(
+                    children: [
+                      // Left-aligned: size downloaded
+                      Expanded(
+                        child: Text(
+                          _formatBytes(download.size - download.bleft),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      // Center-aligned: percentage
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            '${download.percent}%',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      // Right-aligned: total size
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            _formatBytes(download.size),
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Progress bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: download.percent / 100,
+                      minHeight: 6,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.blue[400] ?? Colors.blue,
                       ),
                     ),
                   ),
-                  // Right-aligned: format size
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        download.formatSize,
-                        style: Theme.of(context).textTheme.bodySmall,
+                  const SizedBox(height: 8),
+                  // Row with status chip and speed
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left-aligned: status chip
+                      Chip(
+                        label: Text(
+                          download.statusmsg,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        backgroundColor: _getStatusColor(download.status),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                       ),
-                    ),
+                      const Spacer(),
+                      // Right-aligned: speed
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '${(_formatBytes(download.speed))}/s',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Chip(
-                  label: Text(
-                    download.statusmsg,
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                  backgroundColor: _getStatusColor(download.status),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            if (index < _viewModel.downloads.length - 1)
+              Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
+          ],
         );
       },
     );

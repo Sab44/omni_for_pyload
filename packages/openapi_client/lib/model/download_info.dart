@@ -36,7 +36,7 @@ class DownloadInfo {
 
   String name;
 
-  double speed;
+  int speed;
 
   int eta;
 
@@ -153,7 +153,7 @@ class DownloadInfo {
       return DownloadInfo(
         fid: mapValueOfType<int>(json, r'fid')!,
         name: mapValueOfType<String>(json, r'name')!,
-        speed: mapValueOfType<double>(json, r'speed')!,
+        speed: mapValueOfType<int>(json, r'speed')!,
         eta: mapValueOfType<int>(json, r'eta')!,
         formatEta: mapValueOfType<String>(json, r'format_eta')!,
         bleft: mapValueOfType<int>(json, r'bleft')!,

@@ -344,16 +344,7 @@ class _ServerScreenState extends State<ServerScreen> {
 
   Widget _buildOverviewTab() {
     if (_viewModel.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-            Text('Error: ${_viewModel.error}'),
-          ],
-        ),
-      );
+      return _buildErrorUI();
     }
 
     if (_viewModel.downloads.isEmpty) {
@@ -477,21 +468,28 @@ class _ServerScreenState extends State<ServerScreen> {
     );
   }
 
+  Widget _buildErrorUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, color: Colors.red, size: 48),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text('Error: ${_viewModel.error}'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPackageListTab({
     required List<PackageData> packages,
     required String emptyMessage,
   }) {
     if (_viewModel.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-            Text('Error: ${_viewModel.error}'),
-          ],
-        ),
-      );
+      return _buildErrorUI();
     }
 
     if (packages.isEmpty) {

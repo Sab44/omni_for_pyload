@@ -53,9 +53,6 @@ class ServerViewModel extends ChangeNotifier {
   /// Fetch the current download status from the server
   Future<void> _fetchDownloadStatus() async {
     try {
-      _error = null;
-      notifyListeners();
-
       _downloads = await _pyLoadApiRepository.getDownloadStatus(server);
       _error = null;
     } catch (e) {
@@ -68,9 +65,6 @@ class ServerViewModel extends ChangeNotifier {
   /// Fetch the queue data from the server
   Future<void> _fetchQueueData() async {
     try {
-      _error = null;
-      notifyListeners();
-
       List<PackageData> queue = await _pyLoadApiRepository.getQueue(server);
       _queueData = queue.reversed.toList();
       _error = null;
@@ -84,9 +78,6 @@ class ServerViewModel extends ChangeNotifier {
   /// Fetch the collector data from the server
   Future<void> _fetchCollectorData() async {
     try {
-      _error = null;
-      notifyListeners();
-
       List<PackageData> collector = await _pyLoadApiRepository.getCollector(
         server,
       );

@@ -182,7 +182,7 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
 
   /// Restarts packages by their IDs
   @override
-  Future<RestartResult> restartPackages(
+  Future<Result> restartPackages(
     Server server,
     List<int> packageIds,
   ) async {
@@ -201,11 +201,11 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     );
 
     if (successCount == packageIds.length) {
-      return RestartResult.success;
+      return Result.success;
     } else if (successCount > 0) {
-      return RestartResult.partial;
+      return Result.partial;
     } else {
-      return RestartResult.failure;
+      return Result.failure;
     }
   }
 }

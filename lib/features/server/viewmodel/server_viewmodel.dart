@@ -186,9 +186,33 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
-  void moveSelectedPackages() {
-    // TODO: Implement move
-    clearSelection();
+  Future<Result> moveSelectedPackages() async {
+    Destination? destination;
+    if (_selectedTabIndex == 1) {
+      destination = Destination.COLLECTOR;
+    } else if (_selectedTabIndex == 2) {
+      destination = Destination.QUEUE;
+    }
+
+    if (destination == null) {
+      return Result.failure;
+    }
+
+    try {
+      List<int> movePids = _selectedPackageIds.toList();
+      clearSelection();
+
+      final result = await _pyLoadApiRepository.movePackages(
+        server,
+        movePids,
+        destination,
+      );
+      // Refresh the current tab
+      setSelectedTab(_selectedTabIndex);
+      return result;
+    } catch (e) {
+      return Result.failure;
+    }
   }
 
   void extractSelectedPackages() {

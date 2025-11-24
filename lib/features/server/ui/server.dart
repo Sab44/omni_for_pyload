@@ -296,8 +296,25 @@ class _ServerScreenState extends State<ServerScreen> {
           },
         ),
         PopupMenuButton<String>(
-          onSelected: (value) {
-            if (value == 'Move') _viewModel.moveSelectedPackages();
+          onSelected: (value) async {
+            if (value == 'Move') {
+              final result = await _viewModel.moveSelectedPackages();
+              if (mounted) {
+                String message;
+                switch (result) {
+                  case Result.success:
+                    message = 'Success: Packages moved';
+                    break;
+                  case Result.partial:
+                    message = 'Some packages failed to move';
+                    break;
+                  case Result.failure:
+                    message = 'Error: Failed to move packages';
+                    break;
+                }
+                _showSnackBar(message);
+              }
+            }
             if (value == 'Extract') _viewModel.extractSelectedPackages();
           },
           itemBuilder: (BuildContext context) {

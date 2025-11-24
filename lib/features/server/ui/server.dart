@@ -151,25 +151,61 @@ class _ServerScreenState extends State<ServerScreen> {
       actions: [
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert),
-          onSelected: (value) {
+          onSelected: (value) async {
+            bool success = false;
             switch (value) {
               case _menuResumeQueue:
-                _viewModel.resumeQueue();
+                success = await _viewModel.resumeQueue();
+                if (mounted) {
+                  _showSnackBar(
+                    success
+                        ? 'Success: Queue resumed'
+                        : 'Error: Failed to resume queue',
+                  );
+                }
                 break;
               case _menuPauseQueue:
-                _viewModel.pauseQueue();
+                success = await _viewModel.pauseQueue();
+                if (mounted) {
+                  _showSnackBar(
+                    success
+                        ? 'Success: Queue paused'
+                        : 'Error: Failed to pause queue',
+                  );
+                }
                 break;
               case _menuStopQueue:
-                _viewModel.stopQueue();
+                success = await _viewModel.stopQueue();
+                if (mounted) {
+                  _showSnackBar(
+                    success
+                        ? 'Success: Queue stopped'
+                        : 'Error: Failed to stop queue',
+                  );
+                }
                 break;
               case _menuAddPackage:
                 _viewModel.addPackage();
                 break;
               case _menuClearFinished:
-                _viewModel.clearFinished();
+                success = await _viewModel.clearFinished();
+                if (mounted) {
+                  _showSnackBar(
+                    success
+                        ? 'Success: Finished packages cleared'
+                        : 'Error: Failed to clear finished packages',
+                  );
+                }
                 break;
               case _menuRestartFailed:
-                _viewModel.restartFailed();
+                success = await _viewModel.restartFailed();
+                if (mounted) {
+                  _showSnackBar(
+                    success
+                        ? 'Success: Restarted failed packages'
+                        : 'Error: Failed to restart failed packages',
+                  );
+                }
                 break;
             }
           },

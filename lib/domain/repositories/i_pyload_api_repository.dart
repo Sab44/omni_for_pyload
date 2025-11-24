@@ -76,4 +76,19 @@ abstract class IPyLoadApiRepository {
     List<int> packageIds,
     Destination destination,
   );
+
+  /// Pauses the server (pauses all downloads)
+  Future<void> pauseServer(Server server);
+
+  /// Unpauses the server (resumes downloads)
+  Future<void> unpauseServer(Server server);
+
+  /// Stops all downloads
+  Future<void> stopAllDownloads(Server server);
+
+  /// Deletes all finished packages
+  Future<void> deleteFinished(Server server);
+
+  /// Restarts all failed packages
+  Future<void> restartFailed(Server server);
 }

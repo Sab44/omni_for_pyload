@@ -237,4 +237,39 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
       return Result.failure;
     }
   }
+
+  /// Pause the PyLoad server
+  @override
+  Future<void> pauseServer(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiPauseServerPost());
+  }
+
+  /// Unpause the PyLoad server
+  @override
+  Future<void> unpauseServer(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiUnpauseServerPost());
+  }
+
+  /// Stop all running downloads on the server
+  @override
+  Future<void> stopAllDownloads(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiStopAllDownloadsPost());
+  }
+
+  /// Delete all finished downloads on the server
+  @override
+  Future<void> deleteFinished(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiDeleteFinishedPost());
+  }
+
+  /// Restart all failed downloads on the server
+  @override
+  Future<void> restartFailed(Server server) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(() => api.apiRestartFailedPost());
+  }
 }

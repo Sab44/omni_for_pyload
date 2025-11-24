@@ -220,28 +220,55 @@ class ServerViewModel extends ChangeNotifier {
     clearSelection();
   }
 
-  void resumeQueue() {
-    // TODO: Implement resume queue
+  Future<bool> resumeQueue() async {
+    try {
+      await _pyLoadApiRepository.unpauseServer(server);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
-  void pauseQueue() {
-    // TODO: Implement pause queue
+  Future<bool> pauseQueue() async {
+    try {
+      await _pyLoadApiRepository.pauseServer(server);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
-  void stopQueue() {
-    // TODO: Implement stop queue
+  Future<bool> stopQueue() async {
+    try {
+      await _pyLoadApiRepository.stopAllDownloads(server);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   void addPackage() {
     // TODO: Implement add package
   }
 
-  void clearFinished() {
-    // TODO: Implement clear finished
+  Future<bool> clearFinished() async {
+    try {
+      await _pyLoadApiRepository.deleteFinished(server);
+      setSelectedTab(_selectedTabIndex);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
-  void restartFailed() {
-    // TODO: Implement restart failed
+  Future<bool> restartFailed() async {
+    try {
+      await _pyLoadApiRepository.restartFailed(server);
+      setSelectedTab(_selectedTabIndex);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override

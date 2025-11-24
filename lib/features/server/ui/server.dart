@@ -318,14 +318,17 @@ class _ServerScreenState extends State<ServerScreen> {
             if (value == 'Extract') _viewModel.extractSelectedPackages();
           },
           itemBuilder: (BuildContext context) {
+            final moveDestination = _viewModel.selectedTabIndex == 1
+                ? 'Collector'
+                : 'Queue';
             return [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'Move',
                 child: Row(
                   children: [
-                    Icon(Icons.drive_file_move, color: Colors.black54),
-                    SizedBox(width: 8),
-                    Text('Move'),
+                    const Icon(Icons.drive_file_move, color: Colors.black54),
+                    const SizedBox(width: 8),
+                    Text('Move to $moveDestination'),
                   ],
                 ),
               ),

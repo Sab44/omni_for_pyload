@@ -69,4 +69,11 @@ abstract class IPyLoadApiRepository {
   ///
   /// Returns a RestartResult indicating success, partial success, or failure.
   Future<Result> restartPackages(Server server, List<int> packageIds);
+
+  /// Moves packages to a different destination (Queue or Collector)
+  Future<Result> movePackages(
+    Server server,
+    List<int> packageIds,
+    Destination destination,
+  );
 }

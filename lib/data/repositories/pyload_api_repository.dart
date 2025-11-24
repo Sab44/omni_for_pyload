@@ -182,10 +182,7 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
 
   /// Restarts packages by their IDs
   @override
-  Future<Result> restartPackages(
-    Server server,
-    List<int> packageIds,
-  ) async {
+  Future<Result> restartPackages(Server server, List<int> packageIds) async {
     final api = _configureApi(server);
     int successCount = 0;
 
@@ -193,6 +190,38 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
       packageIds.map((id) async {
         try {
           await executeNetworkRequest(() => api.apiRestartPackagePost(id));
+          successCount++;
+        } catch (e) {
+          // Ignore individual failures but track success count
+        }
+      }),
+    );
+
+    if (successCount == packageIds.length) {
+      return Result.success;
+    } else if (successCount > 0) {
+      return Result.partial;
+    } else {
+      return Result.failure;
+    }
+  }
+
+  /// Moves packages to a different destination
+  @override
+  Future<Result> movePackages(
+    Server server,
+    List<int> packageIds,
+    Destination destination,
+  ) async {
+    final api = _configureApi(server);
+    int successCount = 0;
+
+    await Future.wait(
+      packageIds.map((id) async {
+        try {
+          await executeNetworkRequest(
+            () => api.apiMovePackagePost(destination, id),
+          );
           successCount++;
         } catch (e) {
           // Ignore individual failures but track success count

@@ -169,7 +169,7 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
-  Future<RestartResult> restartSelectedPackages() async {
+  Future<Result> restartSelectedPackages() async {
     try {
       List<int> restartPids = _selectedPackageIds.toList();
       clearSelection();
@@ -182,7 +182,7 @@ class ServerViewModel extends ChangeNotifier {
       setSelectedTab(_selectedTabIndex);
       return result;
     } catch (e) {
-      return RestartResult.failure;
+      return Result.failure;
     }
   }
 

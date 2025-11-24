@@ -281,13 +281,13 @@ class _ServerScreenState extends State<ServerScreen> {
             if (mounted) {
               String message;
               switch (result) {
-                case RestartResult.success:
+                case Result.success:
                   message = 'Success: Package(s) restarted.';
                   break;
-                case RestartResult.partial:
+                case Result.partial:
                   message = 'Error: Some packages failed to restart.';
                   break;
-                case RestartResult.failure:
+                case Result.failure:
                   message = 'Error: Package(s) failed to restart.';
                   break;
               }

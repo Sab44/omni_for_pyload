@@ -238,6 +238,24 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     }
   }
 
+  /// Triggers archive extraction for given packages
+  @override
+  Future<Result> extractPackages(Server server, List<int> packageIds) async {
+    final api = _configureApi(server);
+
+    await executeNetworkRequest(
+      () => api.apiServiceCallPost(
+        apiServiceCallPostRequest: ApiServiceCallPostRequest(
+          serviceName: "ExtractArchive.extract_package",
+          arguments: packageIds,
+          parseArguments: false,
+        ),
+      ),
+    );
+
+    return Result.success;
+  }
+
   /// Pause the PyLoad server
   @override
   Future<void> pauseServer(Server server) async {

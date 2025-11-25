@@ -351,7 +351,16 @@ class _ServerScreenState extends State<ServerScreen> {
                 _showSnackBar(message);
               }
             }
-            if (value == 'Extract') _viewModel.extractSelectedPackages();
+            if (value == 'Extract') {
+              final result = await _viewModel.extractSelectedPackages();
+              if (mounted) {
+                _showSnackBar(
+                  result
+                      ? 'Success: Package extraction triggered.'
+                      : 'Error: Failed to trigger package extraction.',
+                );
+              }
+            }
           },
           itemBuilder: (BuildContext context) {
             final moveDestination = _viewModel.selectedTabIndex == 1

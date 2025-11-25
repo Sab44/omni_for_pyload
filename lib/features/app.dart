@@ -26,7 +26,7 @@ class App extends StatelessWidget {
         ),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Color(0xFF1E3A5F)),
-          bodyMedium: TextStyle(color: Color(0xFF1E3A5F)),
+          bodyMedium: TextStyle(color: Color(0xFF1E3A5F), fontSize: 12),
           titleLarge: TextStyle(color: Color(0xFF1E3A5F)),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(

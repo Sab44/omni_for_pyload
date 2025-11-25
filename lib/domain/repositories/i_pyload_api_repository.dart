@@ -77,6 +77,9 @@ abstract class IPyLoadApiRepository {
     Destination destination,
   );
 
+  /// Triggers archive extraction for given packages
+  Future<Result> extractPackages(Server server, List<int> packageIds);
+
   /// Pauses the server (pauses all downloads)
   Future<void> pauseServer(Server server);
 

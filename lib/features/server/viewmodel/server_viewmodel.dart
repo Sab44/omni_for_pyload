@@ -215,9 +215,18 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
-  void extractSelectedPackages() {
-    // TODO: Implement extract
-    clearSelection();
+  Future<bool> extractSelectedPackages() async {
+    try {
+      List<int> extractPids = _selectedPackageIds.toList();
+      clearSelection();
+
+      await _pyLoadApiRepository.extractPackages(server, extractPids);
+      // Refresh the current tab - maybe not strictly necessary here
+      setSelectedTab(_selectedTabIndex);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> resumeQueue() async {

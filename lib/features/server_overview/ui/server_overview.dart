@@ -5,14 +5,14 @@ import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart
 import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overview_viewmodel.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
-class ServersScreen extends StatefulWidget {
-  const ServersScreen({super.key});
+class ServerOverviewScreen extends StatefulWidget {
+  const ServerOverviewScreen({super.key});
 
   @override
-  State<ServersScreen> createState() => _ServersScreenState();
+  State<ServerOverviewScreen> createState() => _ServerOverviewScreenState();
 }
 
-class _ServersScreenState extends State<ServersScreen> {
+class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
   late ServerOverviewViewModel _viewModel;
   final Map<String, String> _statuses = {};
 

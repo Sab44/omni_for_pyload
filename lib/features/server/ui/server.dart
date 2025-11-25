@@ -466,15 +466,12 @@ class _ServerScreenState extends State<ServerScreen> {
                   ),
                   const SizedBox(height: 8),
                   // Progress bar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: download.percent / 100,
-                      minHeight: 6,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.blue[400] ?? Colors.blue,
-                      ),
+                  LinearProgressIndicator(
+                    value: download.percent / 100,
+                    minHeight: 6,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.blue[400] ?? Colors.blue,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -606,15 +603,12 @@ class _ServerScreenState extends State<ServerScreen> {
                       ),
                       const SizedBox(height: 8),
                       // Progress bar
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: linksTotal > 0 ? linksDone / linksTotal : 0,
-                          minHeight: 6,
-                          backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            progressBarColor,
-                          ),
+                      LinearProgressIndicator(
+                        value: linksTotal > 0 ? linksDone / linksTotal : 0,
+                        minHeight: 6,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressBarColor,
                         ),
                       ),
                       const SizedBox(height: 8),

@@ -23,6 +23,7 @@ class _ServerScreenState extends State<ServerScreen> {
   static const String _menuRestartFailed = 'Restart Failed';
 
   late ServerViewModel _viewModel;
+  bool _isFabExpanded = false;
 
   @override
   void initState() {
@@ -102,7 +103,64 @@ class _ServerScreenState extends State<ServerScreen> {
       appBar: _viewModel.isSelectionMode
           ? _buildSelectionAppBar()
           : _buildDefaultAppBar(),
-      body: _buildTabContent(),
+      body: Stack(
+        children: [
+          _buildTabContent(),
+          if (_isFabExpanded)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () => setState(() => _isFabExpanded = false),
+                child: Container(color: Colors.black26),
+              ),
+            ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (_isFabExpanded) ...[
+            IntrinsicWidth(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FloatingActionButton.extended(
+                    heroTag: 'clicknload',
+                    onPressed: () {},
+                    label: const Text("Click'n'Load"),
+                    icon: const Icon(Icons.touch_app),
+                  ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton.extended(
+                    heroTag: 'uploaddlc',
+                    onPressed: () {},
+                    label: const Text("Upload DLC"),
+                    icon: const Icon(Icons.upload_file),
+                  ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton.extended(
+                    heroTag: 'addlinks',
+                    onPressed: () {},
+                    label: const Text("Add links"),
+                    icon: const Icon(Icons.add_link),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+          FloatingActionButton(
+            heroTag: 'main_fab',
+            onPressed: () {
+              setState(() {
+                _isFabExpanded = !_isFabExpanded;
+              });
+            },
+            child: Icon(_isFabExpanded ? Icons.close : Icons.add),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _viewModel.selectedTabIndex,
         selectedItemColor: Theme.of(context).primaryColor,
@@ -110,6 +168,9 @@ class _ServerScreenState extends State<ServerScreen> {
           context,
         ).bottomNavigationBarTheme.backgroundColor,
         onTap: (index) {
+          if (_isFabExpanded) {
+            setState(() => _isFabExpanded = false);
+          }
           _viewModel.setSelectedTab(index);
         },
         items: const [

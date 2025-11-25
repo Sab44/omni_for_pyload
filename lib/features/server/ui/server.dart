@@ -489,18 +489,19 @@ class _ServerScreenState extends State<ServerScreen> {
                           ),
                         ),
                         backgroundColor: _getStatusColor(download.status),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
                       ),
                       const Spacer(),
                       // Right-aligned: speed
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
+                      Chip(
+                        label: Text(
                           '${(_formatBytes(download.speed))}/s',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).scaffoldBackgroundColor,
+                        shape: const StadiumBorder(
+                          side: BorderSide(style: BorderStyle.none),
                         ),
                       ),
                     ],

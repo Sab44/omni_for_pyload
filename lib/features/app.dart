@@ -83,7 +83,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: {
-        '/': (context) => const ServersScreen(),
+        '/': (context) => const ServerOverviewScreen(),
         '/add-server': (context) => const AddServerScreen(),
       },
       onGenerateRoute: (settings) {

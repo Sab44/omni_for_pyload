@@ -15,6 +15,7 @@ class ServerViewModel extends ChangeNotifier {
   final Set<int> _selectedPackageIds = {};
   String? _error;
   Timer? _pollTimer;
+  bool _isDisposed = false;
 
   ServerViewModel({
     required this.server,
@@ -30,6 +31,7 @@ class ServerViewModel extends ChangeNotifier {
   String? get error => _error;
 
   void setSelectedTab(int index) {
+    if (_isDisposed) return;
     if (_selectedTabIndex != index) {
       clearSelection();
     }
@@ -282,7 +284,15 @@ class ServerViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopPolling();
     super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
   }
 }

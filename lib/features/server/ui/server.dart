@@ -430,7 +430,7 @@ class _ServerScreenState extends State<ServerScreen> {
                   // Download name
                   Text(
                     download.name,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8),
                   // Row with size downloaded, percentage, and total size
@@ -599,7 +599,7 @@ class _ServerScreenState extends State<ServerScreen> {
                       // Package name
                       Text(
                         package.name,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 8),
                       // Progress bar

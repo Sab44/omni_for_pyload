@@ -867,7 +867,7 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
         left: 24,
         right: 24,
         top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1076,36 +1076,27 @@ class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
       maxChildSize: 1.0,
       expand: false,
       builder: (context, scrollController) {
-        return Column(
-          children: [
-            // Drag handle
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(2),
-                ),
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Text(
+                'Add links',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-            // Title
-            Text(
-              'Add links',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            // Content
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                ),
+              const SizedBox(height: 16),
+              // Content
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -1214,8 +1205,8 @@ class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

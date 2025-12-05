@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
@@ -289,5 +290,23 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
   Future<void> restartFailed(Server server) async {
     final api = _configureApi(server);
     await executeNetworkRequest(() => api.apiRestartFailedPost());
+  }
+
+  /// Uploads a container file (.dlc) to the server
+  @override
+  Future<void> uploadContainer(
+    Server server,
+    String fileName,
+    List<int> fileBytes,
+  ) async {
+    final api = _configureApi(server);
+    final multipartFile = http.MultipartFile.fromBytes(
+      'data',
+      fileBytes,
+      filename: fileName,
+    );
+    await executeNetworkRequest(
+      () => api.apiUploadContainerPost(fileName, multipartFile),
+    );
   }
 }

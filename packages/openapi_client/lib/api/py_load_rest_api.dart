@@ -4458,7 +4458,6 @@ class PyLoadRESTApi {
     }
     if (data != null) {
       hasFields = true;
-      mp.fields[r'data'] = data.field;
       mp.files.add(data);
     }
     if (hasFields) {

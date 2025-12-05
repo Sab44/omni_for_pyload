@@ -149,7 +149,7 @@ class _ServerScreenState extends State<ServerScreen> {
                     heroTag: 'addlinks',
                     onPressed: () {
                       setState(() => _isFabExpanded = false);
-                      _showAddLinksDialog();
+                      _showAddLinksBottomSheet();
                     },
                     label: const Text("Add links"),
                     icon: const Icon(Icons.add_link),
@@ -750,11 +750,15 @@ class _ServerScreenState extends State<ServerScreen> {
     );
   }
 
-  void _showAddLinksDialog() {
-    showDialog(
+  void _showAddLinksBottomSheet() {
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => _AddLinksDialog(
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => _AddLinksBottomSheet(
         onAdd: (name, links, destination) async {
           final success = await _viewModel.addPackageWithLinks(
             name,
@@ -987,7 +991,7 @@ void _showErrorDialog(BuildContext context, String title, String message) {
   );
 }
 
-class _AddLinksDialog extends StatefulWidget {
+class _AddLinksBottomSheet extends StatefulWidget {
   final Future<bool> Function(
     String name,
     List<String> links,
@@ -995,13 +999,13 @@ class _AddLinksDialog extends StatefulWidget {
   )
   onAdd;
 
-  const _AddLinksDialog({required this.onAdd});
+  const _AddLinksBottomSheet({required this.onAdd});
 
   @override
-  State<_AddLinksDialog> createState() => _AddLinksDialogState();
+  State<_AddLinksBottomSheet> createState() => _AddLinksBottomSheetState();
 }
 
-class _AddLinksDialogState extends State<_AddLinksDialog> {
+class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
   final _packageNameController = TextEditingController();
   final _linksController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -1066,127 +1070,154 @@ class _AddLinksDialogState extends State<_AddLinksDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog.fullscreen(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: const SizedBox.shrink(),
-          title: const Text('Add links'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: _isAdding ? null : () => Navigator.pop(context),
+    return DraggableScrollableSheet(
+      initialChildSize: 1.0,
+      minChildSize: 0.5,
+      maxChildSize: 1.0,
+      expand: false,
+      builder: (context, scrollController) {
+        return Column(
+          children: [
+            // Drag handle
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
-          ],
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Package name input
-                TextField(
-                  controller: _packageNameController,
-                  enabled: !_isAdding,
-                  decoration: const InputDecoration(
-                    labelText: 'Package name',
-                    border: OutlineInputBorder(),
-                  ),
-                  textInputAction: TextInputAction.next,
+            // Title
+            Text(
+              'Add links',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            // Content
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
                 ),
-                const SizedBox(height: 16),
-
-                // Links multiline input
-                Expanded(
-                  child: TextField(
-                    controller: _linksController,
-                    enabled: !_isAdding,
-                    maxLines: null,
-                    expands: true,
-                    textAlignVertical: TextAlignVertical.top,
-                    decoration: const InputDecoration(
-                      labelText: 'Links',
-                      hintText: 'Enter one link per line',
-                      alignLabelWithHint: true,
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.multiline,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Password input
-                TextField(
-                  controller: _passwordController,
-                  enabled: !_isAdding,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 16),
-
-                // Destination section
-                Text(
-                  'Destination',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Package name input
+                    TextField(
+                      controller: _packageNameController,
+                      enabled: !_isAdding,
+                      decoration: const InputDecoration(
+                        labelText: 'Package name',
+                        border: OutlineInputBorder(),
+                      ),
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Links multiline input
                     Expanded(
-                      child: RadioListTile<Destination>(
-                        title: const Text('Queue'),
-                        value: Destination.QUEUE,
-                        groupValue: _selectedDestination,
-                        onChanged: _isAdding
-                            ? null
-                            : (value) {
-                                if (value != null) {
-                                  setState(() => _selectedDestination = value);
-                                }
-                              },
-                        contentPadding: EdgeInsets.zero,
+                      child: TextField(
+                        controller: _linksController,
+                        enabled: !_isAdding,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: const InputDecoration(
+                          labelText: 'Links',
+                          hintText: 'Enter one link per line',
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.multiline,
                       ),
                     ),
-                    Expanded(
-                      child: RadioListTile<Destination>(
-                        title: const Text('Collector'),
-                        value: Destination.COLLECTOR,
-                        groupValue: _selectedDestination,
-                        onChanged: _isAdding
-                            ? null
-                            : (value) {
-                                if (value != null) {
-                                  setState(() => _selectedDestination = value);
-                                }
-                              },
-                        contentPadding: EdgeInsets.zero,
+                    const SizedBox(height: 16),
+
+                    // Password input
+                    TextField(
+                      controller: _passwordController,
+                      enabled: !_isAdding,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
                       ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Destination section
+                    Text(
+                      'Destination',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RadioListTile<Destination>(
+                            title: const Text('Queue'),
+                            value: Destination.QUEUE,
+                            groupValue: _selectedDestination,
+                            onChanged: _isAdding
+                                ? null
+                                : (value) {
+                                    if (value != null) {
+                                      setState(
+                                        () => _selectedDestination = value,
+                                      );
+                                    }
+                                  },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                        Expanded(
+                          child: RadioListTile<Destination>(
+                            title: const Text('Collector'),
+                            value: Destination.COLLECTOR,
+                            groupValue: _selectedDestination,
+                            onChanged: _isAdding
+                                ? null
+                                : (value) {
+                                    if (value != null) {
+                                      setState(
+                                        () => _selectedDestination = value,
+                                      );
+                                    }
+                                  },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Add button
+                    ElevatedButton(
+                      onPressed: _isAdding ? null : _addPackage,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: _isAdding
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Add'),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-
-                // Add button
-                ElevatedButton(
-                  onPressed: _isAdding ? null : _addPackage,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: _isAdding
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Add'),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
+          ],
+        );
+      },
     );
   }
 }

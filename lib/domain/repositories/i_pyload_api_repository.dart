@@ -94,4 +94,18 @@ abstract class IPyLoadApiRepository {
 
   /// Restarts all failed packages
   Future<void> restartFailed(Server server);
+
+  /// Uploads a container file (.dlc) to the server
+  ///
+  /// Parameters:
+  /// - [server]: The server configuration
+  /// - [fileName]: The name of the file (extension is important for decryption)
+  /// - [fileBytes]: The file content as bytes
+  ///
+  /// Throws: String with user-friendly error message on failure
+  Future<void> uploadContainer(
+    Server server,
+    String fileName,
+    List<int> fileBytes,
+  );
 }

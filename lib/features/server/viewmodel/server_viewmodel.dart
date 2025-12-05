@@ -282,6 +282,30 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
+  /// Upload a DLC container file to the server
+  ///
+  /// Parameters:
+  /// - [fileName]: The name of the file (with .dlc extension)
+  /// - [fileBytes]: The file content as bytes
+  ///
+  /// Returns true if upload was successful, false otherwise
+  Future<bool> uploadDlc(String fileName, List<int> fileBytes) async {
+    try {
+      await _pyLoadApiRepository.uploadContainer(server, fileName, fileBytes);
+
+      // Wait for pyLoad to process the DLC
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Refresh the collector tab since new packages may appear there
+      if (_selectedTabIndex == 2) {
+        _fetchCollectorData();
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   void dispose() {
     _isDisposed = true;

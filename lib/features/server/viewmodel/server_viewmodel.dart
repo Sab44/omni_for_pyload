@@ -306,6 +306,35 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
+  /// Add a new package with links to the server
+  ///
+  /// Parameters:
+  /// - [name]: The name of the new package
+  /// - [links]: List of URLs to add to the package
+  /// - [destination]: Where to add the package (Queue or Collector)
+  ///
+  /// Returns true if the package was added successfully, false otherwise
+  Future<bool> addPackageWithLinks(
+    String name,
+    List<String> links,
+    Destination destination,
+  ) async {
+    try {
+      await _pyLoadApiRepository.addPackage(server, name, links, destination);
+
+      // Refresh the appropriate tab based on destination
+      if (destination == Destination.QUEUE && _selectedTabIndex == 1) {
+        _fetchQueueData();
+      } else if (destination == Destination.COLLECTOR &&
+          _selectedTabIndex == 2) {
+        _fetchCollectorData();
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   void dispose() {
     _isDisposed = true;

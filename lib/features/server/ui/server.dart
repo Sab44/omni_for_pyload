@@ -147,7 +147,10 @@ class _ServerScreenState extends State<ServerScreen> {
                   const SizedBox(height: 10),
                   FloatingActionButton.extended(
                     heroTag: 'addlinks',
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() => _isFabExpanded = false);
+                      _showAddLinksDialog();
+                    },
                     label: const Text("Add links"),
                     icon: const Icon(Icons.add_link),
                   ),
@@ -746,6 +749,30 @@ class _ServerScreenState extends State<ServerScreen> {
       ),
     );
   }
+
+  void _showAddLinksDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _AddLinksDialog(
+        onAdd: (name, links, destination) async {
+          final success = await _viewModel.addPackageWithLinks(
+            name,
+            links,
+            destination,
+          );
+          if (mounted) {
+            _showSnackBar(
+              success
+                  ? 'Success: Package added'
+                  : 'Error: Failed to add package',
+            );
+          }
+          return success;
+        },
+      ),
+    );
+  }
 }
 
 class _UploadDlcBottomSheet extends StatefulWidget {
@@ -764,37 +791,6 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
   List<int>? _selectedFileBytes;
   bool _isUploading = false;
 
-  void _showErrorDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: Icon(
-          Icons.warning_rounded,
-          color: Theme.of(context).colorScheme.error,
-          size: 48,
-        ),
-        title: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        actions: [
-          Center(
-            child: TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK', style: Theme.of(context).textTheme.bodyLarge),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _pickFile() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -808,7 +804,7 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
         // Check file extension
         if (!file.name.toLowerCase().endsWith('.dlc')) {
           if (mounted) {
-            _showErrorDialog('Error', 'Only .dlc files are allowed');
+            _showErrorDialog(context, 'Error', 'Only .dlc files are allowed');
           }
           return;
         }
@@ -816,7 +812,7 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
         // Check file size
         if (file.size > _maxFileSizeBytes) {
           if (mounted) {
-            _showErrorDialog('Error', 'File size exceeds 1 MB limit');
+            _showErrorDialog(context, 'Error', 'File size exceeds 1 MB limit');
           }
           return;
         }
@@ -954,6 +950,242 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
                 : const Text('Upload'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Reusable function to show an error dialog
+void _showErrorDialog(BuildContext context, String title, String message) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      icon: Icon(
+        Icons.warning_rounded,
+        color: Theme.of(context).colorScheme.error,
+        size: 48,
+      ),
+      title: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      actions: [
+        Center(
+          child: TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK', style: Theme.of(context).textTheme.bodyLarge),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _AddLinksDialog extends StatefulWidget {
+  final Future<bool> Function(
+    String name,
+    List<String> links,
+    Destination destination,
+  )
+  onAdd;
+
+  const _AddLinksDialog({required this.onAdd});
+
+  @override
+  State<_AddLinksDialog> createState() => _AddLinksDialogState();
+}
+
+class _AddLinksDialogState extends State<_AddLinksDialog> {
+  final _packageNameController = TextEditingController();
+  final _linksController = TextEditingController();
+  final _passwordController = TextEditingController();
+  Destination _selectedDestination = Destination.QUEUE;
+  bool _isAdding = false;
+
+  @override
+  void dispose() {
+    _packageNameController.dispose();
+    _linksController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addPackage() async {
+    final packageName = _packageNameController.text.trim();
+    final linksText = _linksController.text.trim();
+
+    // Validation
+    if (packageName.isEmpty) {
+      _showErrorDialog(context, 'Error', 'Please enter a package name');
+      return;
+    }
+
+    if (linksText.isEmpty) {
+      _showErrorDialog(context, 'Error', 'Please enter at least one link');
+      return;
+    }
+
+    // Parse links - split by newlines and filter empty lines
+    final links = linksText
+        .split('\n')
+        .map((link) => link.trim())
+        .where((link) => link.isNotEmpty)
+        .toList();
+
+    if (links.isEmpty) {
+      _showErrorDialog(
+        context,
+        'Error',
+        'Please enter at least one valid link',
+      );
+      return;
+    }
+
+    setState(() => _isAdding = true);
+
+    final success = await widget.onAdd(
+      packageName,
+      links,
+      _selectedDestination,
+    );
+
+    if (mounted) {
+      if (success) {
+        Navigator.pop(context);
+      } else {
+        setState(() => _isAdding = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: const SizedBox.shrink(),
+          title: const Text('Add links'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _isAdding ? null : () => Navigator.pop(context),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Package name input
+                TextField(
+                  controller: _packageNameController,
+                  enabled: !_isAdding,
+                  decoration: const InputDecoration(
+                    labelText: 'Package name',
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+
+                // Links multiline input
+                Expanded(
+                  child: TextField(
+                    controller: _linksController,
+                    enabled: !_isAdding,
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    decoration: const InputDecoration(
+                      labelText: 'Links',
+                      hintText: 'Enter one link per line',
+                      alignLabelWithHint: true,
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Password input
+                TextField(
+                  controller: _passwordController,
+                  enabled: !_isAdding,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+
+                // Destination section
+                Text(
+                  'Destination',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<Destination>(
+                        title: const Text('Queue'),
+                        value: Destination.QUEUE,
+                        groupValue: _selectedDestination,
+                        onChanged: _isAdding
+                            ? null
+                            : (value) {
+                                if (value != null) {
+                                  setState(() => _selectedDestination = value);
+                                }
+                              },
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<Destination>(
+                        title: const Text('Collector'),
+                        value: Destination.COLLECTOR,
+                        groupValue: _selectedDestination,
+                        onChanged: _isAdding
+                            ? null
+                            : (value) {
+                                if (value != null) {
+                                  setState(() => _selectedDestination = value);
+                                }
+                              },
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Add button
+                ElevatedButton(
+                  onPressed: _isAdding ? null : _addPackage,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isAdding
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Add'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

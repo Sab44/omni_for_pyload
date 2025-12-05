@@ -309,4 +309,28 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
       () => api.apiUploadContainerPost(fileName, multipartFile),
     );
   }
+
+  /// Adds a new package with links to the server
+  @override
+  Future<int> addPackage(
+    Server server,
+    String name,
+    List<String> links,
+    Destination destination,
+  ) async {
+    final api = _configureApi(server);
+    final packageId = await executeNetworkRequest(
+      () => api.apiAddPackagePost(
+        apiAddPackagePostRequest: ApiAddPackagePostRequest(
+          name: name,
+          links: links,
+          dest: destination,
+        ),
+      ),
+    );
+    if (packageId == null) {
+      throw 'Failed to create package: No package ID returned';
+    }
+    return packageId;
+  }
 }

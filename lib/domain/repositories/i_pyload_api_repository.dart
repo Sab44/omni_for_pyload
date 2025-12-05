@@ -108,4 +108,21 @@ abstract class IPyLoadApiRepository {
     String fileName,
     List<int> fileBytes,
   );
+
+  /// Adds a new package with links to the server
+  ///
+  /// Parameters:
+  /// - [server]: The server configuration
+  /// - [name]: The name of the new package
+  /// - [links]: List of URLs to add to the package
+  /// - [destination]: Where to add the package (Queue or Collector)
+  ///
+  /// Returns the package ID of the created package
+  /// Throws: String with user-friendly error message on failure
+  Future<int> addPackage(
+    Server server,
+    String name,
+    List<String> links,
+    Destination destination,
+  );
 }

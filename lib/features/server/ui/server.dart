@@ -764,25 +764,59 @@ class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
   List<int>? _selectedFileBytes;
   bool _isUploading = false;
 
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: Icon(
+          Icons.warning_rounded,
+          color: Theme.of(context).colorScheme.error,
+          size: 48,
+        ),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK', style: Theme.of(context).textTheme.bodyLarge),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickFile() async {
     try {
       final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['dlc'],
+        type: FileType.any,
         withData: true,
       );
 
       if (result != null && result.files.isNotEmpty) {
         final file = result.files.first;
 
+        // Check file extension
+        if (!file.name.toLowerCase().endsWith('.dlc')) {
+          if (mounted) {
+            _showErrorDialog('Error', 'Only .dlc files are allowed');
+          }
+          return;
+        }
+
         // Check file size
         if (file.size > _maxFileSizeBytes) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Error: File size exceeds 1 MB limit'),
-              ),
-            );
+            _showErrorDialog('Error', 'File size exceeds 1 MB limit');
           }
           return;
         }

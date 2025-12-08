@@ -250,6 +250,13 @@ class _ServerScreenState extends State<ServerScreen> {
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
+        IconButton(
+          icon: const Icon(Icons.settings),
+          tooltip: 'Settings',
+          onPressed: () {
+            Navigator.pushNamed(context, '/settings');
+          },
+        ),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert),
           onSelected: (value) async {

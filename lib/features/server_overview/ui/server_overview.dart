@@ -131,7 +131,7 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
                   FloatingActionButton(
                     mini: true,
                     onPressed: () {
-                      // Settings button click listener
+                      Navigator.pushNamed(context, '/settings');
                     },
                     shape: const CircleBorder(),
                     child: const Icon(Icons.settings),

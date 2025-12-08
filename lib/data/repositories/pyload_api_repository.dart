@@ -80,14 +80,17 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     }
   }
 
-  /// Test the connection to a PyLoad server and authenticate
+  /// Get the server status
   ///
-  /// This method verifies that the server is reachable and the credentials are valid
-  /// by attempting to get the server status.
+  /// Returns a ServerStatus object with current server information.
   @override
-  Future<void> testServerConnection(Server server) async {
+  Future<ServerStatus> getServerStatus(Server server) async {
     final api = _configureApi(server);
-    await executeNetworkRequest(() => api.apiStatusServerGet());
+    final status = await executeNetworkRequest(() => api.apiStatusServerGet());
+    if (status == null) {
+      throw 'Failed to get server status';
+    }
+    return status;
   }
 
   /// Get the status of all currently running downloads

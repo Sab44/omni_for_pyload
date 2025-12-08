@@ -38,7 +38,7 @@ class ServerOverviewViewModel extends ChangeNotifier {
   /// Fetch online status for a given server.
   Future<String> fetchOnlineStatus(Server server) async {
     try {
-      await _pyLoadApiRepository.testServerConnection(server);
+      await _pyLoadApiRepository.getServerStatus(server);
       return 'online';
     } catch (e) {
       return 'offline';

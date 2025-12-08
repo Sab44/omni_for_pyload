@@ -6,7 +6,9 @@ import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overvi
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class ServerOverviewScreen extends StatefulWidget {
-  const ServerOverviewScreen({super.key});
+  final Server? initialAutoOpenServer;
+
+  const ServerOverviewScreen({super.key, this.initialAutoOpenServer});
 
   @override
   State<ServerOverviewScreen> createState() => _ServerOverviewScreenState();
@@ -25,6 +27,16 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
     );
     _viewModel.addListener(_onViewModelChanged);
     _loadServers();
+
+    if (widget.initialAutoOpenServer != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(
+          context,
+          '/server',
+          arguments: widget.initialAutoOpenServer,
+        );
+      });
+    }
   }
 
   void _onViewModelChanged() {

@@ -75,6 +75,7 @@ class _DownloadDetailScreenState extends State<DownloadDetailScreen> {
       case DownloadStatus.FINISHED:
         return Icons.download_done;
       case DownloadStatus.WAITING:
+      case DownloadStatus.QUEUED:
         return Icons.access_time;
       case DownloadStatus.SKIPPED:
         return Icons.arrow_forward;

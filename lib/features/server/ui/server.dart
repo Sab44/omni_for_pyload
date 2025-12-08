@@ -21,7 +21,6 @@ class _ServerScreenState extends State<ServerScreen> {
   static const String _menuResumeQueue = 'Resume Queue';
   static const String _menuPauseQueue = 'Pause Queue';
   static const String _menuStopQueue = 'Stop Queue';
-  static const String _menuAddPackage = 'Add Package';
   static const String _menuClearFinished = 'Clear Finished';
   static const String _menuRestartFailed = 'Restart Failed';
 
@@ -286,9 +285,6 @@ class _ServerScreenState extends State<ServerScreen> {
                   );
                 }
                 break;
-              case _menuAddPackage:
-                _viewModel.addPackage();
-                break;
               case _menuClearFinished:
                 success = await _viewModel.clearFinished();
                 if (mounted) {
@@ -340,16 +336,6 @@ class _ServerScreenState extends State<ServerScreen> {
                     Icon(Icons.stop, color: Colors.black54),
                     SizedBox(width: 8),
                     Text(_menuStopQueue),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: _menuAddPackage,
-                child: Row(
-                  children: [
-                    Icon(Icons.add, color: Colors.black54),
-                    SizedBox(width: 8),
-                    Text(_menuAddPackage),
                   ],
                 ),
               ),

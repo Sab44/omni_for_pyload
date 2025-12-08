@@ -172,10 +172,6 @@ class _ServerScreenState extends State<ServerScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _viewModel.selectedTabIndex,
-        selectedItemColor: Theme.of(context).primaryColor,
-        backgroundColor: Theme.of(
-          context,
-        ).bottomNavigationBarTheme.backgroundColor,
         onTap: (index) {
           if (_isFabExpanded) {
             setState(() => _isFabExpanded = false);

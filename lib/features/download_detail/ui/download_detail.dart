@@ -162,7 +162,7 @@ class _DownloadDetailScreenState extends State<DownloadDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // File name with marquee effect
+                    // File name
                     Text(
                       file.name,
                       style: Theme.of(context).textTheme.bodySmall,

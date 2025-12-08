@@ -498,6 +498,8 @@ class _ServerScreenState extends State<ServerScreen> {
                   Text(
                     download.name,
                     style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   // Row with size downloaded, percentage, and total size

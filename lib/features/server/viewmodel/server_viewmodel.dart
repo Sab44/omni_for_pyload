@@ -260,7 +260,14 @@ class ServerViewModel extends ChangeNotifier {
 
   Future<bool> resumeQueue() async {
     try {
+      if (_serverStatus?.pause == false) {
+        return true;
+      }
+
       await _pyLoadApiRepository.unpauseServer(server);
+      // Update server status immediately and continue polling
+      _serverStatusTimer?.cancel();
+      _startPollingServerStatus();
       return true;
     } catch (e) {
       return false;
@@ -269,7 +276,14 @@ class ServerViewModel extends ChangeNotifier {
 
   Future<bool> pauseQueue() async {
     try {
+      if (_serverStatus?.pause == true) {
+        return true;
+      }
+
       await _pyLoadApiRepository.pauseServer(server);
+      // Update server status immediately and continue polling
+      _serverStatusTimer?.cancel();
+      _startPollingServerStatus();
       return true;
     } catch (e) {
       return false;
@@ -283,10 +297,6 @@ class ServerViewModel extends ChangeNotifier {
     } catch (e) {
       return false;
     }
-  }
-
-  void addPackage() {
-    // TODO: Implement add package
   }
 
   Future<bool> clearFinished() async {

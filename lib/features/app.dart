@@ -3,6 +3,7 @@ import 'server_overview/ui/server_overview.dart';
 import 'add_server/ui/add_server.dart';
 import 'server/ui/server.dart';
 import 'download_detail/ui/download_detail.dart';
+import 'settings/ui/settings_screen.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 
 class App extends StatelessWidget {
@@ -91,6 +92,7 @@ class App extends StatelessWidget {
       routes: {
         '/': (context) => const ServerOverviewScreen(),
         '/add-server': (context) => const AddServerScreen(),
+        '/settings': (context) => const SettingsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/server') {

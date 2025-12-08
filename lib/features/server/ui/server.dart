@@ -1158,45 +1158,33 @@ class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
                               'Destination',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RadioListTile<Destination>(
-                                    title: const Text('Queue'),
-                                    value: Destination.QUEUE,
-                                    groupValue: _selectedDestination,
-                                    onChanged: _isAdding
-                                        ? null
-                                        : (value) {
-                                            if (value != null) {
-                                              setState(
-                                                () => _selectedDestination =
-                                                    value,
-                                              );
-                                            }
-                                          },
-                                    contentPadding: EdgeInsets.zero,
+                            RadioGroup<Destination>(
+                              groupValue: _selectedDestination,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() => _selectedDestination = value);
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: RadioListTile<Destination>(
+                                      title: const Text('Queue'),
+                                      value: Destination.QUEUE,
+                                      contentPadding: EdgeInsets.zero,
+                                      enabled: !_isAdding,
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: RadioListTile<Destination>(
-                                    title: const Text('Collector'),
-                                    value: Destination.COLLECTOR,
-                                    groupValue: _selectedDestination,
-                                    onChanged: _isAdding
-                                        ? null
-                                        : (value) {
-                                            if (value != null) {
-                                              setState(
-                                                () => _selectedDestination =
-                                                    value,
-                                              );
-                                            }
-                                          },
-                                    contentPadding: EdgeInsets.zero,
+                                  Expanded(
+                                    child: RadioListTile<Destination>(
+                                      title: const Text('Collector'),
+                                      value: Destination.COLLECTOR,
+                                      contentPadding: EdgeInsets.zero,
+                                      enabled: !_isAdding,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 16),
 

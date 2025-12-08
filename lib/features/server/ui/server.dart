@@ -23,6 +23,7 @@ class _ServerScreenState extends State<ServerScreen> {
   static const String _menuStopQueue = 'Stop Queue';
   static const String _menuClearFinished = 'Clear Finished';
   static const String _menuRestartFailed = 'Restart Failed';
+  static const String _menuSettings = 'Settings';
 
   late ServerViewModel _viewModel;
   bool _isFabExpanded = false;
@@ -250,13 +251,6 @@ class _ServerScreenState extends State<ServerScreen> {
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.settings),
-          tooltip: 'Settings',
-          onPressed: () {
-            Navigator.pushNamed(context, '/settings');
-          },
-        ),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert),
           onSelected: (value) async {
@@ -311,6 +305,9 @@ class _ServerScreenState extends State<ServerScreen> {
                         : 'Error: Failed to restart failed packages',
                   );
                 }
+                break;
+              case _menuSettings:
+                Navigator.pushNamed(context, '/settings');
                 break;
             }
           },
@@ -376,6 +373,20 @@ class _ServerScreenState extends State<ServerScreen> {
                 ),
               );
             }
+
+            items.add(const PopupMenuDivider());
+            items.add(
+              const PopupMenuItem(
+                value: _menuSettings,
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text(_menuSettings),
+                  ],
+                ),
+              ),
+            );
 
             return items;
           },

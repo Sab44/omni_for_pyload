@@ -5,9 +5,55 @@ import 'server/ui/server.dart';
 import 'download_detail/ui/download_detail.dart';
 import 'settings/ui/settings_screen.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
+import 'package:omni_for_pyload/domain/models/app_settings.dart' as app_models;
 
-class App extends StatelessWidget {
-  const App({super.key});
+// Global notifier for theme changes
+final ValueNotifier<app_models.ThemeMode> themeNotifier = ValueNotifier(
+  app_models.ThemeMode.system,
+);
+
+class App extends StatefulWidget {
+  final app_models.AppSettings initialSettings;
+
+  const App({required this.initialSettings, super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late app_models.ThemeMode _themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeMode = widget.initialSettings.themeMode;
+    themeNotifier.value = _themeMode;
+    themeNotifier.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    themeNotifier.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() {
+    setState(() {
+      _themeMode = themeNotifier.value;
+    });
+  }
+
+  ThemeMode _convertToFlutterThemeMode(app_models.ThemeMode mode) {
+    switch (mode) {
+      case app_models.ThemeMode.light:
+        return ThemeMode.light;
+      case app_models.ThemeMode.dark:
+        return ThemeMode.dark;
+      case app_models.ThemeMode.system:
+        return ThemeMode.system;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +133,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      themeMode: ThemeMode.system,
+      themeMode: _convertToFlutterThemeMode(_themeMode),
       initialRoute: '/',
       routes: {
         '/': (context) => const ServerOverviewScreen(),

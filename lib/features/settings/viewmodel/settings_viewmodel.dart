@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/domain/models/app_settings.dart' as app_models;
 import 'package:omni_for_pyload/domain/repositories/i_settings_repository.dart';
+import 'package:omni_for_pyload/features/app.dart' show themeNotifier;
 
 class SettingsViewModel extends ChangeNotifier {
   final ISettingsRepository _settingsRepository;
@@ -25,13 +26,13 @@ class SettingsViewModel extends ChangeNotifier {
     _settings = _settings.copyWith(themeMode: themeMode);
     await _settingsRepository.saveSettings(_settings);
     notifyListeners();
-    // TODO: Implement theme change in the app
+    // Update the global theme notifier to trigger theme change in the app
+    themeNotifier.value = themeMode;
   }
 
   Future<void> setSkipSelectionScreenIfOnlyOneServer(bool value) async {
     _settings = _settings.copyWith(skipSelectionScreenIfOnlyOneServer: value);
     await _settingsRepository.saveSettings(_settings);
     notifyListeners();
-    // TODO: Implement skip selection screen logic
   }
 }

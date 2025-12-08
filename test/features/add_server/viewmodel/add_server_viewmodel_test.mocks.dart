@@ -26,8 +26,18 @@ import 'package:openapi_client/api.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakePackageData_0 extends _i1.SmartFake implements _i2.PackageData {
-  _FakePackageData_0(
+class _FakeServerStatus_0 extends _i1.SmartFake implements _i2.ServerStatus {
+  _FakeServerStatus_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePackageData_1 extends _i1.SmartFake implements _i2.PackageData {
+  _FakePackageData_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -120,15 +130,20 @@ class MockIPyLoadApiRepository extends _i1.Mock
   }
 
   @override
-  _i4.Future<void> testServerConnection(_i5.Server? server) =>
+  _i4.Future<_i2.ServerStatus> getServerStatus(_i5.Server? server) =>
       (super.noSuchMethod(
         Invocation.method(
-          #testServerConnection,
+          #getServerStatus,
           [server],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i4.Future<_i2.ServerStatus>.value(_FakeServerStatus_0(
+          this,
+          Invocation.method(
+            #getServerStatus,
+            [server],
+          ),
+        )),
+      ) as _i4.Future<_i2.ServerStatus>);
 
   @override
   _i4.Future<List<_i2.DownloadInfo>> getDownloadStatus(_i5.Server? server) =>
@@ -198,7 +213,7 @@ class MockIPyLoadApiRepository extends _i1.Mock
             packageId,
           ],
         ),
-        returnValue: _i4.Future<_i2.PackageData>.value(_FakePackageData_0(
+        returnValue: _i4.Future<_i2.PackageData>.value(_FakePackageData_1(
           this,
           Invocation.method(
             #getPackageData,
@@ -209,4 +224,160 @@ class MockIPyLoadApiRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.PackageData>);
+
+  @override
+  _i4.Future<void> deletePackages(
+    _i5.Server? server,
+    List<int>? packageIds,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deletePackages,
+          [
+            server,
+            packageIds,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i6.Result> restartPackages(
+    _i5.Server? server,
+    List<int>? packageIds,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #restartPackages,
+          [
+            server,
+            packageIds,
+          ],
+        ),
+        returnValue: _i4.Future<_i6.Result>.value(_i6.Result.success),
+      ) as _i4.Future<_i6.Result>);
+
+  @override
+  _i4.Future<_i6.Result> movePackages(
+    _i5.Server? server,
+    List<int>? packageIds,
+    _i2.Destination? destination,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #movePackages,
+          [
+            server,
+            packageIds,
+            destination,
+          ],
+        ),
+        returnValue: _i4.Future<_i6.Result>.value(_i6.Result.success),
+      ) as _i4.Future<_i6.Result>);
+
+  @override
+  _i4.Future<_i6.Result> extractPackages(
+    _i5.Server? server,
+    List<int>? packageIds,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #extractPackages,
+          [
+            server,
+            packageIds,
+          ],
+        ),
+        returnValue: _i4.Future<_i6.Result>.value(_i6.Result.success),
+      ) as _i4.Future<_i6.Result>);
+
+  @override
+  _i4.Future<void> pauseServer(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #pauseServer,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> unpauseServer(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #unpauseServer,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> stopAllDownloads(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #stopAllDownloads,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> deleteFinished(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteFinished,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> restartFailed(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #restartFailed,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> uploadContainer(
+    _i5.Server? server,
+    String? fileName,
+    List<int>? fileBytes,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadContainer,
+          [
+            server,
+            fileName,
+            fileBytes,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<int> addPackage(
+    _i5.Server? server,
+    String? name,
+    List<String>? links,
+    _i2.Destination? destination,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addPackage,
+          [
+            server,
+            name,
+            links,
+            destination,
+          ],
+        ),
+        returnValue: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 }

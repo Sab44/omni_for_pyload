@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/add_server/viewmodel/add_server_viewmodel.dart';
+import 'package:openapi_client/api.dart';
 
 import 'add_server_viewmodel_test.mocks.dart';
 
@@ -158,11 +159,25 @@ void main() {
     );
 
     test(
-      'validateAndAddServer calls testServerConnection and addServer on success',
+      'validateAndAddServer calls getServerStatus and addServer on success',
       () async {
         when(
           mockServerRepository.serverExists('192.168.1.1', 8000),
         ).thenAnswer((_) async => false);
+
+        when(mockPyLoadApiRepository.getServerStatus(any)).thenAnswer(
+          (_) async => ServerStatus(
+            pause: false,
+            active: 0,
+            queue: 0,
+            total: 0,
+            speed: 0,
+            download: false,
+            reconnect: false,
+            captcha: false,
+            proxy: false,
+          ),
+        );
 
         final server = await viewModel.validateAndAddServer(
           name: 'Test Server',
@@ -183,6 +198,8 @@ void main() {
         verify(
           mockServerRepository.serverExists('192.168.1.1', 8000),
         ).called(1);
+        verify(mockPyLoadApiRepository.getServerStatus(any)).called(1);
+        verify(mockServerRepository.addServer(any)).called(1);
       },
     );
 
@@ -190,6 +207,20 @@ void main() {
       when(
         mockServerRepository.serverExists('192.168.1.1', 8000),
       ).thenAnswer((_) async => false);
+
+      when(mockPyLoadApiRepository.getServerStatus(any)).thenAnswer(
+        (_) async => ServerStatus(
+          pause: false,
+          active: 0,
+          queue: 0,
+          total: 0,
+          speed: 0,
+          download: false,
+          reconnect: false,
+          captcha: false,
+          proxy: false,
+        ),
+      );
 
       final server = await viewModel.validateAndAddServer(
         name: '',
@@ -214,6 +245,20 @@ void main() {
           mockServerRepository.serverExists('192.168.1.1', 8000),
         ).thenAnswer((_) async => false);
 
+        when(mockPyLoadApiRepository.getServerStatus(any)).thenAnswer(
+          (_) async => ServerStatus(
+            pause: false,
+            active: 0,
+            queue: 0,
+            total: 0,
+            speed: 0,
+            download: false,
+            reconnect: false,
+            captcha: false,
+            proxy: false,
+          ),
+        );
+
         final server = await viewModel.validateAndAddServer(
           name: '   ',
           ip: '192.168.1.1',
@@ -232,5 +277,112 @@ void main() {
         ).called(1);
       },
     );
+
+    test('validateAndAddServer trims server name', () async {
+      when(
+        mockServerRepository.serverExists('192.168.1.1', 8000),
+      ).thenAnswer((_) async => false);
+
+      when(mockPyLoadApiRepository.getServerStatus(any)).thenAnswer(
+        (_) async => ServerStatus(
+          pause: false,
+          active: 0,
+          queue: 0,
+          total: 0,
+          speed: 0,
+          download: false,
+          reconnect: false,
+          captcha: false,
+          proxy: false,
+        ),
+      );
+
+      final server = await viewModel.validateAndAddServer(
+        name: '  My Server  ',
+        ip: '192.168.1.1',
+        port: '8000',
+        username: 'user',
+        password: 'pass',
+        protocol: 'http',
+      );
+
+      expect(server.name, 'My Server');
+    });
+
+    test(
+      'validateAndAddServer verifies server connection before adding',
+      () async {
+        when(
+          mockServerRepository.serverExists('192.168.1.1', 8000),
+        ).thenAnswer((_) async => false);
+
+        when(mockPyLoadApiRepository.getServerStatus(any)).thenAnswer(
+          (_) async => ServerStatus(
+            pause: false,
+            active: 0,
+            queue: 0,
+            total: 0,
+            speed: 0,
+            download: false,
+            reconnect: false,
+            captcha: false,
+            proxy: false,
+          ),
+        );
+
+        await viewModel.validateAndAddServer(
+          name: 'Test Server',
+          ip: '192.168.1.1',
+          port: '8000',
+          username: 'user',
+          password: 'pass',
+          protocol: 'http',
+        );
+
+        // Verify both getServerStatus and addServer were called
+        verify(mockPyLoadApiRepository.getServerStatus(any)).called(1);
+        verify(mockServerRepository.addServer(any)).called(1);
+      },
+    );
+
+    test('validateAndAddServer throws when port is 0', () async {
+      expect(
+        () => viewModel.validateAndAddServer(
+          name: 'Test Server',
+          ip: '192.168.1.1',
+          port: '0',
+          username: 'user',
+          password: 'pass',
+          protocol: 'http',
+        ),
+        throwsA(
+          isA<String>().having(
+            (msg) => msg,
+            'message',
+            contains('Port must be between 1 and 65535'),
+          ),
+        ),
+      );
+    });
+
+    test('validateAndAddServer throws when port is 65536', () async {
+      expect(
+        () => viewModel.validateAndAddServer(
+          name: 'Test Server',
+          ip: '192.168.1.1',
+          port: '65536',
+          username: 'user',
+          password: 'pass',
+          protocol: 'http',
+        ),
+        throwsA(
+          isA<String>().having(
+            (msg) => msg,
+            'message',
+            contains('Port must be between 1 and 65535'),
+          ),
+        ),
+      );
+    });
   });
 }

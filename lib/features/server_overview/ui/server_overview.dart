@@ -172,6 +172,7 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
                         final Color statusColor = _statusColor(status);
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),
+                          clipBehavior: Clip.hardEdge,
                           child: ListTile(
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

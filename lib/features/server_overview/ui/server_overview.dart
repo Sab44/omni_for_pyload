@@ -174,6 +174,7 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
                           margin: const EdgeInsets.only(bottom: 12.0),
                           clipBehavior: Clip.hardEdge,
                           child: ListTile(
+                            tileColor: Theme.of(context).cardTheme.color,
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

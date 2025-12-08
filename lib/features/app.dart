@@ -18,12 +18,14 @@ class App extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         primaryColor: const Color(0xFF1E3A5F),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF5F5F5),
+          backgroundColor: Color(0xFFECECEC),
           elevation: 0,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFFECECEC),
+          selectedItemColor: Color(0xFF5081CF),
         ),
+        cardTheme: const CardThemeData(color: Colors.white),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Color(0xFF1E3A5F)),
           bodyMedium: TextStyle(color: Color(0xFF1E3A5F), fontSize: 12),
@@ -52,12 +54,14 @@ class App extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF12253F),
         primaryColor: Colors.white,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF12253F),
+          backgroundColor: Color(0xFF07051F),
           elevation: 0,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFF07051F),
+          selectedItemColor: Color(0xFF92B0DF),
         ),
+        cardTheme: const CardThemeData(color: Color(0xFF07051F)),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white),

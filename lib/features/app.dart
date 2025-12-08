@@ -6,6 +6,8 @@ import 'download_detail/ui/download_detail.dart';
 import 'settings/ui/settings_screen.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/models/app_settings.dart' as app_models;
+import 'package:omni_for_pyload/core/service_locator.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 
 // Global notifier for theme changes
 final ValueNotifier<app_models.ThemeMode> themeNotifier = ValueNotifier(
@@ -134,9 +136,12 @@ class _AppState extends State<App> {
         ),
       ),
       themeMode: _convertToFlutterThemeMode(_themeMode),
-      initialRoute: '/',
+      home: _InitialRouteSelector(
+        skipSelectionScreenIfOnlyOneServer:
+            widget.initialSettings.skipSelectionScreenIfOnlyOneServer,
+      ),
       routes: {
-        '/': (context) => const ServerOverviewScreen(),
+        '/server-overview': (context) => const ServerOverviewScreen(),
         '/add-server': (context) => const AddServerScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
@@ -159,5 +164,57 @@ class _AppState extends State<App> {
         return null;
       },
     );
+  }
+}
+
+/// Widget that determines the initial route based on settings and server count
+class _InitialRouteSelector extends StatefulWidget {
+  final bool skipSelectionScreenIfOnlyOneServer;
+
+  const _InitialRouteSelector({
+    required this.skipSelectionScreenIfOnlyOneServer,
+  });
+
+  @override
+  State<_InitialRouteSelector> createState() => _InitialRouteSelectorState();
+}
+
+class _InitialRouteSelectorState extends State<_InitialRouteSelector> {
+  Widget? _destination;
+
+  @override
+  void initState() {
+    super.initState();
+    _determineInitialRoute();
+  }
+
+  Future<void> _determineInitialRoute() async {
+    // Import here to avoid circular dependencies
+    final serverRepository = getIt<IServerRepository>();
+    final servers = await serverRepository.getAllServers();
+
+    Widget destination;
+    if (widget.skipSelectionScreenIfOnlyOneServer && servers.length == 1) {
+      // Navigate directly to the server screen
+      destination = ServerOverviewScreen(initialAutoOpenServer: servers.first);
+    } else {
+      // Navigate to the server overview screen
+      destination = const ServerOverviewScreen();
+    }
+
+    if (mounted) {
+      setState(() {
+        _destination = destination;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show a blank screen while determining the route
+    if (_destination == null) {
+      return const Scaffold(body: Center(child: SizedBox.shrink()));
+    }
+    return _destination!;
   }
 }

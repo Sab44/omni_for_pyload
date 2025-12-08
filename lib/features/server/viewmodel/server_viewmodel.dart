@@ -15,12 +15,16 @@ class ServerViewModel extends ChangeNotifier {
   final Set<int> _selectedPackageIds = {};
   String? _error;
   Timer? _pollTimer;
+  Timer? _serverStatusTimer;
+  ServerStatus? _serverStatus;
   bool _isDisposed = false;
 
   ServerViewModel({
     required this.server,
     required IPyLoadApiRepository pyLoadApiRepository,
-  }) : _pyLoadApiRepository = pyLoadApiRepository;
+  }) : _pyLoadApiRepository = pyLoadApiRepository {
+    _startPollingServerStatus();
+  }
 
   int get selectedTabIndex => _selectedTabIndex;
   List<DownloadInfo> get downloads => _downloads;
@@ -29,6 +33,7 @@ class ServerViewModel extends ChangeNotifier {
   Set<int> get selectedPackageIds => _selectedPackageIds;
   bool get isSelectionMode => _selectedPackageIds.isNotEmpty;
   String? get error => _error;
+  ServerStatus? get serverStatus => _serverStatus;
 
   void setSelectedTab(int index) {
     if (_isDisposed) return;
@@ -92,7 +97,29 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
-  /// Start polling downloads every second
+  /// Start polling server status
+  void _startPollingServerStatus() {
+    // Fetch immediately
+    _fetchServerStatus();
+
+    // Then poll
+    _serverStatusTimer = Timer.periodic(
+      const Duration(seconds: 2),
+      (_) => _fetchServerStatus(),
+    );
+  }
+
+  /// Fetch the server status
+  Future<void> _fetchServerStatus() async {
+    try {
+      _serverStatus = await _pyLoadApiRepository.getServerStatus(server);
+      notifyListeners();
+    } catch (e) {
+      // Ignore errors during polling
+    }
+  }
+
+  /// Start polling downloads
   void _startPollingDownloads() {
     // Stop any existing timer
     _stopPolling();
@@ -100,14 +127,14 @@ class ServerViewModel extends ChangeNotifier {
     // Fetch immediately
     _fetchDownloadStatus();
 
-    // Then poll every second
+    // Then poll
     _pollTimer = Timer.periodic(
       const Duration(seconds: 1),
       (_) => _fetchDownloadStatus(),
     );
   }
 
-  /// Start polling queue data every second
+  /// Start polling queue data
   void _startPollingQueue() {
     // Stop any existing timer
     _stopPolling();
@@ -115,14 +142,14 @@ class ServerViewModel extends ChangeNotifier {
     // Fetch immediately
     _fetchQueueData();
 
-    // Then poll every 10 seconds
+    // Then poll
     _pollTimer = Timer.periodic(
       const Duration(seconds: 10),
       (_) => _fetchQueueData(),
     );
   }
 
-  /// Start polling collector data every 10 seconds
+  /// Start polling collector data
   void _startPollingCollector() {
     // Stop any existing timer
     _stopPolling();
@@ -130,14 +157,14 @@ class ServerViewModel extends ChangeNotifier {
     // Fetch immediately
     _fetchCollectorData();
 
-    // Then poll every 10 seconds
+    // Then poll
     _pollTimer = Timer.periodic(
       const Duration(seconds: 10),
       (_) => _fetchCollectorData(),
     );
   }
 
-  /// Stop polling downloads
+  /// Stop polling downloads / queue / collector
   void _stopPolling() {
     _pollTimer?.cancel();
     _pollTimer = null;
@@ -339,6 +366,7 @@ class ServerViewModel extends ChangeNotifier {
   void dispose() {
     _isDisposed = true;
     _stopPolling();
+    _serverStatusTimer?.cancel();
     super.dispose();
   }
 

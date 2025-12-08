@@ -106,16 +106,23 @@ class _ServerScreenState extends State<ServerScreen> {
       appBar: _viewModel.isSelectionMode
           ? _buildSelectionAppBar()
           : _buildDefaultAppBar(),
-      body: Stack(
+      body: Column(
         children: [
-          _buildTabContent(),
-          if (_isFabExpanded)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () => setState(() => _isFabExpanded = false),
-                child: Container(color: Colors.black26),
-              ),
+          _buildServerStatusRow(),
+          Expanded(
+            child: Stack(
+              children: [
+                _buildTabContent(),
+                if (_isFabExpanded)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _isFabExpanded = false),
+                      child: Container(color: Colors.black26),
+                    ),
+                  ),
+              ],
             ),
+          ),
         ],
       ),
       floatingActionButton: Column(
@@ -182,6 +189,38 @@ class _ServerScreenState extends State<ServerScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Overview'),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Queue'),
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: 'Collector'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServerStatusRow() {
+    final status = _viewModel.serverStatus;
+    if (status == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      color: Theme.of(context).appBarTheme.backgroundColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                status.pause ? Icons.pause : Icons.play_arrow,
+                color: status.pause ? Colors.orange : Colors.green,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                status.pause ? "Paused" : "Running",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Text(
+            "Speed ${_formatBytes(status.speed)}",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );

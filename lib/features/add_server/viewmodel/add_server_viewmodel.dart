@@ -68,7 +68,7 @@ class AddServerViewModel {
     );
 
     // Test the connection to the server and verify authentication
-    await _pyLoadApiRepository.testServerConnection(server);
+    await _pyLoadApiRepository.getServerStatus(server);
 
     await _serverRepository.addServer(server);
 

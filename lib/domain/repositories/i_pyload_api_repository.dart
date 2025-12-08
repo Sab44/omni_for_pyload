@@ -5,13 +5,12 @@ enum Result { success, partial, failure }
 
 /// Interface for PyLoad API interactions
 abstract class IPyLoadApiRepository {
-  /// Test the connection to a PyLoad server and authenticate
+  /// Get the server status
   ///
-  /// This method verifies that the server is reachable and the credentials are valid
-  /// by attempting to get the server status.
+  /// Returns a ServerStatus object with current server information.
   ///
   /// Throws: String with user-friendly error message on failure
-  Future<void> testServerConnection(Server server);
+  Future<ServerStatus> getServerStatus(Server server);
 
   /// Get the status of all currently running downloads
   ///

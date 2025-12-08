@@ -183,10 +183,7 @@ class _ServerScreenState extends State<ServerScreen> {
           _viewModel.setSelectedTab(index);
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
-            label: 'Overview',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Overview'),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Queue'),
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: 'Collector'),
         ],

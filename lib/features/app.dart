@@ -20,6 +20,7 @@ class App extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFECECEC),
           elevation: 0,
+          scrolledUnderElevation: 0,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFFECECEC),
@@ -56,6 +57,7 @@ class App extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF07051F),
           elevation: 0,
+          scrolledUnderElevation: 0,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFF07051F),

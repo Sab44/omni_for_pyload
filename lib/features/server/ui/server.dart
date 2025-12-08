@@ -1083,129 +1083,150 @@ class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
             top: 24,
             bottom: MediaQuery.of(context).viewInsets.bottom + 32,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Title
-              Text(
-                'Add links',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Package name input
-                    TextField(
-                      controller: _packageNameController,
-                      enabled: !_isAdding,
-                      decoration: const InputDecoration(
-                        labelText: 'Package name',
-                        border: OutlineInputBorder(),
-                      ),
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Links multiline input
-                    Expanded(
-                      child: TextField(
-                        controller: _linksController,
-                        enabled: !_isAdding,
-                        maxLines: null,
-                        expands: true,
-                        textAlignVertical: TextAlignVertical.top,
-                        decoration: const InputDecoration(
-                          labelText: 'Links',
-                          hintText: 'Enter one link per line',
-                          alignLabelWithHint: true,
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.multiline,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Password input
-                    TextField(
-                      controller: _passwordController,
-                      enabled: !_isAdding,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Destination section
-                    Text(
-                      'Destination',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Row(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Stack(
                       children: [
-                        Expanded(
-                          child: RadioListTile<Destination>(
-                            title: const Text('Queue'),
-                            value: Destination.QUEUE,
-                            groupValue: _selectedDestination,
-                            onChanged: _isAdding
-                                ? null
-                                : (value) {
-                                    if (value != null) {
-                                      setState(
-                                        () => _selectedDestination = value,
-                                      );
-                                    }
-                                  },
-                            contentPadding: EdgeInsets.zero,
-                          ),
+                        // Invisible column to force minimum height
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.65,
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: RadioListTile<Destination>(
-                            title: const Text('Collector'),
-                            value: Destination.COLLECTOR,
-                            groupValue: _selectedDestination,
-                            onChanged: _isAdding
-                                ? null
-                                : (value) {
-                                    if (value != null) {
-                                      setState(
-                                        () => _selectedDestination = value,
-                                      );
-                                    }
-                                  },
-                            contentPadding: EdgeInsets.zero,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Title
+                            Text(
+                              'Add links',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            // Package name input
+                            TextField(
+                              controller: _packageNameController,
+                              enabled: !_isAdding,
+                              decoration: const InputDecoration(
+                                labelText: 'Package name',
+                                border: OutlineInputBorder(),
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Links multiline input
+                            Expanded(
+                              child: TextField(
+                                controller: _linksController,
+                                enabled: !_isAdding,
+                                maxLines: null,
+                                expands: true,
+                                textAlignVertical: TextAlignVertical.top,
+                                decoration: const InputDecoration(
+                                  labelText: 'Links',
+                                  hintText: 'Enter one link per line',
+                                  alignLabelWithHint: true,
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.multiline,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Password input
+                            TextField(
+                              controller: _passwordController,
+                              enabled: !_isAdding,
+                              decoration: const InputDecoration(
+                                labelText: 'Password',
+                                border: OutlineInputBorder(),
+                              ),
+                              obscureText: true,
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Destination section
+                            Text(
+                              'Destination',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: RadioListTile<Destination>(
+                                    title: const Text('Queue'),
+                                    value: Destination.QUEUE,
+                                    groupValue: _selectedDestination,
+                                    onChanged: _isAdding
+                                        ? null
+                                        : (value) {
+                                            if (value != null) {
+                                              setState(
+                                                () => _selectedDestination =
+                                                    value,
+                                              );
+                                            }
+                                          },
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: RadioListTile<Destination>(
+                                    title: const Text('Collector'),
+                                    value: Destination.COLLECTOR,
+                                    groupValue: _selectedDestination,
+                                    onChanged: _isAdding
+                                        ? null
+                                        : (value) {
+                                            if (value != null) {
+                                              setState(
+                                                () => _selectedDestination =
+                                                    value,
+                                              );
+                                            }
+                                          },
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Add button
+                            ElevatedButton(
+                              onPressed: _isAdding ? null : _addPackage,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                              ),
+                              child: _isAdding
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text('Add'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-
-                    // Add button
-                    ElevatedButton(
-                      onPressed: _isAdding ? null : _addPackage,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: _isAdding
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Add'),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         );
       },

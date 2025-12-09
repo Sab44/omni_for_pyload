@@ -1,11 +1,11 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/features/server/ui/add_links_bottom_sheet.dart';
+import 'package:omni_for_pyload/features/server/ui/overview_tab.dart';
+import 'package:omni_for_pyload/features/server/ui/package_list_tab.dart';
+import 'package:omni_for_pyload/features/server/ui/upload_dlc_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/viewmodel/server_viewmodel.dart';
 
 class ServerScreen extends StatefulWidget {
@@ -69,28 +69,6 @@ class _ServerScreenState extends State<ServerScreen> {
       return '${size.toInt()} ${units[unitIndex]}';
     } else {
       return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
-    }
-  }
-
-  Color _getProgressBarColor(int linksDone, int linksTotal) {
-    if (linksDone == linksTotal) {
-      return Colors.lightGreen[400] ?? Colors.lightGreen;
-    } else {
-      return Colors.blue[400] ?? Colors.blue;
-    }
-  }
-
-  Color _getStatusColor(DownloadStatus status) {
-    if (status == DownloadStatus.WAITING) {
-      return const Color(0xFFF0AD4E);
-    } else if (status == DownloadStatus.STARTING) {
-      return const Color(0xFF5BC0DE);
-    } else if (status == DownloadStatus.DOWNLOADING) {
-      return const Color(0xFF5CB85C);
-    } else if (status == DownloadStatus.PROCESSING) {
-      return const Color(0xFF337AB7);
-    } else {
-      return const Color(0xFF777777);
     }
   }
 
@@ -503,269 +481,47 @@ class _ServerScreenState extends State<ServerScreen> {
   Widget _buildTabContent() {
     switch (_viewModel.selectedTabIndex) {
       case 0:
-        return _buildOverviewTab();
+        return OverviewTab(
+          downloads: _viewModel.downloads,
+          error: _viewModel.error,
+        );
       case 1:
-        return _buildQueueTab();
+        return PackageListTab(
+          packages: _viewModel.queueData,
+          emptyMessage: 'No packages in queue',
+          error: _viewModel.error,
+          selectedPackageIds: _viewModel.selectedPackageIds,
+          isSelectionMode: _viewModel.isSelectionMode,
+          server: widget.server,
+          onToggleSelection: _viewModel.toggleSelection,
+          onPackageTap: (packageId) {
+            Navigator.pushNamed(
+              context,
+              '/download-detail',
+              arguments: {'server': widget.server, 'packageId': packageId},
+            );
+          },
+        );
       case 2:
-        return _buildCollectorTab();
+        return PackageListTab(
+          packages: _viewModel.collectorData,
+          emptyMessage: 'No packages in collector',
+          error: _viewModel.error,
+          selectedPackageIds: _viewModel.selectedPackageIds,
+          isSelectionMode: _viewModel.isSelectionMode,
+          server: widget.server,
+          onToggleSelection: _viewModel.toggleSelection,
+          onPackageTap: (packageId) {
+            Navigator.pushNamed(
+              context,
+              '/download-detail',
+              arguments: {'server': widget.server, 'packageId': packageId},
+            );
+          },
+        );
       default:
         return const Center(child: Text('Overview Tab'));
     }
-  }
-
-  Widget _buildOverviewTab() {
-    if (_viewModel.error != null) {
-      return _buildErrorUI();
-    }
-
-    if (_viewModel.downloads.isEmpty) {
-      return const Center(child: Text('No active downloads'));
-    }
-
-    return ListView.builder(
-      itemCount: _viewModel.downloads.length,
-      itemBuilder: (context, index) {
-        final download = _viewModel.downloads[index];
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Download name
-                  Text(
-                    download.name,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  // Row with size downloaded, percentage, and total size
-                  Row(
-                    children: [
-                      // Left-aligned: size downloaded
-                      Expanded(
-                        child: Text(
-                          _formatBytes(download.size - download.bleft),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                      // Center-aligned: percentage
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            '${download.percent}%',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                      // Right-aligned: total size
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            _formatBytes(download.size),
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // Progress bar
-                  LinearProgressIndicator(
-                    value: download.percent / 100,
-                    minHeight: 6,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.blue[400] ?? Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Row with status chip and speed
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Left-aligned: status chip
-                      Chip(
-                        label: Text(
-                          download.statusmsg,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        backgroundColor: _getStatusColor(download.status),
-                      ),
-                      const Spacer(),
-                      // Right-aligned: speed
-                      Chip(
-                        label: Text(
-                          '${(_formatBytes(download.speed))}/s',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        backgroundColor: Theme.of(
-                          context,
-                        ).scaffoldBackgroundColor,
-                        shape: const StadiumBorder(
-                          side: BorderSide(style: BorderStyle.none),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            if (index < _viewModel.downloads.length - 1)
-              Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildQueueTab() {
-    return _buildPackageListTab(
-      packages: _viewModel.queueData,
-      emptyMessage: 'No packages in queue',
-    );
-  }
-
-  Widget _buildCollectorTab() {
-    return _buildPackageListTab(
-      packages: _viewModel.collectorData,
-      emptyMessage: 'No packages in collector',
-    );
-  }
-
-  Widget _buildErrorUI() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 48),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Error: ${_viewModel.error}'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPackageListTab({
-    required List<PackageData> packages,
-    required String emptyMessage,
-  }) {
-    if (_viewModel.error != null) {
-      return _buildErrorUI();
-    }
-
-    if (packages.isEmpty) {
-      return Center(child: Text(emptyMessage));
-    }
-
-    return ListView.builder(
-      itemCount: packages.length,
-      itemBuilder: (context, index) {
-        final package = packages[index];
-        final linksDone = package.linksdone ?? 0;
-        final linksTotal = package.linkstotal ?? 0;
-        final progressBarColor = _getProgressBarColor(linksDone, linksTotal);
-        final isSelected = _viewModel.selectedPackageIds.contains(package.pid);
-
-        return Material(
-          color: isSelected
-              ? Theme.of(context).primaryColor.withAlpha(100)
-              : Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              if (_viewModel.isSelectionMode) {
-                _viewModel.toggleSelection(package.pid);
-              } else {
-                Navigator.pushNamed(
-                  context,
-                  '/download-detail',
-                  arguments: {
-                    'server': widget.server,
-                    'packageId': package.pid,
-                  },
-                );
-              }
-            },
-            onLongPress: () {
-              _viewModel.toggleSelection(package.pid);
-            },
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Package name
-                      Text(
-                        package.name,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 8),
-                      // Progress bar
-                      LinearProgressIndicator(
-                        value: linksTotal > 0 ? linksDone / linksTotal : 0,
-                        minHeight: 6,
-                        backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          progressBarColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Row with size and links
-                      Row(
-                        children: [
-                          // Left-aligned: size
-                          Expanded(
-                            child: Text(
-                              '${_formatBytes(package.sizedone)} / ${_formatBytes(package.sizetotal)}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                          // Right-aligned: links
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$linksDone / $linksTotal',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Arrow indicator row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey[600],
-                            size: 16,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                  ),
-                ),
-                if (index < packages.length - 1)
-                  Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _showUploadDlcBottomSheet() {
@@ -775,7 +531,7 @@ class _ServerScreenState extends State<ServerScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => _UploadDlcBottomSheet(
+      builder: (context) => UploadDlcBottomSheet(
         onUpload: (fileName, fileBytes) async {
           final success = await _viewModel.uploadDlc(fileName, fileBytes);
           if (mounted) {
@@ -796,7 +552,7 @@ class _ServerScreenState extends State<ServerScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => _AddLinksBottomSheet(
+      builder: (context) => AddLinksBottomSheet(
         onAdd: (name, links, destination) async {
           final success = await _viewModel.addPackageWithLinks(
             name,
@@ -813,449 +569,6 @@ class _ServerScreenState extends State<ServerScreen> {
           return success;
         },
       ),
-    );
-  }
-}
-
-class _UploadDlcBottomSheet extends StatefulWidget {
-  final Future<void> Function(String fileName, List<int> fileBytes) onUpload;
-
-  const _UploadDlcBottomSheet({required this.onUpload});
-
-  @override
-  State<_UploadDlcBottomSheet> createState() => _UploadDlcBottomSheetState();
-}
-
-class _UploadDlcBottomSheetState extends State<_UploadDlcBottomSheet> {
-  static const int _maxFileSizeBytes = 1024 * 1024; // 1 MB
-
-  String? _selectedFileName;
-  List<int>? _selectedFileBytes;
-  bool _isUploading = false;
-
-  Future<void> _pickFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        withData: true,
-      );
-
-      if (result != null && result.files.isNotEmpty) {
-        final file = result.files.first;
-
-        // Check file extension
-        if (!file.name.toLowerCase().endsWith('.dlc')) {
-          if (mounted) {
-            _showErrorDialog(context, 'Error', 'Only .dlc files are allowed');
-          }
-          return;
-        }
-
-        // Check file size
-        if (file.size > _maxFileSizeBytes) {
-          if (mounted) {
-            _showErrorDialog(context, 'Error', 'File size exceeds 1 MB limit');
-          }
-          return;
-        }
-
-        // Get file bytes
-        final bytes = file.bytes;
-        if (bytes == null) {
-          // On some platforms, we need to read from path
-          if (file.path != null) {
-            final fileData = await File(file.path!).readAsBytes();
-            setState(() {
-              _selectedFileName = file.name;
-              _selectedFileBytes = fileData;
-            });
-          }
-        } else {
-          setState(() {
-            _selectedFileName = file.name;
-            _selectedFileBytes = bytes;
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error picking file: $e')));
-      }
-    }
-  }
-
-  Future<void> _uploadFile() async {
-    if (_selectedFileName == null || _selectedFileBytes == null) return;
-
-    setState(() => _isUploading = true);
-
-    await widget.onUpload(_selectedFileName!, _selectedFileBytes!);
-
-    if (mounted) {
-      Navigator.pop(context);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Title
-          Text(
-            'Upload DLC',
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          // Browse button
-          Center(
-            child: InkWell(
-              onTap: _isUploading ? null : _pickFile,
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).primaryColor,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.folder_open,
-                      size: 48,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Browse',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Selected file name
-          if (_selectedFileName != null)
-            Text(
-              _selectedFileName!,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-            )
-          else
-            Text(
-              'No file selected',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          const SizedBox(height: 24),
-          // Upload button
-          ElevatedButton(
-            onPressed: _selectedFileName != null && !_isUploading
-                ? _uploadFile
-                : null,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: _isUploading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Upload'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Reusable function to show an error dialog
-void _showErrorDialog(BuildContext context, String title, String message) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      icon: Icon(
-        Icons.warning_rounded,
-        color: Theme.of(context).colorScheme.error,
-        size: 48,
-      ),
-      title: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-      content: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      actions: [
-        Center(
-          child: TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK', style: Theme.of(context).textTheme.bodyLarge),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _AddLinksBottomSheet extends StatefulWidget {
-  final Future<bool> Function(
-    String name,
-    List<String> links,
-    Destination destination,
-  )
-  onAdd;
-
-  const _AddLinksBottomSheet({required this.onAdd});
-
-  @override
-  State<_AddLinksBottomSheet> createState() => _AddLinksBottomSheetState();
-}
-
-class _AddLinksBottomSheetState extends State<_AddLinksBottomSheet> {
-  final _packageNameController = TextEditingController();
-  final _linksController = TextEditingController();
-  final _passwordController = TextEditingController();
-  Destination _selectedDestination = Destination.QUEUE;
-  bool _isAdding = false;
-
-  @override
-  void dispose() {
-    _packageNameController.dispose();
-    _linksController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _addPackage() async {
-    final packageName = _packageNameController.text.trim();
-    final linksText = _linksController.text.trim();
-
-    // Validation
-    if (packageName.isEmpty) {
-      _showErrorDialog(context, 'Error', 'Please enter a package name');
-      return;
-    }
-
-    if (linksText.isEmpty) {
-      _showErrorDialog(context, 'Error', 'Please enter at least one link');
-      return;
-    }
-
-    // Parse links - split by newlines and filter empty lines
-    final links = linksText
-        .split('\n')
-        .map((link) => link.trim())
-        .where((link) => link.isNotEmpty)
-        .toList();
-
-    if (links.isEmpty) {
-      _showErrorDialog(
-        context,
-        'Error',
-        'Please enter at least one valid link',
-      );
-      return;
-    }
-
-    setState(() => _isAdding = true);
-
-    final success = await widget.onAdd(
-      packageName,
-      links,
-      _selectedDestination,
-    );
-
-    if (mounted) {
-      if (success) {
-        Navigator.pop(context);
-      } else {
-        setState(() => _isAdding = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 1.0,
-      minChildSize: 0.5,
-      maxChildSize: 1.0,
-      expand: false,
-      builder: (context, scrollController) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                controller: scrollController,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Stack(
-                      children: [
-                        // Invisible column to force minimum height
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.65,
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Title
-                            Text(
-                              'Add links',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            // Package name input
-                            TextField(
-                              controller: _packageNameController,
-                              enabled: !_isAdding,
-                              decoration: const InputDecoration(
-                                labelText: 'Package name',
-                                border: OutlineInputBorder(),
-                              ),
-                              textInputAction: TextInputAction.next,
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Links multiline input
-                            Expanded(
-                              child: TextField(
-                                controller: _linksController,
-                                enabled: !_isAdding,
-                                maxLines: null,
-                                expands: true,
-                                textAlignVertical: TextAlignVertical.top,
-                                decoration: const InputDecoration(
-                                  labelText: 'Links',
-                                  hintText: 'Enter one link per line',
-                                  alignLabelWithHint: true,
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.multiline,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Password input
-                            TextField(
-                              controller: _passwordController,
-                              enabled: !_isAdding,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                                border: OutlineInputBorder(),
-                              ),
-                              obscureText: true,
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Destination section
-                            Text(
-                              'Destination',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            RadioGroup<Destination>(
-                              groupValue: _selectedDestination,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() => _selectedDestination = value);
-                                }
-                              },
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: RadioListTile<Destination>(
-                                      title: const Text('Queue'),
-                                      value: Destination.QUEUE,
-                                      contentPadding: EdgeInsets.zero,
-                                      enabled: !_isAdding,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: RadioListTile<Destination>(
-                                      title: const Text('Collector'),
-                                      value: Destination.COLLECTOR,
-                                      contentPadding: EdgeInsets.zero,
-                                      enabled: !_isAdding,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Add button
-                            ElevatedButton(
-                              onPressed: _isAdding ? null : _addPackage,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                              ),
-                              child: _isAdding
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text('Add'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }

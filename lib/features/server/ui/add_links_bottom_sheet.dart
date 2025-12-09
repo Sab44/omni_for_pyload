@@ -38,12 +38,12 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
 
     // Validation
     if (packageName.isEmpty) {
-      showErrorDialog(context, 'Error', 'Please enter a package name');
+      showErrorDialog(context, 'Please enter a package name');
       return;
     }
 
     if (linksText.isEmpty) {
-      showErrorDialog(context, 'Error', 'Please enter at least one link');
+      showErrorDialog(context, 'Please enter at least one link');
       return;
     }
 
@@ -55,7 +55,7 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
         .toList();
 
     if (links.isEmpty) {
-      showErrorDialog(context, 'Error', 'Please enter at least one valid link');
+      showErrorDialog(context, 'Please enter at least one valid link');
       return;
     }
 

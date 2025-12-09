@@ -34,7 +34,7 @@ class _UploadDlcBottomSheetState extends State<UploadDlcBottomSheet> {
         // Check file extension
         if (!file.name.toLowerCase().endsWith('.dlc')) {
           if (mounted) {
-            showErrorDialog(context, 'Error', 'Only .dlc files are allowed');
+            showErrorDialog(context, 'Only .dlc files are allowed');
           }
           return;
         }
@@ -42,7 +42,7 @@ class _UploadDlcBottomSheetState extends State<UploadDlcBottomSheet> {
         // Check file size
         if (file.size > _maxFileSizeBytes) {
           if (mounted) {
-            showErrorDialog(context, 'Error', 'File size exceeds 1 MB limit');
+            showErrorDialog(context, 'File size exceeds 1 MB limit');
           }
           return;
         }

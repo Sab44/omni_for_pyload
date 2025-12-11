@@ -43,16 +43,17 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
   /// Executes a network request with timeout and error handling
   ///
   /// Wraps any Future-returning API call with:
-  /// - Timeout handling (5 seconds default)
-  /// - API exception handling with user-friendly messages
-  /// - Generic error handling
+  /// - Timeout handling
+  /// - API exception handling with user-friendly error messages
+  /// - Generic error handling that converts unknown errors to ApiException
   ///
   /// Parameters:
   /// - [request]: A Future that represents the API call
   /// - [timeout]: Optional custom timeout duration
   ///
   /// Throws:
-  /// - String with user-friendly error message on failure
+  /// - [TimeoutException]: When the request exceeds the timeout duration
+  /// - [ApiException]: For API errors or unknown errors with user-friendly messages
   Future<T> executeNetworkRequest<T>(
     Future<T> Function() request, {
     Duration timeout = _connectionTimeout,
@@ -63,20 +64,20 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
         onTimeout: () => throw TimeoutException('Connection timeout'),
       );
     } on TimeoutException {
-      throw 'Server connection timed out.';
-    } catch (e) {
-      // Re-throw with a user-friendly message
-      if (e is ApiException) {
-        if (e.code == 401) {
-          throw 'Authentication failed. Please check your username and password.';
-        } else if (e.code >= 500) {
-          throw 'Server error: ${e.message}';
-        } else {
-          throw 'Server connection failed: ${e.message}';
-        }
+      rethrow;
+    } on ApiException catch (e) {
+      if (e.code == 401) {
+        throw ApiException(
+          401,
+          'Authentication failed. Please check your username and password.',
+        );
+      } else if (e.code >= 500) {
+        throw ApiException(e.code, 'Server error: ${e.message}');
       } else {
-        throw 'Failed to connect to server: $e';
+        throw ApiException(e.code, 'Server connection failed: ${e.message}');
       }
+    } catch (e) {
+      throw ApiException(500, 'Unknown error occurred: $e');
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/features/server_overview/viewmodel/server_overview_viewmodel.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
+import 'package:omni_for_pyload/features/app.dart';
 
 class ServerOverviewScreen extends StatefulWidget {
   final Server? initialAutoOpenServer;
@@ -14,12 +15,15 @@ class ServerOverviewScreen extends StatefulWidget {
   State<ServerOverviewScreen> createState() => _ServerOverviewScreenState();
 }
 
-class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
+class _ServerOverviewScreenState extends State<ServerOverviewScreen>
+    with WidgetsBindingObserver, RouteAware {
   late ServerOverviewViewModel _viewModel;
+  bool _isScreenVisible = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _viewModel = ServerOverviewViewModel(
       serverRepository: getIt<IServerRepository>(),
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
@@ -38,15 +42,51 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
   void _onViewModelChanged() {
     setState(() {});
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    routeObserver.unsubscribe(this);
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      // App went to background
+      _viewModel.pausePolling();
+    } else if (state == AppLifecycleState.resumed) {
+      // App came to foreground - only resume if this screen is visible
+      if (_isScreenVisible) {
+        _viewModel.resumePolling();
+      }
+    }
+  }
+
+  @override
+  void didPushNext() {
+    // User navigated away from this screen
+    _isScreenVisible = false;
+    _viewModel.pausePolling();
+  }
+
+  @override
+  void didPopNext() {
+    // User came back to this screen
+    _isScreenVisible = true;
+    _viewModel.resumePolling();
   }
 
   Future<void> _loadServers() async {

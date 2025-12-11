@@ -81,9 +81,4 @@ class ServerOverviewViewModel extends ChangeNotifier {
     _statuses.remove(key);
     notifyListeners();
   }
-
-  /// Refresh the server list from storage
-  Future<void> refresh() async {
-    await loadServers();
-  }
 }

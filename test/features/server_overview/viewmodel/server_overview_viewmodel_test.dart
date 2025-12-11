@@ -98,27 +98,6 @@ void main() {
       verify(mockServerRepository.removeServer('192.168.1.1:8000')).called(1);
     });
 
-    test('refresh reloads servers from repository', () async {
-      final testServers = [
-        Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        ),
-      ];
-
-      when(
-        mockServerRepository.getAllServers(),
-      ).thenAnswer((_) async => testServers);
-
-      await viewModel.refresh();
-
-      expect(viewModel.servers, equals(testServers));
-      verify(mockServerRepository.getAllServers()).called(1);
-    });
-
     test('polling updates status to online on success', () {
       fakeAsync((async) {
         final server = Server(

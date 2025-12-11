@@ -11,6 +11,7 @@ class ServerOverviewViewModel extends ChangeNotifier {
   final Map<String, String> _statuses = {};
   final Set<String> _pollingServers = {};
   bool _isDisposed = false;
+  bool _isPaused = false;
   final _serverStatusPollingInterval = Duration(seconds: 2);
 
   ServerOverviewViewModel({
@@ -47,23 +48,24 @@ class ServerOverviewViewModel extends ChangeNotifier {
     _pollingServers.add(key);
 
     while (!_isDisposed &&
+        !_isPaused &&
         _servers.any((s) => s.ip == server.ip && s.port == server.port)) {
       try {
         await _pyLoadApiRepository.getServerStatus(server);
 
-        if (_isDisposed) break;
+        if (_isDisposed || _isPaused) break;
         _statuses[key] = 'online';
         notifyListeners();
 
         await Future.delayed(_serverStatusPollingInterval);
       } on TimeoutException {
-        if (_isDisposed) break;
+        if (_isDisposed || _isPaused) break;
 
         _statuses[key] = 'offline';
         notifyListeners();
         // Poll again immediately
       } catch (e) {
-        if (_isDisposed) break;
+        if (_isDisposed || _isPaused) break;
 
         _statuses[key] = 'offline';
         notifyListeners();
@@ -80,5 +82,18 @@ class ServerOverviewViewModel extends ChangeNotifier {
     _servers.removeWhere((s) => s.ip == server.ip && s.port == server.port);
     _statuses.remove(key);
     notifyListeners();
+  }
+
+  /// Pause polling for all servers
+  void pausePolling() {
+    _isPaused = true;
+  }
+
+  /// Resume polling for all servers
+  void resumePolling() {
+    if (_isPaused) {
+      _isPaused = false;
+      _startPolling();
+    }
   }
 }

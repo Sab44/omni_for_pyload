@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/features/app.dart';
 import 'package:omni_for_pyload/features/server/ui/add_links_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/overview_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/package_list_tab.dart';
@@ -17,7 +18,8 @@ class ServerScreen extends StatefulWidget {
   State<ServerScreen> createState() => _ServerScreenState();
 }
 
-class _ServerScreenState extends State<ServerScreen> {
+class _ServerScreenState extends State<ServerScreen>
+    with WidgetsBindingObserver, RouteAware {
   static const String _menuResumeQueue = 'Resume Queue';
   static const String _menuPauseQueue = 'Pause Queue';
   static const String _menuStopQueue = 'Stop Queue';
@@ -27,10 +29,12 @@ class _ServerScreenState extends State<ServerScreen> {
 
   late ServerViewModel _viewModel;
   bool _isFabExpanded = false;
+  bool _isScreenVisible = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
@@ -40,15 +44,51 @@ class _ServerScreenState extends State<ServerScreen> {
     _viewModel.setSelectedTab(0);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
   void _onViewModelChanged() {
     setState(() {});
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    routeObserver.unsubscribe(this);
     _viewModel.removeListener(_onViewModelChanged);
     _viewModel.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      // App went to background
+      _viewModel.pausePolling();
+    } else if (state == AppLifecycleState.resumed) {
+      // App came to foreground - only resume if this screen is visible
+      if (_isScreenVisible) {
+        _viewModel.resumePolling();
+      }
+    }
+  }
+
+  @override
+  void didPushNext() {
+    // User navigated away from this screen (e.g., to download detail)
+    _isScreenVisible = false;
+    _viewModel.pausePolling();
+  }
+
+  @override
+  void didPopNext() {
+    // User came back to this screen
+    _isScreenVisible = true;
+    _viewModel.resumePolling();
   }
 
   /// Format bytes to the next higher unit (KB, MB, GB, TB)

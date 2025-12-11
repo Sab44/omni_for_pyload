@@ -18,6 +18,7 @@ class ServerViewModel extends ChangeNotifier {
   Timer? _serverStatusTimer;
   ServerStatus? _serverStatus;
   bool _isDisposed = false;
+  bool _isPaused = false;
 
   ServerViewModel({
     required this.server,
@@ -99,6 +100,8 @@ class ServerViewModel extends ChangeNotifier {
 
   /// Start polling server status
   void _startPollingServerStatus() {
+    if (_isPaused) return;
+
     // Fetch immediately
     _fetchServerStatus();
 
@@ -121,6 +124,8 @@ class ServerViewModel extends ChangeNotifier {
 
   /// Start polling downloads
   void _startPollingDownloads() {
+    if (_isPaused) return;
+
     // Stop any existing timer
     _stopPolling();
 
@@ -136,6 +141,8 @@ class ServerViewModel extends ChangeNotifier {
 
   /// Start polling queue data
   void _startPollingQueue() {
+    if (_isPaused) return;
+
     // Stop any existing timer
     _stopPolling();
 
@@ -151,6 +158,8 @@ class ServerViewModel extends ChangeNotifier {
 
   /// Start polling collector data
   void _startPollingCollector() {
+    if (_isPaused) return;
+
     // Stop any existing timer
     _stopPolling();
 
@@ -369,6 +378,31 @@ class ServerViewModel extends ChangeNotifier {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Pause all polling (server status + current tab)
+  void pausePolling() {
+    _isPaused = true;
+    _stopPolling();
+    _serverStatusTimer?.cancel();
+  }
+
+  /// Resume polling for server status and the currently active tab
+  void resumePolling() {
+    if (!_isPaused) return;
+    _isPaused = false;
+
+    // Resume server status polling
+    _startPollingServerStatus();
+
+    // Resume polling for the currently active tab
+    if (_selectedTabIndex == 0) {
+      _startPollingDownloads();
+    } else if (_selectedTabIndex == 1) {
+      _startPollingQueue();
+    } else if (_selectedTabIndex == 2) {
+      _startPollingCollector();
     }
   }
 

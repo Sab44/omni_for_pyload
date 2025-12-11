@@ -14,6 +14,9 @@ final ValueNotifier<app_models.ThemeMode> themeNotifier = ValueNotifier(
   app_models.ThemeMode.system,
 );
 
+// Global route observer for tracking navigation
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class App extends StatefulWidget {
   final app_models.AppSettings initialSettings;
 
@@ -61,6 +64,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Omni',
+      navigatorObservers: [routeObserver],
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,

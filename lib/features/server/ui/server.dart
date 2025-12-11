@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
@@ -7,7 +8,9 @@ import 'package:omni_for_pyload/features/server/ui/add_links_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/overview_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/package_list_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/upload_dlc_bottom_sheet.dart';
+import 'package:omni_for_pyload/features/server/services/click_n_load_service.dart';
 import 'package:omni_for_pyload/features/server/viewmodel/server_viewmodel.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ServerScreen extends StatefulWidget {
   final Server server;
@@ -38,6 +41,7 @@ class _ServerScreenState extends State<ServerScreen>
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
+      clickNLoadService: getIt<ClickNLoadService>(),
     );
     _viewModel.addListener(_onViewModelChanged);
     // Start polling immediately since the first tab (Overview) is selected by default
@@ -118,6 +122,22 @@ class _ServerScreenState extends State<ServerScreen>
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _showClickNLoadAlreadyRunningDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Click'n'Load"),
+        content: const Text("Click'n'Load service is already running."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,12 +173,32 @@ class _ServerScreenState extends State<ServerScreen>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FloatingActionButton.extended(
-                    heroTag: 'clicknload',
-                    onPressed: () {},
-                    label: const Text("Click'n'Load"),
-                    icon: const Icon(Icons.touch_app),
-                  ),
+                  if (Platform.isAndroid)
+                    FloatingActionButton.extended(
+                      heroTag: 'clicknload',
+                      onPressed: () async {
+                        await Permission.notification.request();
+                        final result = await _viewModel.startClickNLoad();
+                        if (mounted) {
+                          switch (result) {
+                            case ClickNLoadStartResult.started:
+                              _showSnackBar('Click\'n\'Load service started');
+                              break;
+                            case ClickNLoadStartResult.alreadyRunning:
+                              _showClickNLoadAlreadyRunningDialog();
+                              break;
+                            case ClickNLoadStartResult.failed:
+                              _showSnackBar(
+                                'Failed to start Click\'n\'Load service',
+                              );
+                              break;
+                          }
+                          setState(() => _isFabExpanded = false);
+                        }
+                      },
+                      label: const Text("Click'n'Load"),
+                      icon: const Icon(Icons.touch_app),
+                    ),
                   const SizedBox(height: 10),
                   FloatingActionButton.extended(
                     heroTag: 'uploaddlc',

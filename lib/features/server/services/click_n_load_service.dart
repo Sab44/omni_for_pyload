@@ -1,0 +1,190 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+import 'package:omni_for_pyload/data/repositories/click_n_load_repository.dart';
+import 'package:omni_for_pyload/domain/models/clicknload_server.dart' as model;
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:shelf_router/shelf_router.dart';
+
+class ClickNLoadService {
+  static const MethodChannel _channel = MethodChannel(
+    'com.example.omni_for_pyload/click_n_load',
+  );
+
+  HttpServer? _server;
+  ClickNLoadRepository? _repository;
+  bool _isRunning = false;
+
+  /// Check if the service is currently running
+  Future<bool> isRunning() async {
+    if (!Platform.isAndroid) {
+      return _isRunning;
+    }
+
+    try {
+      final bool running = await _channel.invokeMethod('isRunning');
+      // Sync state - if native says not running but we have a server, clean up
+      if (!running && _server != null) {
+        await _stopHttpServer();
+      }
+      return running && _server != null;
+    } catch (e) {
+      print('ClickNLoadService: Error checking service status: $e');
+      return false;
+    }
+  }
+
+  /// Start the Click'n'Load service with the given server configuration
+  Future<bool> start(model.ClickNLoadServer serverConfig) async {
+    if (!Platform.isAndroid) {
+      print('ClickNLoadService: Not supported on this platform');
+      return false;
+    }
+
+    try {
+      // Start the native foreground service first
+      await _channel.invokeMethod('startService');
+
+      // Initialize the repository for forwarding requests
+      _repository = ClickNLoadRepository(serverConfig);
+
+      // Start the HTTP server
+      await _startHttpServer();
+
+      _isRunning = true;
+      print('ClickNLoadService: Service started successfully');
+      return true;
+    } catch (e) {
+      print('ClickNLoadService: Error starting service: $e');
+      // Clean up on failure
+      await stop();
+      return false;
+    }
+  }
+
+  /// Stop the Click'n'Load service
+  Future<void> stop() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    try {
+      // Stop the HTTP server
+      await _stopHttpServer();
+
+      // Stop the native foreground service
+      await _channel.invokeMethod('stopService');
+
+      _repository = null;
+      _isRunning = false;
+      print('ClickNLoadService: Service stopped');
+    } catch (e) {
+      print('ClickNLoadService: Error stopping service: $e');
+    }
+  }
+
+  Future<void> _startHttpServer() async {
+    if (_server != null) {
+      print('ClickNLoadService: HTTP server already running');
+      return;
+    }
+
+    final app = Router();
+
+    // Helper to handle requests
+    Future<Response> handle(Future<dynamic> Function() action) async {
+      if (_repository == null) {
+        print(
+          'ClickNLoadService: No server configured. Cannot forward request.',
+        );
+        return Response.internalServerError(body: 'No server configured');
+      }
+      try {
+        final response = await action();
+        return Response(
+          response.statusCode,
+          body: response.bodyBytes,
+          headers: response.headers,
+        );
+      } catch (e) {
+        print('ClickNLoadService: Error handling request: $e');
+        return Response.internalServerError(body: e.toString());
+      }
+    }
+
+    // Define routes
+    app.get(
+      '/flash/',
+      (Request request) => handle(
+        () => _repository!.index(method: 'GET', headers: request.headers),
+      ),
+    );
+
+    app.post('/flash/', (Request request) async {
+      final body = await request.readAsString();
+      return handle(
+        () => _repository!.index(
+          method: 'POST',
+          headers: request.headers,
+          body: body,
+        ),
+      );
+    });
+
+    app.post('/flash/add', (Request request) async {
+      final body = await request.readAsString();
+      return handle(
+        () => _repository!.add(headers: request.headers, body: body),
+      );
+    });
+
+    app.post('/flash/addcrypted', (Request request) async {
+      final body = await request.readAsString();
+      return handle(
+        () => _repository!.addCrypted(headers: request.headers, body: body),
+      );
+    });
+
+    app.post('/flash/addcrypted2', (Request request) async {
+      final body = await request.readAsString();
+      return handle(
+        () => _repository!.addCrypted2(headers: request.headers, body: body),
+      );
+    });
+
+    // jdcheck.js endpoint - hardcoded response
+    app.get('/jdcheck.js', (Request request) async {
+      String response = "jdownloader=true;\r\n";
+      response += "var version='42707';\r\n";
+      return Response.ok(
+        response,
+        headers: {'Content-Type': 'application/javascript'},
+      );
+    });
+
+    final handler = Pipeline()
+        .addMiddleware(logRequests())
+        .addHandler(app.call);
+
+    try {
+      _server = await shelf_io.serve(
+        handler,
+        InternetAddress.loopbackIPv4,
+        9666,
+      );
+      print('ClickNLoadService: HTTP server running on port ${_server!.port}');
+    } catch (e) {
+      print('ClickNLoadService: Failed to start HTTP server: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _stopHttpServer() async {
+    if (_server != null) {
+      await _server!.close(force: true);
+      _server = null;
+      print('ClickNLoadService: HTTP server stopped');
+    }
+  }
+}

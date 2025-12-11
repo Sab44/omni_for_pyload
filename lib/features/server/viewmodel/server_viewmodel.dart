@@ -1,12 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/features/server/services/click_n_load_service.dart';
+
+/// Result of attempting to start Click'n'Load service
+enum ClickNLoadStartResult { started, alreadyRunning, failed }
 
 class ServerViewModel extends ChangeNotifier {
   final IPyLoadApiRepository _pyLoadApiRepository;
+  final ClickNLoadService _clickNLoadService;
   final Server server;
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
@@ -23,7 +29,9 @@ class ServerViewModel extends ChangeNotifier {
   ServerViewModel({
     required this.server,
     required IPyLoadApiRepository pyLoadApiRepository,
-  }) : _pyLoadApiRepository = pyLoadApiRepository {
+    required ClickNLoadService clickNLoadService,
+  }) : _pyLoadApiRepository = pyLoadApiRepository,
+       _clickNLoadService = clickNLoadService {
     _startPollingServerStatus();
   }
 
@@ -326,6 +334,28 @@ class ServerViewModel extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  /// Start the Click'n'Load service
+  /// Returns the result indicating if it was started, already running, or failed
+  Future<ClickNLoadStartResult> startClickNLoad() async {
+    if (await _clickNLoadService.isRunning()) {
+      return ClickNLoadStartResult.alreadyRunning;
+    }
+
+    // TODO: configure this when Click'N'Load is started for the first time for the current server
+    final clickNLoadServer = ClickNLoadServer(
+      ip: server.ip,
+      port: 9666,
+      protocol: server.protocol,
+      allowInsecureConnections: server.protocol == "https",
+      serverIdentifier: "${server.ip}:${server.port}",
+    );
+
+    final success = await _clickNLoadService.start(clickNLoadServer);
+    return success
+        ? ClickNLoadStartResult.started
+        : ClickNLoadStartResult.failed;
   }
 
   /// Upload a DLC container file to the server

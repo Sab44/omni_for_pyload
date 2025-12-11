@@ -16,7 +16,6 @@ class ServerOverviewScreen extends StatefulWidget {
 
 class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
   late ServerOverviewViewModel _viewModel;
-  final Map<String, String> _statuses = {};
 
   @override
   void initState() {
@@ -46,24 +45,12 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
   @override
   void dispose() {
     _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     super.dispose();
   }
 
   Future<void> _loadServers() async {
     await _viewModel.loadServers();
-    await _fetchAllStatuses();
-  }
-
-  Future<void> _fetchAllStatuses() async {
-    _statuses.clear();
-    for (final server in _viewModel.servers) {
-      final key = '${server.ip}:${server.port}';
-      _viewModel.fetchOnlineStatus(server).then((status) {
-        setState(() {
-          _statuses[key] = status;
-        });
-      });
-    }
   }
 
   void _showServerOptions(BuildContext context, Server server) {
@@ -108,10 +95,6 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 await _viewModel.removeServer(server);
-                final key = '${server.ip}:${server.port}';
-                setState(() {
-                  _statuses.remove(key);
-                });
               },
               child: const Text('Remove'),
             ),
@@ -180,7 +163,8 @@ class _ServerOverviewScreenState extends State<ServerOverviewScreen> {
                       itemBuilder: (context, index) {
                         final server = _viewModel.servers[index];
                         final key = '${server.ip}:${server.port}';
-                        final status = _statuses[key] ?? 'fetching...';
+                        final status =
+                            _viewModel.statuses[key] ?? 'fetching...';
                         final Color statusColor = _statusColor(status);
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),

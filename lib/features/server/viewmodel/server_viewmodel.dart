@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
@@ -343,16 +342,7 @@ class ServerViewModel extends ChangeNotifier {
       return ClickNLoadStartResult.alreadyRunning;
     }
 
-    // TODO: configure this when Click'N'Load is started for the first time for the current server
-    final clickNLoadServer = ClickNLoadServer(
-      ip: server.ip,
-      port: 9666,
-      protocol: server.protocol,
-      allowInsecureConnections: server.protocol == "https",
-      serverIdentifier: "${server.ip}:${server.port}",
-    );
-
-    final success = await _clickNLoadService.start(clickNLoadServer);
+    final success = await _clickNLoadService.start();
     return success
         ? ClickNLoadStartResult.started
         : ClickNLoadStartResult.failed;

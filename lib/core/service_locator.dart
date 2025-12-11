@@ -7,7 +7,6 @@ import 'package:omni_for_pyload/domain/repositories/i_click_n_load_server_reposi
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_settings_repository.dart';
-import 'package:omni_for_pyload/features/server/services/click_n_load_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -27,7 +26,4 @@ Future<void> setupServiceLocator() async {
   getIt.registerSingleton<IPyLoadApiRepository>(PyLoadApiRepository());
 
   getIt.registerSingleton<ISettingsRepository>(SettingsRepository());
-
-  // Register services
-  getIt.registerSingleton<ClickNLoadService>(ClickNLoadService());
 }

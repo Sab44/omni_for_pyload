@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
+import 'package:omni_for_pyload/data/repositories/click_n_load_repository.dart';
+import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/features/app.dart';
@@ -38,10 +40,20 @@ class _ServerScreenState extends State<ServerScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // TODO: configure this when Click'N'Load is started for the first time for the current server and persist it inside the server object
+    final clickNLoadServer = ClickNLoadServer(
+      ip: widget.server.ip,
+      port: 9666,
+      protocol: widget.server.protocol,
+      allowInsecureConnections: widget.server.protocol == "https",
+      serverIdentifier: "${widget.server.ip}:${widget.server.port}",
+    );
+
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
-      clickNLoadService: getIt<ClickNLoadService>(),
+      clickNLoadService: ClickNLoadService(repository: ClickNLoadRepository(clickNLoadServer)),
     );
     _viewModel.addListener(_onViewModelChanged);
     // Start polling immediately since the first tab (Overview) is selected by default

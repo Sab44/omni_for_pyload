@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:omni_for_pyload/data/repositories/click_n_load_repository.dart';
-import 'package:omni_for_pyload/domain/models/clicknload_server.dart' as model;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
@@ -12,8 +11,13 @@ class ClickNLoadService {
     'com.example.omni_for_pyload/click_n_load',
   );
 
+  final ClickNLoadRepository _repository;
+
+  ClickNLoadService({
+    required ClickNLoadRepository repository,
+  }) : _repository = repository;
+
   HttpServer? _server;
-  ClickNLoadRepository? _repository;
   bool _isRunning = false;
 
   /// Check if the service is currently running
@@ -36,7 +40,7 @@ class ClickNLoadService {
   }
 
   /// Start the Click'n'Load service with the given server configuration
-  Future<bool> start(model.ClickNLoadServer serverConfig) async {
+  Future<bool> start() async {
     if (!Platform.isAndroid) {
       print('ClickNLoadService: Not supported on this platform');
       return false;
@@ -45,9 +49,6 @@ class ClickNLoadService {
     try {
       // Start the native foreground service first
       await _channel.invokeMethod('startService');
-
-      // Initialize the repository for forwarding requests
-      _repository = ClickNLoadRepository(serverConfig);
 
       // Start the HTTP server
       await _startHttpServer();
@@ -76,7 +77,6 @@ class ClickNLoadService {
       // Stop the native foreground service
       await _channel.invokeMethod('stopService');
 
-      _repository = null;
       _isRunning = false;
       print('ClickNLoadService: Service stopped');
     } catch (e) {
@@ -94,12 +94,6 @@ class ClickNLoadService {
 
     // Helper to handle requests
     Future<Response> handle(Future<dynamic> Function() action) async {
-      if (_repository == null) {
-        print(
-          'ClickNLoadService: No server configured. Cannot forward request.',
-        );
-        return Response.internalServerError(body: 'No server configured');
-      }
       try {
         final response = await action();
         return Response(
@@ -117,14 +111,14 @@ class ClickNLoadService {
     app.get(
       '/flash/',
       (Request request) => handle(
-        () => _repository!.index(method: 'GET', headers: request.headers),
+        () => _repository.index(method: 'GET', headers: request.headers),
       ),
     );
 
     app.post('/flash/', (Request request) async {
       final body = await request.readAsString();
       return handle(
-        () => _repository!.index(
+        () => _repository.index(
           method: 'POST',
           headers: request.headers,
           body: body,
@@ -135,21 +129,21 @@ class ClickNLoadService {
     app.post('/flash/add', (Request request) async {
       final body = await request.readAsString();
       return handle(
-        () => _repository!.add(headers: request.headers, body: body),
+        () => _repository.add(headers: request.headers, body: body),
       );
     });
 
     app.post('/flash/addcrypted', (Request request) async {
       final body = await request.readAsString();
       return handle(
-        () => _repository!.addCrypted(headers: request.headers, body: body),
+        () => _repository.addCrypted(headers: request.headers, body: body),
       );
     });
 
     app.post('/flash/addcrypted2', (Request request) async {
       final body = await request.readAsString();
       return handle(
-        () => _repository!.addCrypted2(headers: request.headers, body: body),
+        () => _repository.addCrypted2(headers: request.headers, body: body),
       );
     });
 

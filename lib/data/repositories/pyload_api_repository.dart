@@ -5,7 +5,7 @@ import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 
 class PyLoadApiRepository implements IPyLoadApiRepository {
-  static const Duration _connectionTimeout = Duration(seconds: 5);
+  static const Duration _connectionTimeout = Duration(seconds: 2);
 
   ApiClient? _cachedApiClient;
   PyLoadRESTApi? _cachedApi;

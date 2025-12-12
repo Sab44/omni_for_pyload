@@ -9,6 +9,8 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:omni_for_pyload/domain/models/server.dart' as _i5;
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart'
     as _i3;
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart'
+    as _i6;
 import 'package:openapi_client/api.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -304,4 +306,88 @@ class MockIPyLoadApiRepository extends _i1.Mock
         ),
         returnValue: _i4.Future<int>.value(0),
       ) as _i4.Future<int>);
+}
+
+/// A class which mocks [IServerRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIServerRepository extends _i1.Mock implements _i6.IServerRepository {
+  MockIServerRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Future<void> initialize() => (super.noSuchMethod(
+        Invocation.method(
+          #initialize,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i5.Server>> getAllServers() => (super.noSuchMethod(
+        Invocation.method(
+          #getAllServers,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i5.Server>>.value(<_i5.Server>[]),
+      ) as _i4.Future<List<_i5.Server>>);
+
+  @override
+  _i4.Future<void> addServer(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #addServer,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> serverExists(
+    String? ip,
+    int? port,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #serverExists,
+          [
+            ip,
+            port,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> removeServer(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #removeServer,
+          [key],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> updateServer(_i5.Server? server) => (super.noSuchMethod(
+        Invocation.method(
+          #updateServer,
+          [server],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAllServers() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllServers,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

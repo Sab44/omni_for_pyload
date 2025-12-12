@@ -3,20 +3,23 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/server/viewmodel/server_viewmodel.dart';
 import 'package:openapi_client/api.dart';
 
 import 'server_viewmodel_test.mocks.dart';
 
-@GenerateMocks([IPyLoadApiRepository])
+@GenerateMocks([IPyLoadApiRepository, IServerRepository])
 void main() {
   group('ServerViewModel', () {
     late MockIPyLoadApiRepository mockPyLoadApiRepository;
+    late MockIServerRepository mockServerRepository;
     late Server server;
     late ServerViewModel viewModel;
 
     setUp(() {
       mockPyLoadApiRepository = MockIPyLoadApiRepository();
+      mockServerRepository = MockIServerRepository();
       server = Server(
         ip: '192.168.1.100',
         port: 8000,
@@ -44,6 +47,7 @@ void main() {
       viewModel = ServerViewModel(
         server: server,
         pyLoadApiRepository: mockPyLoadApiRepository,
+        serverRepository: mockServerRepository,
       );
     });
 
@@ -215,6 +219,7 @@ void main() {
       final pausedViewModel = ServerViewModel(
         server: server,
         pyLoadApiRepository: mockPyLoadApiRepository,
+        serverRepository: mockServerRepository,
       );
 
       // Allow the constructor's async fetch to complete

@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 
 part 'server.g.dart';
 
@@ -22,6 +23,19 @@ class Server extends HiveObject {
   @HiveField(5)
   late String name;
 
+  // Click'N'Load configuration (nullable - not configured by default)
+  @HiveField(6)
+  String? clickNLoadIp;
+
+  @HiveField(7)
+  int? clickNLoadPort;
+
+  @HiveField(8)
+  String? clickNLoadProtocol;
+
+  @HiveField(9)
+  bool? clickNLoadAllowInsecure;
+
   Server({
     required this.ip,
     required this.port,
@@ -29,7 +43,43 @@ class Server extends HiveObject {
     required this.password,
     required this.protocol,
     this.name = 'pyLoad',
+    this.clickNLoadIp,
+    this.clickNLoadPort,
+    this.clickNLoadProtocol,
+    this.clickNLoadAllowInsecure,
   });
+
+  /// Check if Click'N'Load is configured for this server
+  bool get hasClickNLoad =>
+      clickNLoadIp != null &&
+      clickNLoadPort != null &&
+      clickNLoadProtocol != null &&
+      clickNLoadAllowInsecure != null;
+
+  /// Get a ClickNLoadServer instance from the configured properties
+  /// Returns null if Click'N'Load is not configured
+  ClickNLoadServer? get clickNLoadServer {
+    if (!hasClickNLoad) return null;
+    return ClickNLoadServer(
+      ip: clickNLoadIp!,
+      port: clickNLoadPort!,
+      protocol: clickNLoadProtocol!,
+      allowInsecureConnections: clickNLoadAllowInsecure!,
+    );
+  }
+
+  /// Configure Click'N'Load for this server
+  void configureClickNLoad({
+    required String ip,
+    required int port,
+    required String protocol,
+    required bool allowInsecureConnections,
+  }) {
+    clickNLoadIp = ip;
+    clickNLoadPort = port;
+    clickNLoadProtocol = protocol;
+    clickNLoadAllowInsecure = allowInsecureConnections;
+  }
 
   /// Get the base URL for this server
   String get baseUrl {
@@ -44,6 +94,10 @@ class Server extends HiveObject {
     String? password,
     String? protocol,
     String? name,
+    String? clickNLoadIp,
+    int? clickNLoadPort,
+    String? clickNLoadProtocol,
+    bool? clickNLoadAllowInsecure,
   }) {
     return Server(
       ip: ip ?? this.ip,
@@ -52,6 +106,11 @@ class Server extends HiveObject {
       password: password ?? this.password,
       protocol: protocol ?? this.protocol,
       name: name ?? this.name,
+      clickNLoadIp: clickNLoadIp ?? this.clickNLoadIp,
+      clickNLoadPort: clickNLoadPort ?? this.clickNLoadPort,
+      clickNLoadProtocol: clickNLoadProtocol ?? this.clickNLoadProtocol,
+      clickNLoadAllowInsecure:
+          clickNLoadAllowInsecure ?? this.clickNLoadAllowInsecure,
     );
   }
 
@@ -65,7 +124,11 @@ class Server extends HiveObject {
           username == other.username &&
           password == other.password &&
           protocol == other.protocol &&
-          name == other.name;
+          name == other.name &&
+          clickNLoadIp == other.clickNLoadIp &&
+          clickNLoadPort == other.clickNLoadPort &&
+          clickNLoadProtocol == other.clickNLoadProtocol &&
+          clickNLoadAllowInsecure == other.clickNLoadAllowInsecure;
 
   @override
   int get hashCode =>
@@ -74,5 +137,9 @@ class Server extends HiveObject {
       username.hashCode ^
       password.hashCode ^
       protocol.hashCode ^
-      name.hashCode;
+      name.hashCode ^
+      clickNLoadIp.hashCode ^
+      clickNLoadPort.hashCode ^
+      clickNLoadProtocol.hashCode ^
+      clickNLoadAllowInsecure.hashCode;
 }

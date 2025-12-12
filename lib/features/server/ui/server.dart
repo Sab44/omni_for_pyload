@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
-import 'package:omni_for_pyload/data/repositories/click_n_load_repository.dart';
-import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/app.dart';
+import 'package:omni_for_pyload/features/server/ui/add_click_n_load_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/add_links_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/overview_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/package_list_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/upload_dlc_bottom_sheet.dart';
-import 'package:omni_for_pyload/features/server/services/click_n_load_service.dart';
 import 'package:omni_for_pyload/features/server/viewmodel/server_viewmodel.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -41,19 +40,10 @@ class _ServerScreenState extends State<ServerScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // TODO: configure this when Click'N'Load is started for the first time for the current server and persist it inside the server object
-    final clickNLoadServer = ClickNLoadServer(
-      ip: widget.server.ip,
-      port: 9666,
-      protocol: widget.server.protocol,
-      allowInsecureConnections: widget.server.protocol == "https",
-      serverIdentifier: "${widget.server.ip}:${widget.server.port}",
-    );
-
     _viewModel = ServerViewModel(
       server: widget.server,
       pyLoadApiRepository: getIt<IPyLoadApiRepository>(),
-      clickNLoadService: ClickNLoadService(repository: ClickNLoadRepository(clickNLoadServer)),
+      serverRepository: getIt<IServerRepository>(),
     );
     _viewModel.addListener(_onViewModelChanged);
     // Start polling immediately since the first tab (Overview) is selected by default
@@ -189,6 +179,13 @@ class _ServerScreenState extends State<ServerScreen>
                     FloatingActionButton.extended(
                       heroTag: 'clicknload',
                       onPressed: () async {
+                        // Check if Click'N'Load is configured
+                        if (!_viewModel.hasClickNLoadConfigured) {
+                          setState(() => _isFabExpanded = false);
+                          _showAddClickNLoadBottomSheet();
+                          return;
+                        }
+
                         await Permission.notification.request();
                         final result = await _viewModel.startClickNLoad();
                         if (mounted) {
@@ -203,6 +200,10 @@ class _ServerScreenState extends State<ServerScreen>
                               _showSnackBar(
                                 'Failed to start Click\'n\'Load service',
                               );
+                              break;
+                            case ClickNLoadStartResult.notConfigured:
+                              // Should not happen as we check above, but handle it
+                              _showAddClickNLoadBottomSheet();
                               break;
                           }
                           setState(() => _isFabExpanded = false);
@@ -614,6 +615,53 @@ class _ServerScreenState extends State<ServerScreen>
       default:
         return const Center(child: Text('Overview Tab'));
     }
+  }
+
+  void _showAddClickNLoadBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => AddClickNLoadBottomSheet(
+        defaultIp: widget.server.ip,
+        onAdd: (ip, port, protocol, allowInsecureConnections) async {
+          final success = await _viewModel.configureClickNLoad(
+            ip: ip,
+            port: port,
+            protocol: protocol,
+            allowInsecureConnections: allowInsecureConnections,
+          );
+
+          if (success && mounted) {
+            // Start the Click'N'Load service after configuration
+            await Permission.notification.request();
+            final result = await _viewModel.startClickNLoad();
+            if (mounted) {
+              switch (result) {
+                case ClickNLoadStartResult.started:
+                  _showSnackBar('Click\'n\'Load service started');
+                  break;
+                case ClickNLoadStartResult.alreadyRunning:
+                  _showClickNLoadAlreadyRunningDialog();
+                  break;
+                case ClickNLoadStartResult.failed:
+                  _showSnackBar('Failed to start Click\'n\'Load service');
+                  break;
+                case ClickNLoadStartResult.notConfigured:
+                  _showSnackBar('Error: Click\'n\'Load not configured');
+                  break;
+              }
+            }
+          } else if (!success && mounted) {
+            _showSnackBar('Error: Failed to save Click\'n\'Load configuration');
+          }
+
+          return success;
+        },
+      ),
+    );
   }
 
   void _showUploadDlcBottomSheet() {

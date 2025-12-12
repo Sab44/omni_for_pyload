@@ -17,6 +17,9 @@ abstract class IServerRepository {
   /// Remove a server by key
   Future<void> removeServer(String key);
 
+  /// Update an existing server
+  Future<void> updateServer(Server server);
+
   /// Clear all servers
   Future<void> clearAllServers();
 }

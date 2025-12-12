@@ -2,17 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:openapi_client/api.dart';
+import 'package:omni_for_pyload/data/repositories/click_n_load_repository.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/server/services/click_n_load_service.dart';
 
 /// Result of attempting to start Click'n'Load service
-enum ClickNLoadStartResult { started, alreadyRunning, failed }
+enum ClickNLoadStartResult { started, alreadyRunning, failed, notConfigured }
 
 class ServerViewModel extends ChangeNotifier {
   final IPyLoadApiRepository _pyLoadApiRepository;
-  final ClickNLoadService _clickNLoadService;
-  final Server server;
+  final IServerRepository _serverRepository;
+  final Server _server;
+  ClickNLoadService? _clickNLoadService;
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
   List<PackageData> _queueData = [];
@@ -26,14 +29,28 @@ class ServerViewModel extends ChangeNotifier {
   bool _isPaused = false;
 
   ServerViewModel({
-    required this.server,
+    required Server server,
     required IPyLoadApiRepository pyLoadApiRepository,
-    required ClickNLoadService clickNLoadService,
-  }) : _pyLoadApiRepository = pyLoadApiRepository,
-       _clickNLoadService = clickNLoadService {
+    required IServerRepository serverRepository,
+  }) : _server = server,
+       _pyLoadApiRepository = pyLoadApiRepository,
+       _serverRepository = serverRepository {
+    _initializeClickNLoadService();
     _startPollingServerStatus();
   }
 
+  /// Initialize the Click'N'Load service if configured
+  void _initializeClickNLoadService() {
+    final clickNLoadServer = _server.clickNLoadServer;
+    if (clickNLoadServer != null) {
+      _clickNLoadService = ClickNLoadService(
+        repository: ClickNLoadRepository(clickNLoadServer),
+      );
+    }
+  }
+
+  Server get server => _server;
+  bool get hasClickNLoadConfigured => _server.hasClickNLoad;
   int get selectedTabIndex => _selectedTabIndex;
   List<DownloadInfo> get downloads => _downloads;
   List<PackageData> get queueData => _queueData;
@@ -335,14 +352,55 @@ class ServerViewModel extends ChangeNotifier {
     }
   }
 
+  /// Configure Click'N'Load for the current server and persist the configuration
+  ///
+  /// Parameters:
+  /// - [ip]: The IP address or hostname of the Click'N'Load server
+  /// - [port]: The port number
+  /// - [protocol]: The protocol (http or https)
+  /// - [allowInsecureConnections]: Whether to allow insecure HTTPS connections
+  ///
+  /// Returns true if configuration was saved successfully, false otherwise
+  Future<bool> configureClickNLoad({
+    required String ip,
+    required int port,
+    required String protocol,
+    required bool allowInsecureConnections,
+  }) async {
+    try {
+      // Update the server object with Click'N'Load configuration
+      _server.configureClickNLoad(
+        ip: ip,
+        port: port,
+        protocol: protocol,
+        allowInsecureConnections: allowInsecureConnections,
+      );
+
+      // Persist the updated server
+      await _serverRepository.updateServer(_server);
+
+      // Initialize the Click'N'Load service with the new configuration
+      _initializeClickNLoadService();
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// Start the Click'n'Load service
-  /// Returns the result indicating if it was started, already running, or failed
+  /// Returns the result indicating if it was started, already running, not configured, or failed
   Future<ClickNLoadStartResult> startClickNLoad() async {
-    if (await _clickNLoadService.isRunning()) {
+    if (_clickNLoadService == null) {
+      return ClickNLoadStartResult.notConfigured;
+    }
+
+    if (await _clickNLoadService!.isRunning()) {
       return ClickNLoadStartResult.alreadyRunning;
     }
 
-    final success = await _clickNLoadService.start();
+    final success = await _clickNLoadService!.start();
     return success
         ? ClickNLoadStartResult.started
         : ClickNLoadStartResult.failed;

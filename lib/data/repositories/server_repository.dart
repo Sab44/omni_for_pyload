@@ -49,6 +49,14 @@ class ServerRepository implements IServerRepository {
     await box.delete(key);
   }
 
+  /// Update an existing server
+  @override
+  Future<void> updateServer(Server server) async {
+    final box = await _getBox();
+    final key = '${server.ip}:${server.port}';
+    await box.put(key, server);
+  }
+
   /// Clear all servers
   @override
   Future<void> clearAllServers() async {

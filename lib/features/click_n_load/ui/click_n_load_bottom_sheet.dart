@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/features/click_n_load/viewmodel/click_n_load_bottom_sheet_viewmodel.dart';
 import 'package:omni_for_pyload/features/error_dialog/ui/error_dialog.dart';
 
-/// Bottom sheet widget for configuring a Click'N'Load server.
-class AddClickNLoadBottomSheet extends StatefulWidget {
-  /// The server IP to pre-fill in the form
+/// Bottom sheet widget for adding or editing a Click'N'Load server configuration.
+class ClickNLoadBottomSheet extends StatefulWidget {
+  /// The server IP to pre-fill in the form (used for new configurations)
   final String defaultIp;
 
-  /// Callback when the user adds a Click'N'Load server configuration
+  /// Default port for Click'N'Load (used for new configurations)
+  final int defaultPort;
+
+  /// Default protocol (used for new configurations)
+  final String defaultProtocol;
+
+  /// Default value for allowing insecure connections (used for new configurations)
+  final bool defaultAllowInsecure;
+
+  /// Whether we are editing an existing configuration
+  final bool isEditMode;
+
+  /// Callback when the user saves a Click'N'Load server configuration
   /// Parameters: ip, port, protocol, allowInsecureConnections
   /// Returns true if the configuration was saved successfully
   final Future<bool> Function(
@@ -15,31 +28,82 @@ class AddClickNLoadBottomSheet extends StatefulWidget {
     String protocol,
     bool allowInsecureConnections,
   )
-  onAdd;
+  onSave;
 
-  const AddClickNLoadBottomSheet({
+  const ClickNLoadBottomSheet({
     required this.defaultIp,
-    required this.onAdd,
+    required this.onSave,
+    this.defaultPort = 9666,
+    this.defaultProtocol = 'http',
+    this.defaultAllowInsecure = false,
+    this.isEditMode = false,
     super.key,
   });
 
+  /// Factory constructor for creating a new Click'N'Load configuration
+  factory ClickNLoadBottomSheet.add({
+    required String defaultIp,
+    required Future<bool> Function(
+      String ip,
+      int port,
+      String protocol,
+      bool allowInsecureConnections,
+    )
+    onSave,
+  }) {
+    return ClickNLoadBottomSheet(
+      defaultIp: defaultIp,
+      onSave: onSave,
+      isEditMode: false,
+    );
+  }
+
+  /// Factory constructor for editing an existing Click'N'Load configuration
+  factory ClickNLoadBottomSheet.edit({
+    required String currentIp,
+    required int currentPort,
+    required String currentProtocol,
+    required bool currentAllowInsecure,
+    required Future<bool> Function(
+      String ip,
+      int port,
+      String protocol,
+      bool allowInsecureConnections,
+    )
+    onSave,
+  }) {
+    return ClickNLoadBottomSheet(
+      defaultIp: currentIp,
+      defaultPort: currentPort,
+      defaultProtocol: currentProtocol,
+      defaultAllowInsecure: currentAllowInsecure,
+      onSave: onSave,
+      isEditMode: true,
+    );
+  }
+
   @override
-  State<AddClickNLoadBottomSheet> createState() =>
-      _AddClickNLoadBottomSheetState();
+  State<ClickNLoadBottomSheet> createState() => _ClickNLoadBottomSheetState();
 }
 
-class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
+class _ClickNLoadBottomSheetState extends State<ClickNLoadBottomSheet> {
   late final TextEditingController _ipController;
   late final TextEditingController _portController;
-  int _selectedProtocolIndex = 0; // 0 = http, 1 = https
-  bool _allowInsecureConnections = false;
-  bool _isAdding = false;
+  late final ClickNLoadBottomSheetViewModel _viewModel;
+  late int _selectedProtocolIndex;
+  late bool _allowInsecureConnections;
+  bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     _ipController = TextEditingController(text: widget.defaultIp);
-    _portController = TextEditingController(text: "9666");
+    _portController = TextEditingController(
+      text: widget.defaultPort.toString(),
+    );
+    _viewModel = ClickNLoadBottomSheetViewModel(onSave: widget.onSave);
+    _selectedProtocolIndex = widget.defaultProtocol == 'https' ? 1 : 0;
+    _allowInsecureConnections = widget.defaultAllowInsecure;
   }
 
   @override
@@ -52,44 +116,30 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
   String get _selectedProtocol =>
       _selectedProtocolIndex == 0 ? 'http' : 'https';
 
-  Future<void> _addClickNLoadServer() async {
-    final ip = _ipController.text.trim();
-    final portText = _portController.text.trim();
+  String get _title => widget.isEditMode
+      ? "Edit Click'N'Load server"
+      : "Configure Click'N'Load server";
 
-    // Validate IP / hostname
-    if (ip.isEmpty) {
-      showErrorDialog(context, 'IP or hostname is required');
-      return;
-    }
+  String get _buttonText => widget.isEditMode
+      ? "Update Click'N'Load server"
+      : "Configure Click'N'Load server";
 
-    // Validate port
-    int? port;
-    try {
-      port = int.parse(portText);
-    } catch (e) {
-      showErrorDialog(context, 'Port must be a valid number');
-      return;
-    }
+  Future<void> _saveClickNLoadServer() async {
+    setState(() => _isSaving = true);
 
-    if (port <= 0 || port > 65535) {
-      showErrorDialog(context, 'Port must be between 1 and 65535');
-      return;
-    }
-
-    setState(() => _isAdding = true);
-
-    final success = await widget.onAdd(
-      ip,
-      port,
-      _selectedProtocol,
-      _allowInsecureConnections,
+    final success = await _viewModel.validateAndSave(
+      ip: _ipController.text,
+      portText: _portController.text,
+      protocol: _selectedProtocol,
+      allowInsecureConnections: _allowInsecureConnections,
+      onError: (message) => showErrorDialog(context, message),
     );
 
     if (mounted) {
       if (success) {
         Navigator.pop(context);
       } else {
-        setState(() => _isAdding = false);
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -110,7 +160,7 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
           children: [
             // Title
             Text(
-              "Add Click'N'Load server",
+              _title,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -121,7 +171,7 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
             // IP / Hostname input
             TextField(
               controller: _ipController,
-              enabled: !_isAdding,
+              enabled: !_isSaving,
               decoration: const InputDecoration(
                 labelText: 'IP / Hostname',
                 border: OutlineInputBorder(),
@@ -133,7 +183,7 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
             // Port input
             TextField(
               controller: _portController,
-              enabled: !_isAdding,
+              enabled: !_isSaving,
               decoration: const InputDecoration(
                 labelText: 'Port',
                 border: OutlineInputBorder(),
@@ -150,7 +200,7 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
                   _selectedProtocolIndex == 0,
                   _selectedProtocolIndex == 1,
                 ],
-                onPressed: _isAdding
+                onPressed: _isSaving
                     ? null
                     : (index) {
                         setState(() {
@@ -180,7 +230,7 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
             if (_selectedProtocolIndex == 1) ...[
               CheckboxListTile(
                 value: _allowInsecureConnections,
-                onChanged: _isAdding
+                onChanged: _isSaving
                     ? null
                     : (value) {
                         setState(() {
@@ -191,38 +241,40 @@ class _AddClickNLoadBottomSheetState extends State<AddClickNLoadBottomSheet> {
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
               ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange.shade700,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Warning: potentially dangerous',
-                    style: TextStyle(
+              if (_allowInsecureConnections)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
                       color: Colors.orange.shade700,
-                      fontSize: 14,
+                      size: 20,
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Warning: potentially dangerous',
+                      style: TextStyle(
+                        color: Colors.orange.shade700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 16),
             ],
 
             const SizedBox(height: 8),
 
-            // Add button
+            // Save button
             ElevatedButton(
-              onPressed: _isAdding ? null : _addClickNLoadServer,
-              child: _isAdding
+              onPressed: _isSaving ? null : _saveClickNLoadServer,
+              child: _isSaving
                   ? const SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text("Add Click'N'Load server"),
+                  : Text(_buttonText),
             ),
           ],
         ),

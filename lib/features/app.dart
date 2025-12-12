@@ -147,13 +147,25 @@ class _AppState extends State<App> {
       routes: {
         '/server-overview': (context) => const ServerOverviewScreen(),
         '/add-server': (context) => const AddServerScreen(),
-        '/settings': (context) => const SettingsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/server') {
           final server = settings.arguments as Server;
           return MaterialPageRoute(
             builder: (context) => ServerScreen(server: server),
+          );
+        }
+        if (settings.name == '/settings') {
+          // Settings can be opened with or without server context
+          final args = settings.arguments as Map<String, dynamic>?;
+          final server = args?['server'] as Server?;
+          final onStopClickNLoad =
+              args?['onStopClickNLoad'] as Future<void> Function()?;
+          return MaterialPageRoute(
+            builder: (context) => SettingsScreen(
+              server: server,
+              onClickNLoadConfigChanged: onStopClickNLoad,
+            ),
           );
         }
         if (settings.name == '/download-detail') {

@@ -81,6 +81,14 @@ class Server extends HiveObject {
     clickNLoadAllowInsecure = allowInsecureConnections;
   }
 
+  /// Clear Click'N'Load configuration for this server
+  void clearClickNLoad() {
+    clickNLoadIp = null;
+    clickNLoadPort = null;
+    clickNLoadProtocol = null;
+    clickNLoadAllowInsecure = null;
+  }
+
   /// Get the base URL for this server
   String get baseUrl {
     return '$protocol://$ip:$port';

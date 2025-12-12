@@ -14,7 +14,7 @@ enum ClickNLoadStartResult { started, alreadyRunning, failed, notConfigured }
 class ServerViewModel extends ChangeNotifier {
   final IPyLoadApiRepository _pyLoadApiRepository;
   final IServerRepository _serverRepository;
-  final Server _server;
+  Server _server;
   ClickNLoadService? _clickNLoadService;
   int _selectedTabIndex = 0;
   List<DownloadInfo> _downloads = [];
@@ -35,18 +35,7 @@ class ServerViewModel extends ChangeNotifier {
   }) : _server = server,
        _pyLoadApiRepository = pyLoadApiRepository,
        _serverRepository = serverRepository {
-    _initializeClickNLoadService();
     _startPollingServerStatus();
-  }
-
-  /// Initialize the Click'N'Load service if configured
-  void _initializeClickNLoadService() {
-    final clickNLoadServer = _server.clickNLoadServer;
-    if (clickNLoadServer != null) {
-      _clickNLoadService = ClickNLoadService(
-        repository: ClickNLoadRepository(clickNLoadServer),
-      );
-    }
   }
 
   Server get server => _server;
@@ -379,9 +368,6 @@ class ServerViewModel extends ChangeNotifier {
       // Persist the updated server
       await _serverRepository.updateServer(_server);
 
-      // Initialize the Click'N'Load service with the new configuration
-      _initializeClickNLoadService();
-
       notifyListeners();
       return true;
     } catch (e) {
@@ -392,6 +378,9 @@ class ServerViewModel extends ChangeNotifier {
   /// Start the Click'n'Load service
   /// Returns the result indicating if it was started, already running, not configured, or failed
   Future<ClickNLoadStartResult> startClickNLoad() async {
+    // (Re-)Initialize the Click'N'Load service in case server config was updated
+    await _initializeClickNLoadService();
+
     if (_clickNLoadService == null) {
       return ClickNLoadStartResult.notConfigured;
     }
@@ -404,6 +393,18 @@ class ServerViewModel extends ChangeNotifier {
     return success
         ? ClickNLoadStartResult.started
         : ClickNLoadStartResult.failed;
+  }
+
+  /// Initialize the Click'N'Load service if configured
+  Future<void> _initializeClickNLoadService() async {
+    _server = (await _serverRepository.getAllServers()).firstWhere((server) => server.ip == _server.ip && server.port == _server.port);
+    final clickNLoadServer = _server.clickNLoadServer;
+    if (clickNLoadServer != null) {
+      print('Initializing ClickNLoad service with remote url ${clickNLoadServer.baseUrl}');
+      _clickNLoadService = ClickNLoadService(
+        repository: ClickNLoadRepository(clickNLoadServer),
+      );
+    }
   }
 
   /// Stop the Click'n'Load service if it's running

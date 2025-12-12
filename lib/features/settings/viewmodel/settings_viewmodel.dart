@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/domain/models/app_settings.dart' as app_models;
+import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_settings_repository.dart';
+import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/app.dart' show themeNotifier;
 
 class SettingsViewModel extends ChangeNotifier {
   final ISettingsRepository _settingsRepository;
+  final IServerRepository? _serverRepository;
+  final Future<void> Function()? _onClickNLoadConfigChanged;
   app_models.AppSettings _settings = const app_models.AppSettings();
+  final Server? _server;
 
-  SettingsViewModel({required ISettingsRepository settingsRepository})
-    : _settingsRepository = settingsRepository {
+  SettingsViewModel({
+    required ISettingsRepository settingsRepository,
+    IServerRepository? serverRepository,
+    Server? server,
+    Future<void> Function()? onClickNLoadConfigChanged,
+  }) : _settingsRepository = settingsRepository,
+       _serverRepository = serverRepository,
+       _server = server,
+       _onClickNLoadConfigChanged = onClickNLoadConfigChanged {
     _loadSettings();
   }
 
@@ -16,6 +28,12 @@ class SettingsViewModel extends ChangeNotifier {
   app_models.ThemeMode get themeMode => _settings.themeMode;
   bool get skipSelectionScreenIfOnlyOneServer =>
       _settings.skipSelectionScreenIfOnlyOneServer;
+
+  /// The server being configured, if any
+  Server? get server => _server;
+
+  /// Whether this settings screen has a server context (opened from ServerScreen)
+  bool get hasServerContext => _server != null;
 
   Future<void> _loadSettings() async {
     _settings = await _settingsRepository.loadSettings();
@@ -33,6 +51,47 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> setSkipSelectionScreenIfOnlyOneServer(bool value) async {
     _settings = _settings.copyWith(skipSelectionScreenIfOnlyOneServer: value);
     await _settingsRepository.saveSettings(_settings);
+    notifyListeners();
+  }
+
+  /// Update the Click'N'Load configuration for the server
+  ///
+  /// This will also stop the Click'N'Load service if running, so it can be
+  /// restarted with the new configuration
+  Future<void> updateClickNLoadConfig(
+    String ip,
+    int port,
+    String protocol,
+    bool allowInsecureConnections,
+  ) async {
+    if (_server == null || _serverRepository == null) return;
+
+    // Stop the Click'N'Load service before updating config
+    await _onClickNLoadConfigChanged?.call();
+
+    // Update the server with new Click'N'Load config
+    _server.configureClickNLoad(
+      ip: ip,
+      port: port,
+      protocol: protocol,
+      allowInsecureConnections: allowInsecureConnections,
+    );
+
+    await _serverRepository.updateServer(_server);
+    notifyListeners();
+  }
+
+  /// Remove the Click'N'Load configuration from the server
+  Future<void> removeClickNLoadConfig() async {
+    if (_server == null || _serverRepository == null) return;
+
+    // Stop the Click'N'Load service before removing config
+    await _onClickNLoadConfigChanged?.call();
+
+    // Clear the Click'N'Load configuration
+    _server.clearClickNLoad();
+
+    await _serverRepository.updateServer(_server);
     notifyListeners();
   }
 }

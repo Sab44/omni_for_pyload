@@ -5,7 +5,7 @@ import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
 import 'package:omni_for_pyload/features/app.dart';
-import 'package:omni_for_pyload/features/server/ui/add_click_n_load_bottom_sheet.dart';
+import 'package:omni_for_pyload/features/click_n_load/ui/click_n_load_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/add_links_bottom_sheet.dart';
 import 'package:omni_for_pyload/features/server/ui/overview_tab.dart';
 import 'package:omni_for_pyload/features/server/ui/package_list_tab.dart';
@@ -378,7 +378,7 @@ class _ServerScreenState extends State<ServerScreen>
                 }
                 break;
               case _menuSettings:
-                Navigator.pushNamed(context, '/settings');
+                _navigateToSettings();
                 break;
             }
           },
@@ -617,6 +617,19 @@ class _ServerScreenState extends State<ServerScreen>
     }
   }
 
+  /// Navigate to settings screen, pass current server
+  Future<void> _navigateToSettings() async {
+    await Navigator.pushNamed(
+          context,
+          '/settings',
+          arguments: {
+            'server': _viewModel.server,
+            'onStopClickNLoad': _viewModel.stopClickNLoad,
+          },
+        )
+        as Server?;
+  }
+
   void _showAddClickNLoadBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -624,9 +637,9 @@ class _ServerScreenState extends State<ServerScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => AddClickNLoadBottomSheet(
-        defaultIp: widget.server.ip,
-        onAdd: (ip, port, protocol, allowInsecureConnections) async {
+      builder: (context) => ClickNLoadBottomSheet.add(
+        defaultIp: _viewModel.server.ip,
+        onSave: (ip, port, protocol, allowInsecureConnections) async {
           final success = await _viewModel.configureClickNLoad(
             ip: ip,
             port: port,

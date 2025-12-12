@@ -13,12 +13,31 @@ class ClickNLoadService {
 
   final ClickNLoadRepository _repository;
 
-  ClickNLoadService({
-    required ClickNLoadRepository repository,
-  }) : _repository = repository;
+  ClickNLoadService({required ClickNLoadRepository repository})
+    : _repository = repository {
+    // Set up handler for callbacks from native side
+    _channel.setMethodCallHandler(_handleMethodCall);
+  }
 
   HttpServer? _server;
   bool _isRunning = false;
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'onServiceStopped':
+        // Native service was stopped (e.g., notification tapped)
+        // Stop the HTTP server on the Dart side
+        await _stopHttpServer();
+        _isRunning = false;
+        print('ClickNLoadService: Received stop signal from native');
+        return null;
+      default:
+        throw PlatformException(
+          code: 'Unimplemented',
+          details: 'Method ${call.method} not implemented',
+        );
+    }
+  }
 
   /// Check if the service is currently running
   Future<bool> isRunning() async {

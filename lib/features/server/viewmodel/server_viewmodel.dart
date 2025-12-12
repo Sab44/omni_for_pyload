@@ -406,6 +406,15 @@ class ServerViewModel extends ChangeNotifier {
         : ClickNLoadStartResult.failed;
   }
 
+  /// Stop the Click'n'Load service if it's running
+  Future<void> stopClickNLoad() async {
+    if (_clickNLoadService == null) return;
+
+    if (await _clickNLoadService!.isRunning()) {
+      await _clickNLoadService!.stop();
+    }
+  }
+
   /// Upload a DLC container file to the server
   ///
   /// Parameters:
@@ -486,6 +495,8 @@ class ServerViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    // Fire-and-forget, stop clickNLoad async from sync context
+    stopClickNLoad();
     _isDisposed = true;
     _stopPolling();
     _serverStatusTimer?.cancel();

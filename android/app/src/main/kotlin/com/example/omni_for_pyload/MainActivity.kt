@@ -10,12 +10,21 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     companion object {
         private const val CHANNEL = "com.example.omni_for_pyload/click_n_load"
+        
+        private var methodChannel: MethodChannel? = null
+        
+        fun notifyFlutterServiceStopped() {
+            methodChannel?.invokeMethod("onServiceStopped", null)
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel = channel
+        
+        channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "startService" -> {
                     startClickNLoadService()

@@ -30,6 +30,8 @@ class ClickNLoadForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_SERVICE) {
+            // Notify Flutter to stop the HTTP server before stopping the native service
+            MainActivity.notifyFlutterServiceStopped()
             stopSelf()
             return START_NOT_STICKY
         }

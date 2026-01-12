@@ -91,33 +91,29 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
             top: 24,
             bottom: MediaQuery.of(context).viewInsets.bottom + 32,
           ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                controller: scrollController,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Stack(
-                      children: [
-                        // Invisible column to force minimum height
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.65,
-                            ),
-                          ],
-                        ),
-                        Column(
+          child: Column(
+            children: [
+              // Title
+              Text(
+                'Add links',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              // Scrollable content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Title
-                            Text(
-                              'Add links',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
                             const SizedBox(height: 16),
                             // Package name input
                             TextField(
@@ -132,21 +128,19 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
                             const SizedBox(height: 16),
 
                             // Links multiline input
-                            Expanded(
-                              child: TextField(
-                                controller: _linksController,
-                                enabled: !_isAdding,
-                                maxLines: null,
-                                expands: true,
-                                textAlignVertical: TextAlignVertical.top,
-                                decoration: const InputDecoration(
-                                  labelText: 'Links',
-                                  hintText: 'Enter one link per line',
-                                  alignLabelWithHint: true,
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.multiline,
+                            TextField(
+                              controller: _linksController,
+                              enabled: !_isAdding,
+                              maxLines: 8,
+                              minLines: 8,
+                              textAlignVertical: TextAlignVertical.top,
+                              decoration: const InputDecoration(
+                                labelText: 'Links',
+                                hintText: 'Enter one link per line',
+                                alignLabelWithHint: true,
+                                border: OutlineInputBorder(),
                               ),
+                              keyboardType: TextInputType.multiline,
                             ),
                             const SizedBox(height: 16),
 
@@ -195,34 +189,29 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
-
-                            // Add button
-                            ElevatedButton(
-                              onPressed: _isAdding ? null : _addPackage,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                              ),
-                              child: _isAdding
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text('Add'),
-                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    // Add button
+                    ElevatedButton(
+                      onPressed: _isAdding ? null : _addPackage,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: _isAdding
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Add'),
+                    ),
+                  ],
                 ),
-              );
-            },
+              ),
+            ],
           ),
         );
       },

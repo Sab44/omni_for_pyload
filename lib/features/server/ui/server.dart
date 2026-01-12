@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:omni_for_pyload/core/service_locator.dart';
+import 'package:omni_for_pyload/core/utils/format_utils.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
 import 'package:omni_for_pyload/domain/repositories/i_server_repository.dart';
@@ -95,27 +96,6 @@ class _ServerScreenState extends State<ServerScreen>
     // User came back to this screen
     _isScreenVisible = true;
     _viewModel.resumePolling();
-  }
-
-  /// Format bytes to the next higher unit (KB, MB, GB, TB)
-  /// until the whole number is below 1000 or TB is reached
-  String _formatBytes(num? bytes) {
-    if (bytes == null || bytes == 0) return '0 B';
-
-    final units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    double size = bytes.toDouble();
-    int unitIndex = 0;
-
-    while (size >= 1000 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-
-    if (unitIndex == 0) {
-      return '${size.toInt()} ${units[unitIndex]}';
-    } else {
-      return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
-    }
   }
 
   void _showSnackBar(String message) {
@@ -289,7 +269,7 @@ class _ServerScreenState extends State<ServerScreen>
             ],
           ),
           Text(
-            "Speed ${_formatBytes(status.speed)}",
+            "Speed ${formatBytes(status.speed)}",
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ],

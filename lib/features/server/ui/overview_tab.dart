@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:omni_for_pyload/core/utils/format_utils.dart';
 import 'package:openapi_client/api.dart';
 
 /// Widget that displays the overview tab with active downloads.
@@ -7,27 +8,6 @@ class OverviewTab extends StatelessWidget {
   final String? error;
 
   const OverviewTab({required this.downloads, this.error, super.key});
-
-  /// Format bytes to the next higher unit (KB, MB, GB, TB)
-  /// until the whole number is below 1000 or TB is reached
-  String _formatBytes(num? bytes) {
-    if (bytes == null || bytes == 0) return '0 B';
-
-    final units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    double size = bytes.toDouble();
-    int unitIndex = 0;
-
-    while (size >= 1000 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-
-    if (unitIndex == 0) {
-      return '${size.toInt()} ${units[unitIndex]}';
-    } else {
-      return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
-    }
-  }
 
   Color _getStatusColor(DownloadStatus status) {
     if (status == DownloadStatus.WAITING) {
@@ -78,7 +58,7 @@ class OverviewTab extends StatelessWidget {
                       // Left-aligned: size downloaded
                       Expanded(
                         child: Text(
-                          _formatBytes(download.size - download.bleft),
+                          formatBytes(download.size - download.bleft),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
@@ -96,7 +76,7 @@ class OverviewTab extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            _formatBytes(download.size),
+                            formatBytes(download.size),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
@@ -133,7 +113,7 @@ class OverviewTab extends StatelessWidget {
                       // Right-aligned: speed
                       Chip(
                         label: Text(
-                          '${(_formatBytes(download.speed))}/s',
+                          '${(formatBytes(download.speed))}/s',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         backgroundColor: Theme.of(

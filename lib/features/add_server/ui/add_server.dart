@@ -100,122 +100,128 @@ class _AddServerScreenState extends State<AddServerScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Server Name
-              TextFormField(
-                controller: _nameController,
-                enabled: !_isLoading,
-                decoration: const InputDecoration(labelText: 'Server name'),
-              ),
-              const SizedBox(height: 12),
-              // IP / Hostname
-              TextFormField(
-                controller: _ipController,
-                enabled: !_isLoading,
-                decoration: const InputDecoration(labelText: 'IP / Hostname'),
-              ),
-              const SizedBox(height: 12),
-              // Port
-              TextFormField(
-                controller: _portController,
-                enabled: !_isLoading,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Port'),
-              ),
-              const SizedBox(height: 12),
-              // Protocol toggle
-              Padding(
-                padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Protocol',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    ToggleButtons(
-                      isSelected: [_isHttp, !_isHttp],
-                      onPressed: _isLoading
-                          ? null
-                          : (index) {
-                              setState(() {
-                                _isHttp = index == 0;
-                              });
-                            },
-                      borderRadius: BorderRadius.circular(8),
-                      constraints: const BoxConstraints(
-                        minHeight: 36,
-                        minWidth: 72,
-                      ),
-                      children: const [Text('http'), Text('https')],
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Server Name
+                TextFormField(
+                  controller: _nameController,
+                  enabled: !_isLoading,
+                  decoration: const InputDecoration(labelText: 'Server name'),
                 ),
-              ),
-              const SizedBox(height: 6),
-              // Username
-              TextFormField(
-                controller: _usernameController,
-                enabled: !_isLoading,
-                decoration: const InputDecoration(labelText: 'Username'),
-              ),
-              const SizedBox(height: 12),
-              // Password
-              TextFormField(
-                controller: _passwordController,
-                enabled: !_isLoading,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
-              ),
-              const Spacer(),
-              // Add server button
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 12),
+                // IP / Hostname
+                TextFormField(
+                  controller: _ipController,
+                  enabled: !_isLoading,
+                  decoration: const InputDecoration(labelText: 'IP / Hostname'),
+                ),
+                const SizedBox(height: 12),
+                // Port
+                TextFormField(
+                  controller: _portController,
+                  enabled: !_isLoading,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Port'),
+                ),
+                const SizedBox(height: 12),
+                // Protocol toggle
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Protocol',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    onPressed: _isLoading ? null : _handleAddServer,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                'Add server',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
+                      const SizedBox(width: 16),
+                      ToggleButtons(
+                        isSelected: [_isHttp, !_isHttp],
+                        onPressed: _isLoading
+                            ? null
+                            : (index) {
+                                setState(() {
+                                  _isHttp = index == 0;
+                                });
+                              },
+                        borderRadius: BorderRadius.circular(8),
+                        constraints: const BoxConstraints(
+                          minHeight: 36,
+                          minWidth: 72,
+                        ),
+                        children: const [Text('http'), Text('https')],
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 6),
+                // Username
+                TextFormField(
+                  controller: _usernameController,
+                  enabled: !_isLoading,
+                  decoration: const InputDecoration(labelText: 'Username'),
+                ),
+                const SizedBox(height: 12),
+                // Password
+                TextFormField(
+                  controller: _passwordController,
+                  enabled: !_isLoading,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                ),
+                const SizedBox(height: 16),
+                // Add server button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _isLoading ? null : _handleAddServer,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  'Add server',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

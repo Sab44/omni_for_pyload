@@ -1,4 +1,4 @@
-package com.example.omni_for_pyload
+package com.downloader.omni_for_pyload
 
 import android.content.Intent
 import android.os.Build
@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     companion object {
-        private const val CHANNEL = "com.example.omni_for_pyload/click_n_load"
+        private const val CHANNEL = "com.downloader.omni_for_pyload/click_n_load"
         
         private var methodChannel: MethodChannel? = null
         

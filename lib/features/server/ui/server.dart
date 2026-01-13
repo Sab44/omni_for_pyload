@@ -686,10 +686,11 @@ class _ServerScreenState extends State<ServerScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) => AddLinksBottomSheet(
-        onAdd: (name, links, destination) async {
+        onAdd: (name, links, password, destination) async {
           final success = await _viewModel.addPackageWithLinks(
             name,
             links,
+            password,
             destination,
           );
           if (mounted) {

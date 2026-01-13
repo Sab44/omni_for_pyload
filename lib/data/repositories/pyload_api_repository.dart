@@ -337,4 +337,22 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
     }
     return packageId;
   }
+
+  /// Sets or updates the password for a specific package
+  @override
+  Future<void> setPackagePassword(
+    Server server,
+    int packageId,
+    String password,
+  ) async {
+    final api = _configureApi(server);
+    await executeNetworkRequest(
+      () => api.apiSetPackageDataPost(
+        apiSetPackageDataPostRequest: ApiSetPackageDataPostRequest(
+          packageId: packageId,
+          data: Map.of({'password': password}),
+        ),
+      ),
+    );
+  }
 }

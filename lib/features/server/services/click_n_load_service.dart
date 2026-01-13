@@ -8,7 +8,7 @@ import 'package:shelf_router/shelf_router.dart';
 
 class ClickNLoadService {
   static const MethodChannel _channel = MethodChannel(
-    'com.example.omni_for_pyload/click_n_load',
+    'com.downloader.omni_for_pyload/click_n_load',
   );
 
   final ClickNLoadRepository _repository;

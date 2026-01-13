@@ -1,4 +1,4 @@
-package com.example.omni_for_pyload
+package com.downloader.omni_for_pyload
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -16,7 +16,7 @@ class ClickNLoadForegroundService : Service() {
     companion object {
         const val CHANNEL_ID = "click_n_load_channel"
         const val NOTIFICATION_ID = 888
-        const val ACTION_STOP_SERVICE = "com.example.omni_for_pyload.STOP_CLICK_N_LOAD"
+        const val ACTION_STOP_SERVICE = "com.downloader.omni_for_pyload.STOP_CLICK_N_LOAD"
         
         private var isRunning = false
         

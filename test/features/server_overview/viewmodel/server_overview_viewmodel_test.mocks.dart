@@ -390,4 +390,23 @@ class MockIPyLoadApiRepository extends _i1.Mock
         ),
         returnValue: _i4.Future<int>.value(0),
       ) as _i4.Future<int>);
+
+  @override
+  _i4.Future<void> setPackagePassword(
+    _i5.Server? server,
+    int? packageId,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setPackagePassword,
+          [
+            server,
+            packageId,
+            password,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

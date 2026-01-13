@@ -7,6 +7,7 @@ class AddLinksBottomSheet extends StatefulWidget {
   final Future<bool> Function(
     String name,
     List<String> links,
+    String password,
     Destination destination,
   )
   onAdd;
@@ -35,6 +36,7 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
   Future<void> _addPackage() async {
     final packageName = _packageNameController.text.trim();
     final linksText = _linksController.text.trim();
+    final passwordText = _passwordController.text.trim();
 
     // Validation
     if (packageName.isEmpty) {
@@ -64,6 +66,7 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
     final success = await widget.onAdd(
       packageName,
       links,
+      passwordText,
       _selectedDestination,
     );
 

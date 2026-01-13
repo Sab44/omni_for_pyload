@@ -327,7 +327,7 @@ void main() {
       verify(mockPyLoadApiRepository.getCollector(server)).called(2);
     });
 
-    test('addPackageWithLinks calls addPackage', () async {
+    test('addPackageWithLinks calls addPackage without password', () async {
       final links = ['http://example.com/file.zip'];
       when(
         mockPyLoadApiRepository.addPackage(
@@ -347,6 +347,7 @@ void main() {
       final result = await viewModel.addPackageWithLinks(
         'test package',
         links,
+        '',
         Destination.QUEUE,
       );
 
@@ -358,6 +359,47 @@ void main() {
           links,
           Destination.QUEUE,
         ),
+      ).called(1);
+      verifyNever(mockPyLoadApiRepository.setPackagePassword(any, any, any));
+      // Verify refresh happened (called twice: once for tab select, once for addPackage refresh)
+      verify(mockPyLoadApiRepository.getQueue(server)).called(2);
+    });
+
+    test('addPackageWithLinks calls addPackage with password', () async {
+      final links = ['http://example.com/file.zip'];
+      when(
+        mockPyLoadApiRepository.addPackage(
+          server,
+          'test package',
+          links,
+          Destination.QUEUE,
+        ),
+      ).thenAnswer((_) async => 123);
+
+      // If destination is Queue and tab is Queue, it refreshes
+      viewModel.setSelectedTab(1);
+      when(
+        mockPyLoadApiRepository.getQueue(server),
+      ).thenAnswer((_) async => []);
+
+      final result = await viewModel.addPackageWithLinks(
+        'test package',
+        links,
+        's3cret',
+        Destination.QUEUE,
+      );
+
+      expect(result, true);
+      verify(
+        mockPyLoadApiRepository.addPackage(
+          server,
+          'test package',
+          links,
+          Destination.QUEUE,
+        ),
+      ).called(1);
+      verify(
+        mockPyLoadApiRepository.setPackagePassword(server, 123, 's3cret'),
       ).called(1);
       // Verify refresh happened (called twice: once for tab select, once for addPackage refresh)
       verify(mockPyLoadApiRepository.getQueue(server)).called(2);

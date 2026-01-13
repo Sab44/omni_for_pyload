@@ -124,4 +124,11 @@ abstract class IPyLoadApiRepository {
     List<String> links,
     Destination destination,
   );
+
+  /// Sets or updates the password for a specific package
+  Future<void> setPackagePassword(
+    Server server,
+    int packageId,
+    String password,
+  );
 }

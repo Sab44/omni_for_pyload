@@ -397,10 +397,14 @@ class ServerViewModel extends ChangeNotifier {
 
   /// Initialize the Click'N'Load service if configured
   Future<void> _initializeClickNLoadService() async {
-    _server = (await _serverRepository.getAllServers()).firstWhere((server) => server.ip == _server.ip && server.port == _server.port);
+    _server = (await _serverRepository.getAllServers()).firstWhere(
+      (server) => server.ip == _server.ip && server.port == _server.port,
+    );
     final clickNLoadServer = _server.clickNLoadServer;
     if (clickNLoadServer != null) {
-      print('Initializing ClickNLoad service with remote url ${clickNLoadServer.baseUrl}');
+      print(
+        'Initializing ClickNLoad service with remote url ${clickNLoadServer.baseUrl}',
+      );
       _clickNLoadService = ClickNLoadService(
         repository: ClickNLoadRepository(clickNLoadServer),
       );
@@ -451,10 +455,16 @@ class ServerViewModel extends ChangeNotifier {
   Future<bool> addPackageWithLinks(
     String name,
     List<String> links,
+    String password,
     Destination destination,
   ) async {
     try {
-      await _pyLoadApiRepository.addPackage(server, name, links, destination);
+      int packageId = await _pyLoadApiRepository.addPackage(
+        server,
+        name,
+        links,
+        destination,
+      );
 
       // Refresh the appropriate tab based on destination
       if (destination == Destination.QUEUE && _selectedTabIndex == 1) {
@@ -463,6 +473,16 @@ class ServerViewModel extends ChangeNotifier {
           _selectedTabIndex == 2) {
         _fetchCollectorData();
       }
+
+      if (password.isNotEmpty) {
+        // Set password for the newly added package
+        await _pyLoadApiRepository.setPackagePassword(
+          server,
+          packageId,
+          password,
+        );
+      }
+
       return true;
     } catch (e) {
       return false;

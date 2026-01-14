@@ -87,134 +87,143 @@ class _AddLinksBottomSheetState extends State<AddLinksBottomSheet> {
       maxChildSize: 1.0,
       expand: false,
       builder: (context, scrollController) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-          ),
-          child: Column(
-            children: [
-              // Title
-              Text(
-                'Add links',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              // Scrollable content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const SizedBox(height: 16),
-                            // Package name input
-                            TextField(
-                              controller: _packageNameController,
-                              enabled: !_isAdding,
-                              decoration: const InputDecoration(
-                                labelText: 'Package name',
-                                border: OutlineInputBorder(),
+        return Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          shape: Theme.of(context).bottomSheetTheme.shape,
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            ),
+            child: Column(
+              children: [
+                // Title
+                Text(
+                  'Add links',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                // Scrollable content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 16),
+                              // Package name input
+                              TextField(
+                                controller: _packageNameController,
+                                enabled: !_isAdding,
+                                decoration: const InputDecoration(
+                                  labelText: 'Package name',
+                                  border: OutlineInputBorder(),
+                                ),
+                                textInputAction: TextInputAction.next,
                               ),
-                              textInputAction: TextInputAction.next,
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // Links multiline input
-                            TextField(
-                              controller: _linksController,
-                              enabled: !_isAdding,
-                              maxLines: 8,
-                              minLines: 8,
-                              textAlignVertical: TextAlignVertical.top,
-                              decoration: const InputDecoration(
-                                labelText: 'Links',
-                                hintText: 'Enter one link per line',
-                                alignLabelWithHint: true,
-                                border: OutlineInputBorder(),
+                              // Links multiline input
+                              TextField(
+                                controller: _linksController,
+                                enabled: !_isAdding,
+                                maxLines: 8,
+                                minLines: 8,
+                                textAlignVertical: TextAlignVertical.top,
+                                decoration: const InputDecoration(
+                                  labelText: 'Links',
+                                  hintText: 'Enter one link per line',
+                                  alignLabelWithHint: true,
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.multiline,
                               ),
-                              keyboardType: TextInputType.multiline,
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // Password input
-                            TextField(
-                              controller: _passwordController,
-                              enabled: !_isAdding,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                                border: OutlineInputBorder(),
+                              // Password input
+                              TextField(
+                                controller: _passwordController,
+                                enabled: !_isAdding,
+                                decoration: const InputDecoration(
+                                  labelText: 'Password',
+                                  border: OutlineInputBorder(),
+                                ),
+                                obscureText: true,
                               ),
-                              obscureText: true,
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // Destination section
-                            Text(
-                              'Destination',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            RadioGroup<Destination>(
-                              groupValue: _selectedDestination,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() => _selectedDestination = value);
-                                }
-                              },
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: RadioListTile<Destination>(
-                                      title: const Text('Queue'),
-                                      value: Destination.QUEUE,
-                                      contentPadding: EdgeInsets.zero,
-                                      enabled: !_isAdding,
+                              // Destination section
+                              Text(
+                                'Destination',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              RadioGroup<Destination>(
+                                groupValue: _selectedDestination,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(
+                                      () => _selectedDestination = value,
+                                    );
+                                  }
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: RadioListTile<Destination>(
+                                        title: const Text('Queue'),
+                                        value: Destination.QUEUE,
+                                        contentPadding: EdgeInsets.zero,
+                                        enabled: !_isAdding,
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: RadioListTile<Destination>(
-                                      title: const Text('Collector'),
-                                      value: Destination.COLLECTOR,
-                                      contentPadding: EdgeInsets.zero,
-                                      enabled: !_isAdding,
+                                    Expanded(
+                                      child: RadioListTile<Destination>(
+                                        title: const Text('Collector'),
+                                        value: Destination.COLLECTOR,
+                                        contentPadding: EdgeInsets.zero,
+                                        enabled: !_isAdding,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Add button
-                    ElevatedButton(
-                      onPressed: _isAdding ? null : _addPackage,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      const SizedBox(height: 16),
+                      // Add button
+                      ElevatedButton(
+                        onPressed: _isAdding ? null : _addPackage,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: _isAdding
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Add'),
                       ),
-                      child: _isAdding
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Add'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

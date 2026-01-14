@@ -101,6 +101,11 @@ class _AppState extends State<App> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+        bottomSheetTheme: BottomSheetThemeData(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -136,6 +141,11 @@ class _AppState extends State<App> {
           color: const Color(0xFF1E3A5F),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        bottomSheetTheme: BottomSheetThemeData(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           ),
         ),
       ),

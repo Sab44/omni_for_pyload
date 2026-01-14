@@ -15,9 +15,16 @@ an [issue](https://github.com/Sab44/omni_for_pyload/issues) if it is not listed 
 
 ## Screenshots
 
-| <img src="./assets/screenshots/overview_light.png" alt="Overview page" /> | <img src="./assets/screenshots/downloads_light.png" alt="Downloads page" /> | <img src="./assets/screenshots/add_links_light.png" alt="Add links sheet" /> |
-| ------------------------------------------------------ | ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| <img src="./assets/screenshots/overview_dark.png" alt="Overview page dark theme" /> | <img src="./assets/screenshots/downloads_dark.png" alt="Downloads page dark theme" /> | <img src="./assets/screenshots/upload_dlc_dark.png" alt="Upload dlc sheet dark theme" /> |
+<div align="center">
+  <div>
+    <img src="./assets/screenshots/overview_light.png" width="30%" style="margin:6px;" alt="Overview page"/>
+    <img src="./assets/screenshots/downloads_light.png" width="30%" style="margin:6px;" alt="Downloads page"/>
+    <img src="./assets/screenshots/add_links_light.png" width="30%" style="margin:6px;" alt="Add links sheet"/>
+    <img src="./assets/screenshots/overview_dark.png" width="30%" style="margin:6px;" alt="Overview page dark theme"/>
+    <img src="./assets/screenshots/downloads_dark.png" width="30%" style="margin:6px;" alt="Downloads page dark theme"/>
+    <img src="./assets/screenshots/upload_dlc_dark.png" width="30%" style="margin:6px;" alt="Upload dlc sheet dark theme"/>
+  </div>
+</div>
 
 ## Support development
 

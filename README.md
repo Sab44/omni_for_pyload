@@ -28,7 +28,7 @@ an [issue](https://github.com/Sab44/omni_for_pyload/issues) if it is not listed 
 
 ## Support development
 
-A lot of work has gone into building this app. It is provided for free and open-souce. If you like it, please consider donating to support the development.  
+A lot of work has gone into building this app. It is provided for free and open-source. If you like it, please consider donating to support the development.  
 
 <div align="center">
   <div>

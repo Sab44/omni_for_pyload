@@ -28,7 +28,27 @@ an [issue](https://github.com/Sab44/omni_for_pyload/issues) if it is not listed 
 
 ## Support development
 
-A lot of work has gone into building this app. It is provided for free and open-souce. If you like it, please consider donating to support the development.
+A lot of work has gone into building this app. It is provided for free and open-souce. If you like it, please consider donating to support the development.  
+<div align="center">
+
+|     |     |
+|-----|-----|
+| [!["Buy Me A Coffee"](./assets/funding/buymeacoffee.png)](https://www.buymeacoffee.com/sab44) | [!["GitHub Sponsors"](./assets/funding/github_sponsor.png)](https://github.com/sponsors/Sab44) |
+
+</div>
+
+Another one 
+
+<div align="center">
+
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center">[!["Buy Me A Coffee"](./assets/funding/buymeacoffee.png)](https://www.buymeacoffee.com/sab44)</td>
+    <td align="center">[!["GitHub Sponsors"](./assets/funding/github_sponsor.png)](https://github.com/sponsors/Sab44)</td>
+  </tr>
+</table>
+
+</div>
 
 
 

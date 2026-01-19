@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
+import 'package:omni_for_pyload/core/utils/http_client_factory.dart';
 import 'package:omni_for_pyload/domain/models/clicknload_server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_click_n_load_repository.dart';
 
@@ -10,22 +8,13 @@ class ClickNLoadRepository implements IClickNLoadRepository {
   final ClickNLoadServer _server;
 
   factory ClickNLoadRepository(ClickNLoadServer clicknloadserver) {
-    http.Client initClient = createClient(clicknloadserver.allowInsecureConnections);
+    http.Client initClient = HttpClientFactory.createClient(
+      clicknloadserver.allowInsecureConnections,
+    );
     return ClickNLoadRepository._internal(clicknloadserver, initClient);
   }
 
   ClickNLoadRepository._internal(this._server, this._client);
-
-  static IOClient createClient(bool allowInsecureConnections) {
-    if (allowInsecureConnections) {
-      final HttpClient httpClient = HttpClient()
-        ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-      return IOClient(httpClient);
-    }
-
-    return IOClient(HttpClient());
-  }
 
   Future<http.Response> _forward(
     String path, {

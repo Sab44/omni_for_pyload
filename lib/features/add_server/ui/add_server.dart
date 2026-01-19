@@ -23,6 +23,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
   final TextEditingController _passwordController = TextEditingController();
   late AddServerViewModel _viewModel;
   bool _isHttp = true;
+  bool _allowInsecureConnections = false;
   bool _isLoading = false;
 
   @override
@@ -75,6 +76,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
         username: _usernameController.text.trim(),
         password: _passwordController.text,
         protocol: _isHttp ? "http" : "https",
+        allowInsecureConnections: _allowInsecureConnections,
       );
 
       if (mounted) {
@@ -167,6 +169,42 @@ class _AddServerScreenState extends State<AddServerScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
+                // Insecure connections checkbox (only visible for https)
+                if (!_isHttp) ...[
+                  CheckboxListTile(
+                    value: _allowInsecureConnections,
+                    onChanged: _isLoading
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _allowInsecureConnections = value ?? false;
+                            });
+                          },
+                    title: const Text('Allow insecure connections'),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  if (_allowInsecureConnections)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.orange.shade700,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Warning: potentially dangerous',
+                          style: TextStyle(
+                            color: Colors.orange.shade700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 12),
+                ],
                 // Username
                 TextFormField(
                   controller: _usernameController,

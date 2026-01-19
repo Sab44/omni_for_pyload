@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:omni_for_pyload/core/utils/http_client_factory.dart';
 import 'package:openapi_client/api.dart';
 import 'package:omni_for_pyload/domain/models/server.dart';
 import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart';
@@ -33,6 +34,11 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
 
     // Create API client with the server configuration and authentication
     _cachedApiClient = ApiClient(basePath: basePath, authentication: basicAuth);
+
+    // Inject custom client without certificate validation if user configured
+    if (server.allowInsecure) {
+      _cachedApiClient!.client = HttpClientFactory.createClient(server.allowInsecure);
+    }
 
     // Create API instance with the configured client
     _cachedApi = PyLoadRESTApi(_cachedApiClient);

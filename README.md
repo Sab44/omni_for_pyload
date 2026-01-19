@@ -32,8 +32,8 @@ A lot of work has gone into building this app. It is provided for free and open-
 
 <div align="center">
   <div>
-  <a href="https://www.buymeacoffee.com/sab44" title="Buy me a coffee" target="_blank"><img src="./assets/funding/buymeacoffee.png" style="margin:6px;" alt="Buy me a coffee"/></a>
-  <a href="https://github.com/sponsors/sab44" title="GitHub Sponsor" target="_blank"><img src="./assets/funding/github_sponsor.png" style="margin:6px;" alt="GitHub Sponsor"/></a>
+  <a href="https://buymeacoffee.com/sab44" title="Buy me a coffee" target="_blank"><img src="./assets/funding/buymeacoffee.png" style="margin:6px; vertical-align:middle;" alt="Buy me a coffee"/></a>
+  <a href="https://github.com/sponsors/sab44" title="GitHub Sponsor" target="_blank"><img src="./assets/funding/github_sponsor.png" style="margin:6px; vertical-align:middle;" alt="GitHub Sponsor"/></a>
   </div>
 </div>
 

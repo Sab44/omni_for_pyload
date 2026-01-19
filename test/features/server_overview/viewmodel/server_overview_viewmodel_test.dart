@@ -16,6 +16,7 @@ void main() {
   group('ServerOverviewViewModel', () {
     late MockIServerRepository mockServerRepository;
     late MockIPyLoadApiRepository mockPyLoadApiRepository;
+    late Server server;
     late ServerOverviewViewModel viewModel;
 
     setUp(() {
@@ -25,6 +26,15 @@ void main() {
         serverRepository: mockServerRepository,
         pyLoadApiRepository: mockPyLoadApiRepository,
       );
+
+      server = Server(
+        ip: '192.168.1.1',
+        port: 8000,
+        username: 'user1',
+        password: 'pass1',
+        protocol: 'http',
+        allowInsecure: false,
+      );
     });
 
     tearDown(() {
@@ -33,19 +43,14 @@ void main() {
 
     test('loadServers retrieves and updates server list', () async {
       final testServers = [
-        Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        ),
+        server,
         Server(
           ip: '192.168.1.2',
           port: 8001,
           username: 'user2',
           password: 'pass2',
           protocol: 'https',
+          allowInsecure: true,
         ),
       ];
 
@@ -70,14 +75,6 @@ void main() {
     });
 
     test('removeServer removes server from list and repository', () async {
-      final server = Server(
-        ip: '192.168.1.1',
-        port: 8000,
-        username: 'user1',
-        password: 'pass1',
-        protocol: 'http',
-      );
-
       final initialServers = [server];
       when(
         mockServerRepository.getAllServers(),
@@ -100,14 +97,6 @@ void main() {
 
     test('polling updates status to online on success', () {
       fakeAsync((async) {
-        final server = Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        );
-
         when(
           mockServerRepository.getAllServers(),
         ).thenAnswer((_) async => [server]);
@@ -143,14 +132,6 @@ void main() {
 
     test('polling updates status to offline on error', () {
       fakeAsync((async) {
-        final server = Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        );
-
         when(
           mockServerRepository.getAllServers(),
         ).thenAnswer((_) async => [server]);
@@ -171,14 +152,6 @@ void main() {
 
     test('polling updates status to offline on timeout', () {
       fakeAsync((async) {
-        final server = Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        );
-
         when(
           mockServerRepository.getAllServers(),
         ).thenAnswer((_) async => [server]);
@@ -208,15 +181,7 @@ void main() {
     });
 
     test('loadServers triggers notifyListeners', () async {
-      final testServers = [
-        Server(
-          ip: '192.168.1.1',
-          port: 8000,
-          username: 'user1',
-          password: 'pass1',
-          protocol: 'http',
-        ),
-      ];
+      final testServers = [server];
 
       when(
         mockServerRepository.getAllServers(),
@@ -236,14 +201,6 @@ void main() {
     });
 
     test('removeServer triggers notifyListeners', () async {
-      final server = Server(
-        ip: '192.168.1.1',
-        port: 8000,
-        username: 'user1',
-        password: 'pass1',
-        protocol: 'http',
-      );
-
       when(
         mockServerRepository.getAllServers(),
       ).thenAnswer((_) async => [server]);

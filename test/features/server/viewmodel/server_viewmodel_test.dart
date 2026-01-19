@@ -26,6 +26,7 @@ void main() {
         username: 'admin',
         password: 'password',
         protocol: 'http',
+        allowInsecure: false,
         name: 'Test Server',
       );
 

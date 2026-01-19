@@ -33,6 +33,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(
@@ -53,6 +54,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(
@@ -75,6 +77,7 @@ void main() {
             username: 'user',
             password: 'pass',
             protocol: 'http',
+            allowInsecureConnections: false,
           ),
           throwsA(
             isA<String>().having(
@@ -96,6 +99,7 @@ void main() {
           username: '',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(
@@ -116,6 +120,7 @@ void main() {
           username: 'user',
           password: '',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(
@@ -142,6 +147,7 @@ void main() {
             username: 'user',
             password: 'pass',
             protocol: 'http',
+            allowInsecureConnections: false,
           ),
           throwsA(
             isA<String>().having(
@@ -185,14 +191,16 @@ void main() {
           port: '8000',
           username: 'user',
           password: 'pass',
-          protocol: 'http',
+          protocol: 'https',
+          allowInsecureConnections: true,
         );
 
         expect(server.ip, '192.168.1.1');
         expect(server.port, 8000);
         expect(server.username, 'user');
         expect(server.password, 'pass');
-        expect(server.protocol, 'http');
+        expect(server.protocol, 'https');
+        expect(server.allowInsecure, true);
         expect(server.name, 'Test Server');
 
         verify(
@@ -229,6 +237,7 @@ void main() {
         username: 'user',
         password: 'pass',
         protocol: 'http',
+        allowInsecureConnections: false,
       );
 
       expect(server.name, 'pyLoad');
@@ -266,6 +275,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         );
 
         expect(server.name, 'pyLoad');
@@ -304,6 +314,7 @@ void main() {
         username: 'user',
         password: 'pass',
         protocol: 'http',
+        allowInsecureConnections: false,
       );
 
       expect(server.name, 'My Server');
@@ -337,6 +348,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         );
 
         // Verify both getServerStatus and addServer were called
@@ -354,6 +366,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(
@@ -374,6 +387,7 @@ void main() {
           username: 'user',
           password: 'pass',
           protocol: 'http',
+          allowInsecureConnections: false,
         ),
         throwsA(
           isA<String>().having(

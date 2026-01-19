@@ -22,18 +22,19 @@ class ServerAdapter extends TypeAdapter<Server> {
       username: fields[2] as String,
       password: fields[3] as String,
       protocol: fields[4] as String,
+      allowInsecure: fields[6] as bool,
       name: fields[5] as String,
-      clickNLoadIp: fields[6] as String?,
-      clickNLoadPort: fields[7] as int?,
-      clickNLoadProtocol: fields[8] as String?,
-      clickNLoadAllowInsecure: fields[9] as bool?,
+      clickNLoadIp: fields[7] as String?,
+      clickNLoadPort: fields[8] as int?,
+      clickNLoadProtocol: fields[9] as String?,
+      clickNLoadAllowInsecure: fields[10] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Server obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.ip)
       ..writeByte(1)
@@ -47,12 +48,14 @@ class ServerAdapter extends TypeAdapter<Server> {
       ..writeByte(5)
       ..write(obj.name)
       ..writeByte(6)
-      ..write(obj.clickNLoadIp)
+      ..write(obj.allowInsecure)
       ..writeByte(7)
-      ..write(obj.clickNLoadPort)
+      ..write(obj.clickNLoadIp)
       ..writeByte(8)
-      ..write(obj.clickNLoadProtocol)
+      ..write(obj.clickNLoadPort)
       ..writeByte(9)
+      ..write(obj.clickNLoadProtocol)
+      ..writeByte(10)
       ..write(obj.clickNLoadAllowInsecure);
   }
 

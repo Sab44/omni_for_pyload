@@ -21,6 +21,7 @@ class AddServerViewModel {
     required String username,
     required String password,
     required String protocol,
+    required bool allowInsecureConnections,
   }) async {
     // Validate and default server name
     final serverName = name.trim().isEmpty ? 'pyLoad' : name.trim();
@@ -65,6 +66,7 @@ class AddServerViewModel {
       password: password,
       protocol: protocol,
       name: serverName,
+      allowInsecure: allowInsecureConnections,
     );
 
     // Test the connection to the server and verify authentication

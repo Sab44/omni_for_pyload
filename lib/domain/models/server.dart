@@ -23,17 +23,20 @@ class Server extends HiveObject {
   @HiveField(5)
   late String name;
 
-  // Click'N'Load configuration (nullable - not configured by default)
   @HiveField(6)
+  late bool allowInsecure;
+
+  // Click'N'Load configuration (nullable - not configured by default)
+  @HiveField(7)
   String? clickNLoadIp;
 
-  @HiveField(7)
+  @HiveField(8)
   int? clickNLoadPort;
 
-  @HiveField(8)
+  @HiveField(9)
   String? clickNLoadProtocol;
 
-  @HiveField(9)
+  @HiveField(10)
   bool? clickNLoadAllowInsecure;
 
   Server({
@@ -42,6 +45,7 @@ class Server extends HiveObject {
     required this.username,
     required this.password,
     required this.protocol,
+    required this.allowInsecure,
     this.name = 'pyLoad',
     this.clickNLoadIp,
     this.clickNLoadPort,
@@ -101,6 +105,7 @@ class Server extends HiveObject {
     String? username,
     String? password,
     String? protocol,
+    bool? allowInsecure,
     String? name,
     String? clickNLoadIp,
     int? clickNLoadPort,
@@ -113,6 +118,7 @@ class Server extends HiveObject {
       username: username ?? this.username,
       password: password ?? this.password,
       protocol: protocol ?? this.protocol,
+      allowInsecure: allowInsecure ?? this.allowInsecure,
       name: name ?? this.name,
       clickNLoadIp: clickNLoadIp ?? this.clickNLoadIp,
       clickNLoadPort: clickNLoadPort ?? this.clickNLoadPort,
@@ -132,6 +138,7 @@ class Server extends HiveObject {
           username == other.username &&
           password == other.password &&
           protocol == other.protocol &&
+          allowInsecure == other.allowInsecure &&
           name == other.name &&
           clickNLoadIp == other.clickNLoadIp &&
           clickNLoadPort == other.clickNLoadPort &&
@@ -145,6 +152,7 @@ class Server extends HiveObject {
       username.hashCode ^
       password.hashCode ^
       protocol.hashCode ^
+      allowInsecure.hashCode ^
       name.hashCode ^
       clickNLoadIp.hashCode ^
       clickNLoadPort.hashCode ^

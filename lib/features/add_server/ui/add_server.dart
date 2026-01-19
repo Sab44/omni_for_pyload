@@ -180,7 +180,7 @@ class _AddServerScreenState extends State<AddServerScreen> {
                               _allowInsecureConnections = value ?? false;
                             });
                           },
-                    title: const Text('Allow insecure connections'),
+                    title: const Text('Disable SSL certificate verification'),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),

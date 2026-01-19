@@ -75,6 +75,7 @@ Alternatively, install the IPA from the releases section manually (e.g. via Side
 ## Known limitations
 
 * Password is currently not encrypted when stored on device
+* No support for captcha solving
 
 
 ## Roadmap

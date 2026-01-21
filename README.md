@@ -29,6 +29,7 @@ an [issue](https://github.com/Sab44/omni_for_pyload/issues) if it is not listed 
 ## Support development
 
 A lot of work has gone into building this app. It is provided for free and open-source. If you like it, please consider donating to support the development.  
+Ideally, I would like to publish the app on the App Store but for enrolling in Apple's developer program there is a fee of 99$ per year. 
 
 <div align="center">
   <div>

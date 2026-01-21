@@ -37,7 +37,7 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
 
     // Inject custom client without certificate validation if user configured
     if (server.allowInsecure) {
-      _cachedApiClient!.client = HttpClientFactory.createClient(server.allowInsecure);
+      _cachedApiClient!.client = HttpClientFactory.createClient(true);
     }
 
     // Create API instance with the configured client

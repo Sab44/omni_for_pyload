@@ -86,7 +86,7 @@ class _ServerScreenState extends State<ServerScreen>
 
   @override
   void didPushNext() {
-    // User navigated away from this screen (e.g., to download detail)
+    // User navigated away from this screen (e.g. to download detail)
     _isScreenVisible = false;
     _viewModel.pausePolling();
   }

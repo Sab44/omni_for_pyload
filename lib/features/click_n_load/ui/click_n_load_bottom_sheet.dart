@@ -122,7 +122,7 @@ class _ClickNLoadBottomSheetState extends State<ClickNLoadBottomSheet> {
 
   String get _buttonText => widget.isEditMode
       ? "Update Click'N'Load server"
-      : "Configure Click'N'Load server";
+      : "Save Click'N'Load server";
 
   Future<void> _saveClickNLoadServer() async {
     setState(() => _isSaving = true);

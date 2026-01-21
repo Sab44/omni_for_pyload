@@ -279,6 +279,7 @@ class _ServerScreenState extends State<ServerScreen>
 
   PreferredSizeWidget _buildDefaultAppBar() {
     return AppBar(
+      centerTitle: true,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

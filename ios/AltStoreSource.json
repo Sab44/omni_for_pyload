@@ -1,0 +1,35 @@
+{
+    "name": "Apps by Sab44",
+    "subtitle": "My iOS apps in one place.",
+    "website": "https://github.com/Sab44",
+    "tintColor": "#306998",
+    "apps": [
+        {
+            "name": "Omni for pyLoad",
+            "bundleIdentifier": "com.downloader.omniForPyload",
+            "developerName": "Sab44",
+            "localizedDescription": "Companion app for your pyLoad instance.",
+            "iconURL": "https://github.com/Sab44/omni_for_pyload/blob/main/assets/icon/icon.png?raw=true",
+            "screenshots": [
+                "https://github.com/Sab44/omni_for_pyload/blob/main/assets/screenshots/overview_light.png?raw=true",
+                "https://github.com/Sab44/omni_for_pyload/blob/main/assets/screenshots/downloads_light.png?raw=true"
+            ],
+            "versions": [
+                {
+                    "version": "0.1.0",
+                    "date": "2026-01-21T10:59:00+01:00",
+                    "size": 8390254,
+                    "downloadURL": "https://github.com/Sab44/omni_for_pyload/releases/download/v0.1.0/omni_for_pyload-0.1.0.ipa",
+                    "localizedDescription": "First alpha release.",
+                    "minOSVersion": "13.0"
+                }
+            ],
+            "appPermissions": {
+                "entitlements": [],
+                "privacy": {
+                    "NSLocalNetworkUsageDescription": "App may use local network to communicate with pyLoad instance."
+                }
+            }
+        }
+    ]
+}

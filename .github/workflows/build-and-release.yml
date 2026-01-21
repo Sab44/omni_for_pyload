@@ -1,0 +1,130 @@
+name: Build and Release Flutter App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Rename APK with version
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/omni_for_pyload-${{ steps.version.outputs.version }}.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/omni_for_pyload-${{ steps.version.outputs.version }}.apk
+
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Create unsigned IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r omni_for_pyload-${{ steps.version.outputs.version }}.ipa Payload
+          rm -rf Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: omni_for_pyload-${{ steps.version.outputs.version }}.ipa
+
+  release:
+    name: Create GitHub Release
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: artifacts/
+
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build-android.outputs.version }}
+          name: Release v${{ needs.build-android.outputs.version }}
+          body: |
+            ## Installation
+
+            ### Android (Obtainium)
+            1. Install [Obtainium](https://github.com/ImranR98/Obtainium)
+            2. Add this repository URL as an app source
+            3. Obtainium will automatically fetch and install the APK
+
+            ### iOS (AltStore)
+            1. Install [AltStore](https://altstore.io/) on your device
+            2. Download the IPA file
+            3. Open the IPA with AltStore to sideload it
+
+            > **Note:** The iOS IPA is unsigned. You need AltStore or a similar sideloading tool to install it.
+          files: |
+            artifacts/omni_for_pyload-${{ needs.build-android.outputs.version }}.apk
+            artifacts/omni_for_pyload-${{ needs.build-android.outputs.version }}.ipa
+          draft: false
+          prerelease: false

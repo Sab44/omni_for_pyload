@@ -63,14 +63,22 @@ The app supports adding downloads via Click'N'Load. You can start the service vi
 ### Android
 
 Recommended: install via Obtanium  
-// add Obtanium button with redirect function  
+
+[<img src="./assets/badges/badge_obtainium.png"
+  alt="Get it on Obtainium"
+  height="80">][obtainium-app]
+
 Alternatively, install the APK from the releases section manually.
 
 
 ### iOS
 
 Recommended: install via AltStore  
-// add AltStore logo and instructions after making it available on AltStore  
+
+[<img src="./assets/badges/badge_altstore.png"
+  alt="Get it on Obtainium"
+  height="80">][altstore-source]
+
 Alternatively, install the IPA from the releases section manually (e.g. via Sideloadly).
 
 ## Known limitations
@@ -93,3 +101,6 @@ Alternatively, install the IPA from the releases section manually (e.g. via Side
 
 This is a flutter project, written in Dart and Kotlin (for the Android service).  
 Contributions are welcome. Make sure they are well tested and unit tests are adapted if feasible.
+
+[obtainium-app]: http://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/Sab44/omni_for_pyload
+[altstore-source]: https://sab44.github.io/

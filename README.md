@@ -41,6 +41,7 @@ Ideally, I would like to publish the app on the App Store but for enrolling in A
 ## Features
 
 * Manage multiple instances
+* All views will periodically auto-refresh, no manual refreshing required
 * Add downloads via links or upload DLC file
 * See active downloads & packages in Queue and Collector
 * Stop, pause and resume Queue

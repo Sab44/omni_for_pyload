@@ -79,6 +79,11 @@ Recommended: install via AltStore
   alt="Get it on Obtainium"
   height="80">][altstore-source]
 
+Or, add AltStore source manually:
+```
+https://github.com/Sab44/omni_for_pyload/raw/refs/heads/main/ios/AltStoreSource.json
+```
+
 Alternatively, install the IPA from the releases section manually (e.g. via Sideloadly).
 
 ## Known limitations

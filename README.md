@@ -63,7 +63,7 @@ The app supports adding downloads via Click'N'Load. You can start the service vi
 
 ### Android
 
-Recommended: install via Obtanium  
+Recommended: install via Obtainium  
 
 [<img src="./assets/badges/badge_obtainium.png"
   alt="Get it on Obtainium"

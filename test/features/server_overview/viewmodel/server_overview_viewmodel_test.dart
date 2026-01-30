@@ -81,7 +81,7 @@ void main() {
       ).thenAnswer((_) async => initialServers);
 
       when(
-        mockServerRepository.removeServer('192.168.1.1:8000'),
+        mockServerRepository.removeServer('192.168.1.1', 8000),
       ).thenAnswer((_) async => Future<void>.value());
 
       // Load servers first
@@ -92,7 +92,7 @@ void main() {
       await viewModel.removeServer(server);
 
       expect(viewModel.servers, isEmpty);
-      verify(mockServerRepository.removeServer('192.168.1.1:8000')).called(1);
+      verify(mockServerRepository.removeServer('192.168.1.1', 8000)).called(1);
     });
 
     test('polling updates status to online on success', () {
@@ -205,7 +205,7 @@ void main() {
         mockServerRepository.getAllServers(),
       ).thenAnswer((_) async => [server]);
       when(
-        mockServerRepository.removeServer(any),
+        mockServerRepository.removeServer(any, any),
       ).thenAnswer((_) async => Future.value());
 
       await viewModel.loadServers();

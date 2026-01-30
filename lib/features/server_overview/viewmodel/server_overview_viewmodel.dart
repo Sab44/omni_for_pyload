@@ -78,7 +78,7 @@ class ServerOverviewViewModel extends ChangeNotifier {
   /// Remove a server by its IP and port key
   Future<void> removeServer(Server server) async {
     final key = '${server.ip}:${server.port}';
-    await _serverRepository.removeServer(key);
+    await _serverRepository.removeServer(server.ip, server.port);
     _servers.removeWhere((s) => s.ip == server.ip && s.port == server.port);
     _statuses.remove(key);
     notifyListeners();

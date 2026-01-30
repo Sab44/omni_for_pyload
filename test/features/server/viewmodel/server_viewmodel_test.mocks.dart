@@ -381,10 +381,17 @@ class MockIServerRepository extends _i1.Mock implements _i6.IServerRepository {
       ) as _i4.Future<bool>);
 
   @override
-  _i4.Future<void> removeServer(String? key) => (super.noSuchMethod(
+  _i4.Future<void> removeServer(
+    String? ip,
+    int? port,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #removeServer,
-          [key],
+          [
+            ip,
+            port,
+          ],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

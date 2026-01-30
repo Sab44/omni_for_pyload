@@ -13,6 +13,7 @@ dependencies:
       path: ./packages/openapi_client
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  flutter_secure_storage: ^10.0.0
   get_it: ^9.0.5
   file_picker: ^10.3.7
   shelf: ^1.4.2

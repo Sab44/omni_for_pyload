@@ -15,7 +15,7 @@ abstract class IServerRepository {
   Future<bool> serverExists(String ip, int port);
 
   /// Remove a server by key
-  Future<void> removeServer(String key);
+  Future<void> removeServer(String ip, int port);
 
   /// Update an existing server
   Future<void> updateServer(Server server);

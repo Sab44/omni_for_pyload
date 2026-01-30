@@ -269,7 +269,7 @@ class _ServerScreenState extends State<ServerScreen>
             ],
           ),
           Text(
-            "Speed ${formatBytes(status.speed)}",
+            "Speed ${formatBytes(status.speed)}/s",
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ],

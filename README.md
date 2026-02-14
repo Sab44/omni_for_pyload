@@ -63,7 +63,7 @@ The app supports adding downloads via Click'N'Load. You can start the service vi
 
 ### Android
 
-Recommended: install via Obtainium  
+Recommended: install via [Obtainium](https://github.com/ImranR98/Obtainium)  
 
 [<img src="./assets/badges/badge_obtainium.png"
   alt="Get it on Obtainium"
@@ -74,7 +74,7 @@ Alternatively, install the APK from the releases section manually.
 
 ### iOS
 
-Recommended: install via AltStore  
+Recommended: install via [AltStore](https://altstore.io)  
 
 [<img src="./assets/badges/badge_altstore.png"
   alt="Get it on Obtainium"

@@ -110,19 +110,8 @@ jobs:
           tag_name: v${{ needs.build-android.outputs.version }}
           name: Release v${{ needs.build-android.outputs.version }}
           body: |
-            ## Installation
-
-            ### Android (Obtainium)
-            1. Install [Obtainium](https://github.com/ImranR98/Obtainium)
-            2. Add this repository URL as an app source
-            3. Obtainium will automatically fetch and install the APK
-
-            ### iOS (AltStore)
-            1. Install [AltStore](https://altstore.io/) on your device
-            2. Download the IPA file
-            3. Open the IPA with AltStore to sideload it
-
             > **Note:** The iOS IPA is unsigned. You need AltStore or a similar sideloading tool to install it.
+          generate_release_notes: true
           files: |
             artifacts/omni_for_pyload-${{ needs.build-android.outputs.version }}.apk
             artifacts/omni_for_pyload-${{ needs.build-android.outputs.version }}.ipa

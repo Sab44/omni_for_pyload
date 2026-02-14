@@ -8,7 +8,7 @@ import 'package:omni_for_pyload/domain/repositories/i_pyload_api_repository.dart
 class PyLoadApiRepository implements IPyLoadApiRepository {
   static const Duration _connectionTimeout = Duration(seconds: 2);
 
-  ApiClient? _cachedApiClient;
+  Server? _currentServer;
   PyLoadRESTApi? _cachedApi;
 
   /// Configures and returns a PyLoadRESTApi instance with proper authentication
@@ -21,27 +21,28 @@ class PyLoadApiRepository implements IPyLoadApiRepository {
   ///
   /// Returns a configured PyLoadRESTApi instance
   PyLoadRESTApi _configureApi(Server server) {
-    final basePath = '${server.protocol}://${server.ip}:${server.port}';
-
     // Return cached API if the server hasn't changed
-    if (_cachedApiClient?.basePath == basePath && _cachedApi != null) {
+    if (_currentServer?.areMainConnectionParametersEqualTo(server) == true &&
+        _cachedApi != null) {
       return _cachedApi!;
     }
 
+    _currentServer = server;
+
+    // Create API client with the server configuration and authentication
+    final basePath = '${server.protocol}://${server.ip}:${server.port}';
     final basicAuth = HttpBasicAuth();
     basicAuth.username = server.username;
     basicAuth.password = server.password;
-
-    // Create API client with the server configuration and authentication
-    _cachedApiClient = ApiClient(basePath: basePath, authentication: basicAuth);
+    final apiClient = ApiClient(basePath: basePath, authentication: basicAuth);
 
     // Inject custom client without certificate validation if user configured
     if (server.allowInsecure) {
-      _cachedApiClient!.client = HttpClientFactory.createClient(true);
+      apiClient.client = HttpClientFactory.createClient(true);
     }
 
     // Create API instance with the configured client
-    _cachedApi = PyLoadRESTApi(_cachedApiClient);
+    _cachedApi = PyLoadRESTApi(apiClient);
 
     return _cachedApi!;
   }

@@ -128,6 +128,15 @@ class Server extends HiveObject {
     );
   }
 
+  bool areMainConnectionParametersEqualTo(Server other) {
+    return ip == other.ip &&
+        port == other.port &&
+        username == other.username &&
+        password == other.password &&
+        protocol == other.protocol &&
+        allowInsecure == other.allowInsecure;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

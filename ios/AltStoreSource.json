@@ -21,6 +21,14 @@
             ],
             "versions": [
                 {
+                  "version": "0.1.3",
+                  "date": "2026-02-14T19:45:00+01:00",
+                  "size": 8523407,
+                  "downloadURL": "https://github.com/Sab44/omni_for_pyload/releases/download/v0.1.3/omni_for_pyload-0.1.3.ipa",
+                  "localizedDescription": "Fixed authentication if initial credentials were wrong.",
+                  "minOSVersion": "13.0"
+                },
+                {
                     "version": "0.1.2",
                     "date": "2026-01-30T14:26:00+01:00",
                     "size": 8447677,
